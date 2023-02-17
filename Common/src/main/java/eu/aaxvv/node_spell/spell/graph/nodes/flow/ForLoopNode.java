@@ -1,0 +1,86 @@
+package eu.aaxvv.node_spell.spell.graph.nodes.flow;
+
+import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.SpellRunner;
+import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
+import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
+import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
+import eu.aaxvv.node_spell.spell.graph.structure.Socket;
+import eu.aaxvv.node_spell.spell.value.Datatype;
+import eu.aaxvv.node_spell.spell.value.Value;
+
+import java.util.List;
+
+public class ForLoopNode extends FlowNode<ForLoopNode.InstanceData> {
+    public final Socket sStartIdx;
+    public final Socket sEndIdx;
+    public final Socket sIndex;
+
+    public final Socket fIn;
+    public final Socket fComplete;
+    public final Socket fRepeat;
+
+    public ForLoopNode() {
+        super("For Range", "Flow");
+        this.fIn = addInputSocket(Datatype.FLOW, "");
+        this.fComplete = addInputSocket(Datatype.FLOW, "Complete");
+        this.sStartIdx = addInputSocket(Datatype.NUMBER, "Start Index");
+        this.sEndIdx = addInputSocket(Datatype.NUMBER, "End Index");
+        this.sIndex = addOutputSocket(Datatype.NUMBER, "Index");
+        this.fRepeat = addInputSocket(Datatype.FLOW, "Repeat");
+    }
+
+    @Override
+    public Socket getFlowContinueSocket(SpellContext ctx, NodeInstance instance) {
+        return this.fComplete;
+    }
+
+    @Override
+    public InstanceData createInstanceData() {
+        return new InstanceData();
+    }
+
+    @Override
+    public void run(SpellContext ctx, NodeInstance instance) {
+
+    }
+
+    @Override
+    public SpellRunner getSubRunner(SpellContext ctx, NodeInstance instance) {
+        return new SubRunner(instance, ctx);
+    }
+
+    public static class InstanceData {
+        public InstanceData() {
+            this.index = 0;
+        }
+        public int index;
+    }
+
+    private class SubRunner extends SpellRunner {
+        private final NodeInstance nodeInstance;
+        public SubRunner(NodeInstance nodeInstance, SpellContext ctx) {
+            this.nodeInstance = nodeInstance;
+            super.ctx = ctx;
+        }
+
+        @Override
+        public void run() {
+            List<Edge> loopBodyConnections = nodeInstance.getSocketConnections(ForLoopNode.this.fRepeat);
+            if (loopBodyConnections.size() == 0) {
+                return;
+            } else if (loopBodyConnections.size() > 1) {
+                throw new IllegalStateException("Flow Output cannot have multiple outgoing connections.");
+            }
+            NodeInstance firstLoopNode = loopBodyConnections.get(0).getOpposite(nodeInstance.getSocketInstance(ForLoopNode.this.fRepeat)).getParentInstance();
+
+            long startIdx = Math.round(nodeInstance.getSocketValue(ForLoopNode.this.sStartIdx, super.ctx).numberValue());
+            long endIdx = Math.round(nodeInstance.getSocketValue(ForLoopNode.this.sEndIdx, super.ctx).numberValue());
+
+            for (long i = startIdx; i < endIdx; i++) {
+                this.nodeInstance.setSocketValue(ForLoopNode.this.sIndex, Value.createNumber(i));
+                this.runFromNode(firstLoopNode);
+            }
+        }
+    }
+}
