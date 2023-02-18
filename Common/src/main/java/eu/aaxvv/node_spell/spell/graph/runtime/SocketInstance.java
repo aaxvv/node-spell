@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents a specific instance of a node socket.
+ * <p>
+ * This is used to store connections between node instances, as well as values of nodes during execution.
+ */
 public class SocketInstance {
     private final Socket base;
     private final List<Edge> connections;

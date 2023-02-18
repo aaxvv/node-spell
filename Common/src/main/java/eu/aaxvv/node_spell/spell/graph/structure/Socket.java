@@ -4,6 +4,11 @@ import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 
+/**
+ * A connection on the side of a node.
+ * <p>
+ * This class does not represent an instance of a socket, it only holds a description of a socket which will appear on specific node type.
+ */
 public class Socket {
     private final Datatype dataType;
     private final String name;

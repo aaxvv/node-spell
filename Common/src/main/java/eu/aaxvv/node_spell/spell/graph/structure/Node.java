@@ -8,8 +8,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Node<I> {
-    private final List<Socket> sockets;
+import eu.aaxvv.node_spell.client.widget.NodeConstants;
+
+/**
+ * Represents a type of node which can be used in a spell graph.
+ * <p>
+ * Like the vanilla Block class these Nodes are singletons and don't represent a specific node instance,
+ * but the general layout and behavior of this type of node.
+ *
+ * @see NodeInstance
+ */
+public abstract class Node {
     private final String name;
     private final String category;
     private final List<Socket> sockets;

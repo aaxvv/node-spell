@@ -1,6 +1,8 @@
 package eu.aaxvv.node_spell.spell.value;
 
 
+import eu.aaxvv.node_spell.util.ColorUtil;
+
 /**
  * Color scheme:
  * Bool - Red
@@ -30,11 +32,22 @@ public enum Datatype {
         this.r = r;
         this.g = g;
         this.b = b;
+        this.packedColor = ColorUtil.packColor(r, g, b, 1);
+    }
+
+    Datatype(int packedColor) {
+        this.packedColor = packedColor;
+        float[] components = new float[4];
+        ColorUtil.unpackColor(packedColor, components);
+        this.r = components[1];
+        this.g = components[2];
+        this.b = components[3];
 
     }
 
     public final float r;
     public final float g;
     public final float b;
+    public final int packedColor;
 
 }

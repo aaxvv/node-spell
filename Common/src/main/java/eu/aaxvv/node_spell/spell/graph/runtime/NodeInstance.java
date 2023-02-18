@@ -8,6 +8,11 @@ import eu.aaxvv.node_spell.spell.value.Value;
 
 import java.util.*;
 
+/**
+ * Represents a specific instance of a node within a spell graph.
+ * <p>
+ * @implNote It kind of sucks how editor/client stuff is also stored in here, but I don't care enough to do it better right now.
+ */
 public class NodeInstance {
     /** The node type of this instance */
     private final Node base;

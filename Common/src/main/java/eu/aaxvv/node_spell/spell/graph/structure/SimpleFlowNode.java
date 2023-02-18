@@ -4,7 +4,10 @@ import eu.aaxvv.node_spell.spell.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 
-public abstract class SimpleFlowNode<I> extends FlowNode<I> {
+/**
+ * A FlowNode which only has one input and one output flow node.
+ */
+public abstract class SimpleFlowNode extends FlowNode {
     public final Socket fIn;
     public final Socket fOut;
 

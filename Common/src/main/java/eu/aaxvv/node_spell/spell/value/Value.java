@@ -8,6 +8,10 @@ import org.joml.Vector3d;
 import java.util.List;
 import java.util.Optional;
 
+
+/**
+ * An immutable dynamic value used by spell nodes to pass data around.
+ */
 public class Value {
     private final Datatype datatype;
     private final Object value;
