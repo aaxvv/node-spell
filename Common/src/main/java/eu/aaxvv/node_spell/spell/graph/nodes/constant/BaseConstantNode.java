@@ -7,26 +7,29 @@ import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 public abstract class BaseConstantNode<T> extends Node<T> {
     public final Socket sValue;
+    private final Function<T, Value> valueCreatorFunc;
+    private final Supplier<T> defaultValueSupplier;
 
-    public BaseConstantNode(String name) {
+    public BaseConstantNode(String name, Supplier<T> defaultValueSupplier, Function<T, Value> valueCreatorFunc) {
         super(name, "Constants");
         this.sValue = addOutputSocket(Datatype.NUMBER, "Value");
+        this.defaultValueSupplier = defaultValueSupplier;
+        this.valueCreatorFunc = valueCreatorFunc;
     }
 
     @Override
     public T createInstanceData() {
-        return getDefaultValue();
+        return defaultValueSupplier.get();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void run(SpellContext ctx, NodeInstance instance) {
-        instance.setSocketValue(this.sValue, createValue((T) instance.getInstanceData()));
+        instance.setSocketValue(this.sValue, valueCreatorFunc.apply((T) instance.getInstanceData()));
     }
-
-    protected abstract T getDefaultValue();
-
-    protected abstract Value createValue(T instanceData);
 }

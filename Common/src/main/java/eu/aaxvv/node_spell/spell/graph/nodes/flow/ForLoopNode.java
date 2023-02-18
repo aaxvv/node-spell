@@ -23,11 +23,11 @@ public class ForLoopNode extends FlowNode<ForLoopNode.InstanceData> {
     public ForLoopNode() {
         super("For Range", "Flow");
         this.fIn = addInputSocket(Datatype.FLOW, "");
-        this.fComplete = addInputSocket(Datatype.FLOW, "Complete");
+        this.fComplete = addOutputSocket(Datatype.FLOW, "Complete");
         this.sStartIdx = addInputSocket(Datatype.NUMBER, "Start Index");
         this.sEndIdx = addInputSocket(Datatype.NUMBER, "End Index");
+        this.fRepeat = addOutputSocket(Datatype.FLOW, "Repeat");
         this.sIndex = addOutputSocket(Datatype.NUMBER, "Index");
-        this.fRepeat = addInputSocket(Datatype.FLOW, "Repeat");
     }
 
     @Override
