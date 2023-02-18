@@ -13,8 +13,22 @@ public abstract class Node<I> {
     private final String name;
     private final String category;
 
+    private int expectedHeight = 12;
+
     private void addSocket(Socket socket) {
         this.sockets.add(socket);
+        int inCount = 0;
+        int outCount = 0;
+
+        for (Socket s : this.sockets) {
+            if (s.getDirection() == Socket.Direction.IN) {
+                inCount++;
+            } else {
+                outCount++;
+            }
+        }
+
+        expectedHeight = 12 + Math.max(inCount, outCount) * 12;
     }
 
     public final List<Socket> getSockets() {
@@ -39,6 +53,10 @@ public abstract class Node<I> {
 
     public String getCategory() {
         return category;
+    }
+
+    public int getExpectedHeight() {
+        return expectedHeight;
     }
 
     public Node(String name, String category) {

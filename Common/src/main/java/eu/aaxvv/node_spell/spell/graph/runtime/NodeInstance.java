@@ -11,14 +11,14 @@ import java.util.Map;
 import java.util.Optional;
 
 public class NodeInstance {
-    private final Node<Object> base;
+    private final Node<?> base;
     private final Object instanceData;
     private final Map<Socket, SocketInstance> socketInstances;
 
     private int x;
     private int y;
 
-    public NodeInstance(Node<Object> base) {
+    public NodeInstance(Node<?> base) {
         this.base = base;
         this.instanceData = base.createInstanceData();
         this.socketInstances = new HashMap<>();
@@ -29,7 +29,7 @@ public class NodeInstance {
         return instanceData;
     }
 
-    public Node<Object> getBaseNode() {
+    public Node<?> getBaseNode() {
         return base;
     }
 
