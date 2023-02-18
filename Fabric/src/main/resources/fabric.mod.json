@@ -19,7 +19,7 @@
     "environment": "*",
     "entrypoints": {
       "main": [
-        "eu.aaxvv.node_spell.ExampleMod"
+        "eu.aaxvv.node_spell.NodeSpellMod"
       ]
     },
     "mixins": [
