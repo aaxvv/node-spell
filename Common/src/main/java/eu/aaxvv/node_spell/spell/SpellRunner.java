@@ -19,9 +19,9 @@ public class SpellRunner {
     protected void runFromNode(NodeInstance instance) {
         NodeInstance currentInstance = instance;
         while (currentInstance != null) {
-            Node<?> baseNode = currentInstance.getBaseNode();
+            Node baseNode = currentInstance.getBaseNode();
 
-            if (baseNode instanceof FlowNode<?> flowNode) {
+            if (baseNode instanceof FlowNode flowNode) {
                 SpellRunner subRunner = flowNode.getSubRunner(this.ctx, currentInstance);
 
                 if (subRunner != null) {

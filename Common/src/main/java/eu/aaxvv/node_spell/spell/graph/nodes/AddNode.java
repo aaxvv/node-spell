@@ -7,7 +7,7 @@ import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 
-public class AddNode extends Node<Void> {
+public class AddNode extends Node {
     public final Socket sA;
     public final Socket sB;
     public final Socket sResult;

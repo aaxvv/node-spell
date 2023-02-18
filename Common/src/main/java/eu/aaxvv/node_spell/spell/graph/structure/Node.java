@@ -12,23 +12,20 @@ public abstract class Node<I> {
     private final List<Socket> sockets;
     private final String name;
     private final String category;
+    private final List<Socket> sockets;
+    private int inSocketCount;
+    private int outSocketCount;
 
-    private int expectedHeight = 12;
+    public Node(String name, String category) {
+        this.name = name;
+        this.category = category;
+        this.sockets = new ArrayList<>();
+        this.inSocketCount = 0;
+        this.outSocketCount = 0;
+    }
 
     private void addSocket(Socket socket) {
         this.sockets.add(socket);
-        int inCount = 0;
-        int outCount = 0;
-
-        for (Socket s : this.sockets) {
-            if (s.getDirection() == Socket.Direction.IN) {
-                inCount++;
-            } else {
-                outCount++;
-            }
-        }
-
-        expectedHeight = 12 + Math.max(inCount, outCount) * 12;
     }
 
     public final List<Socket> getSockets() {
@@ -36,15 +33,21 @@ public abstract class Node<I> {
     }
 
     protected final Socket addInputSocket(Datatype datatype, String name) {
-        Socket socket = new Socket(datatype, name, this, Socket.Direction.IN);
+        Socket socket = new Socket(datatype, name, this, Socket.Direction.IN, this.inSocketCount);
         addSocket(socket);
+        this.inSocketCount++;
         return socket;
     }
 
     protected final Socket addOutputSocket(Datatype datatype, String name) {
-        Socket socket = new Socket(datatype, name, this, Socket.Direction.OUT);
+        Socket socket = new Socket(datatype, name, this, Socket.Direction.OUT, this.outSocketCount);
         addSocket(socket);
+        this.outSocketCount++;
         return socket;
+    }
+
+    public NodeInstance createInstance() {
+        return new NodeInstance(this);
     }
 
     public String getName() {
@@ -56,24 +59,10 @@ public abstract class Node<I> {
     }
 
     public int getExpectedHeight() {
-        return expectedHeight;
+        return NodeConstants.SOCKET_START_Y + Math.max(this.inSocketCount, this.outSocketCount) * NodeConstants.SOCKET_STEP_Y;
     }
 
-    public Node(String name, String category) {
-        this.name = name;
-        this.category = category;
-        this.sockets = new ArrayList<>();
-    }
-
-    public abstract I createInstanceData();
-
-    public void draw() {
-        // box
-        // title bar + name
-        // sockets + names
-    }
-
-    //TODO: these nodes should be singletons in a registry
+    public abstract Object createInstanceData();
 
     public abstract void run(SpellContext ctx, NodeInstance instance);
 }

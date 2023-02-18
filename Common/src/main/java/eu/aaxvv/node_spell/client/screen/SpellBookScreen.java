@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.joml.Vector2i;
 
 /**
  * Look at BookEditScreen for inspiration
@@ -23,6 +24,7 @@ public class SpellBookScreen extends Screen {
 
     @Override
     protected void init() {
+        //TODO the canvas my also need to contain the node list in order to make dragging from canvas to list possible?
         this.canvas = addRenderableWidget(new NodeCanvasWidget((this.width / 2) - (this.mainAreaWidth / 2), (this.height / 2) - (this.mainAreaHeight / 2), mainAreaWidth - 64, mainAreaHeight));
     }
 
@@ -42,21 +44,37 @@ public class SpellBookScreen extends Screen {
 
         GuiComponent.fill(pose, nodeListX, y, nodeListX - 1, y+ mainAreaHeight, 0xFF000000);
 
-        // Test node
-//        int nPos = x + 64;
-//        int nW = 64;
-//        int nH = 48;
-//        GuiComponent.fill(pose, nPos, nPos, nPos + nW, nPos + nH, 0xFF000000);
-//        GuiComponent.fill(pose, nPos + 1, nPos + 1, nPos + nW - 1, nPos + 10, 0xFF3EA84F);
-//        GuiComponent.fill(pose, nPos + 1, nPos + 11, nPos + nW - 1, nPos + nH - 1, 0xFFE5E5E5);
-//        Minecraft.getInstance().font.draw(pose, "Vec. Decomp.", nPos + 2, nPos + 2, 0xFF000000);
-//
-//        GuiComponent.fill(pose, nPos - 1, nPos + 14, nPos + 2, nPos + 19, 0xFFFF6663);
-//        GuiComponent.fill(pose, nPos - 2, nPos + 15, nPos + 3, nPos + 18, 0xFFFF6663);
-//
-//        GuiComponent.fill(pose, nPos - 1, nPos + 26, nPos + 2, nPos + 31, 0xFFFF6663);
-//        GuiComponent.fill(pose, nPos - 2, nPos + 27, nPos + 3, nPos + 30, 0xFFFF6663);
-
         super.render(pose, mouseX, mouseY, tickDelta);
+    }
+
+    @Override
+    public void mouseMoved(double x, double y) {
+        super.mouseMoved(x, y);
+    }
+
+    @Override
+    public boolean mouseDragged(double x, double y, int activeButton, double dx, double dy) {
+        return super.mouseDragged(x, y, activeButton, dx, dy);
+    }
+
+
+
+    private class DragInfo {
+        public boolean isDragging;
+        public Vector2i startPoint;
+        public Object draggedObject;
+
+        public void mouseDown(int x, int y) {
+
+        }
+
+        public void mouseMove(int x, int y) {
+
+        }
+
+        public void mouseUp(int x, int y) {
+            // if moved some distance -> drag, else click
+        }
+
     }
 }

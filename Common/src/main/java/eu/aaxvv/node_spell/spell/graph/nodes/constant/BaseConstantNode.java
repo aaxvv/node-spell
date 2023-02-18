@@ -10,7 +10,7 @@ import eu.aaxvv.node_spell.spell.value.Value;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class BaseConstantNode<T> extends Node<T> {
+public abstract class BaseConstantNode<T> extends Node {
     public final Socket sValue;
     private final Function<T, Value> valueCreatorFunc;
     private final Supplier<T> defaultValueSupplier;

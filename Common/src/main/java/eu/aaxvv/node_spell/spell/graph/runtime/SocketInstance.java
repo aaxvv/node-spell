@@ -14,10 +14,6 @@ public class SocketInstance {
     private final NodeInstance parentInstance;
     private Value currentValue;
 
-    private int x;
-    private int y;
-
-
     public void setCurrentValue(Value currentValue) {
         this.currentValue = currentValue;
     }
@@ -73,23 +69,10 @@ public class SocketInstance {
     }
 
     public int getX() {
-        return this.x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setPosition(int x, int y) {
-        this.setX(x);
-        this.setY(y);
+        return this.getParentInstance().getSocketX(this.base.getDirection());
     }
 
     public int getY() {
-        return this.y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+        return this.getParentInstance().getSocketY(this.base.getPositionOnNode());
     }
 }

@@ -6,7 +6,7 @@ import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 
-public class BranchNode extends FlowNode<Void> {
+public class BranchNode extends FlowNode {
     public final Socket fIn;
 
     public final Socket sValue;

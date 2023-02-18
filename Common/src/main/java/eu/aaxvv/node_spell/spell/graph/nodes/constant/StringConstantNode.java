@@ -4,6 +4,6 @@ import eu.aaxvv.node_spell.spell.value.Value;
 
 public class StringConstantNode extends BaseConstantNode<String> {
     public StringConstantNode() {
-        super("String Constant", () -> "", Value::createString);
+        super("Const. Str.", () -> "", Value::createString);
     }
 }

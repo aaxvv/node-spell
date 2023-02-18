@@ -11,7 +11,7 @@ import eu.aaxvv.node_spell.spell.value.Value;
 
 import java.util.List;
 
-public class ForLoopNode extends FlowNode<ForLoopNode.InstanceData> {
+public class ForLoopNode extends FlowNode {
     public final Socket sStartIdx;
     public final Socket sEndIdx;
     public final Socket sIndex;

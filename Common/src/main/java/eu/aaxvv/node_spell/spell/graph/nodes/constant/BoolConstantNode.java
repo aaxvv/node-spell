@@ -4,6 +4,6 @@ import eu.aaxvv.node_spell.spell.value.Value;
 
 public class BoolConstantNode extends BaseConstantNode<Boolean> {
     public BoolConstantNode() {
-        super("Bool Constant", () -> false, Value::createBool);
+        super("Const. Bool", () -> false, Value::createBool);
     }
 }

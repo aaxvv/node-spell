@@ -4,6 +4,6 @@ import eu.aaxvv.node_spell.spell.value.Value;
 
 public class NumberConstantNode extends BaseConstantNode<Double> {
     public NumberConstantNode() {
-        super("Number Constant", () -> 0.0, Value::createNumber);
+        super("Const. Num.", () -> 0.0, Value::createNumber);
     }
 }
