@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.flow;
 
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.SpellContext;
 import eu.aaxvv.node_spell.spell.SpellRunner;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
@@ -21,7 +22,7 @@ public class ForLoopNode extends FlowNode {
     public final Socket fRepeat;
 
     public ForLoopNode() {
-        super("For Range", "Flow");
+        super("For Range", "Flow", ModConstants.resLoc("for_range"));
         this.fIn = addInputSocket(Datatype.FLOW, "");
         this.fComplete = addOutputSocket(Datatype.FLOW, "Complete");
         this.sStartIdx = addInputSocket(Datatype.NUMBER, "Start Index");

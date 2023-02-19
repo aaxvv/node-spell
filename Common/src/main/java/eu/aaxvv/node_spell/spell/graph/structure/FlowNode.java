@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.spell.graph.structure;
 import eu.aaxvv.node_spell.spell.SpellContext;
 import eu.aaxvv.node_spell.spell.SpellRunner;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
 
@@ -12,8 +13,8 @@ import java.util.Optional;
  */
 public abstract class FlowNode extends Node {
 
-    public FlowNode(String name, String category) {
-        super(name, category);
+    public FlowNode(String name, String category, ResourceLocation resourceLocation) {
+        super(name, category, resourceLocation);
     }
 
     /**

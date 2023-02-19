@@ -6,6 +6,7 @@ import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -15,8 +16,8 @@ public abstract class BaseConstantNode<T> extends Node {
     private final Function<T, Value> valueCreatorFunc;
     private final Supplier<T> defaultValueSupplier;
 
-    public BaseConstantNode(String name, Supplier<T> defaultValueSupplier, Function<T, Value> valueCreatorFunc) {
-        super(name, "Constants");
+    public BaseConstantNode(String name, ResourceLocation resourceLocation, Supplier<T> defaultValueSupplier, Function<T, Value> valueCreatorFunc) {
+        super(name, "Constants", resourceLocation);
         this.sValue = addOutputSocket(Datatype.NUMBER, "Value");
         this.defaultValueSupplier = defaultValueSupplier;
         this.valueCreatorFunc = valueCreatorFunc;

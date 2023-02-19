@@ -21,7 +21,7 @@ public class NodeSpellMod implements ModInitializer {
         // project.
 
         // Use Fabric to bootstrap the Common mod.
-        Constants.LOG.info("Hello Fabric world!");
+        ModConstants.LOG.info("Hello Fabric world!");
         NodeSpellCommon.init();
 
         testMapping = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.node_spell.test", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, "key.node_spell.test.desc"));

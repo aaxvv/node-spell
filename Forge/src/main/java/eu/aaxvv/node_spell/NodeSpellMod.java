@@ -2,7 +2,7 @@ package eu.aaxvv.node_spell;
 
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(Constants.MOD_ID)
+@Mod(ModConstants.MOD_ID)
 public class NodeSpellMod {
     
     public NodeSpellMod() {
@@ -12,7 +12,7 @@ public class NodeSpellMod {
         // project.
     
         // Use Forge to bootstrap the Common mod.
-        Constants.LOG.info("Hello Forge world!");
+        ModConstants.LOG.info("Hello Forge world!");
         NodeSpellCommon.init();
         
     }

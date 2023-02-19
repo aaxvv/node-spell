@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.platform;
 
-import eu.aaxvv.node_spell.Constants;
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
@@ -24,7 +24,7 @@ public class Services {
         final T loadedService = ServiceLoader.load(clazz)
                 .findFirst()
                 .orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-        Constants.LOG.debug("Loaded {} for service {}", loadedService, clazz);
+        ModConstants.LOG.debug("Loaded {} for service {}", loadedService, clazz);
         return loadedService;
     }
 }

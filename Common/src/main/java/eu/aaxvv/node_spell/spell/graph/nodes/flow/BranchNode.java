@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.flow;
 
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
@@ -14,7 +15,7 @@ public class BranchNode extends FlowNode {
     public final Socket fFalseOut;
 
     public BranchNode() {
-        super("Branch", "Flow");
+        super("Branch", "Flow", ModConstants.resLoc("branch"));
         this.fIn = addInputSocket(Datatype.FLOW, "");
         this.sValue = addInputSocket(Datatype.BOOL, "Value");
         this.fTrueOut = addInputSocket(Datatype.FLOW, "True");
