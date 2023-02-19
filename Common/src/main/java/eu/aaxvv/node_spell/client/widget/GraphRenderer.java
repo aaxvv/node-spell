@@ -9,6 +9,7 @@ import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
+import eu.aaxvv.node_spell.util.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
@@ -24,6 +25,8 @@ public class GraphRenderer {
     private int windowPanX;
     private int windowPanY;
 
+    private final float[] gridColor;
+
     public GraphRenderer(int x, int y, int windowWidth, int windowHeight, SpellGraph graph) {
         this.graph = graph;
         this.windowWidth = windowWidth;
@@ -32,6 +35,9 @@ public class GraphRenderer {
         this.y = y;
         this.windowPanX = 0;
         this.windowPanY = 0;
+
+        this.gridColor = new float[4];
+        ColorUtil.unpackColor(NodeConstants.NODE_GRAPH_GRID_COLOR, gridColor);
     }
 
     public void offsetWindowPan(int dx, int dy) {
@@ -53,10 +59,12 @@ public class GraphRenderer {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         double scale = Minecraft.getInstance().getWindow().getGuiScale();
-        // it took me awhile to realize that GlScissor uses a bottom left origin, not top left
+        // it took me a while to realize that GlScissor uses a bottom left origin, not top left
         int framebufferHeight = Minecraft.getInstance().getWindow().getHeight();
         RenderSystem.enableScissor((int)(x*scale), framebufferHeight - ((int)(y*scale) + (int)(windowHeight*scale)), (int)(windowWidth*scale), (int)(windowHeight*scale));
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+
+        renderGrid(mat, bb);
 
         // Edges
         for (Edge instance : graph.getEdges()) {
@@ -69,13 +77,26 @@ public class GraphRenderer {
         }
 
         BufferUploader.drawWithShader(bb.end());
-        RenderSystem.disableScissor();
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
 
         // Node Text
         for (NodeInstance instance : graph.getNodeInstances()) {
             renderNodeText(pose, instance);
+        }
+
+        RenderSystem.disableScissor();
+    }
+
+    private void renderGrid(Matrix4f mat, BufferBuilder bb) {
+        int spacing = NodeConstants.NODE_GRAPH_GRID_SPACING;
+
+        for (int x = this.x; x < this.x + this.windowWidth + spacing; x += spacing) {
+            RenderUtil.putQuad(mat, bb, x + (this.windowPanX % spacing), this.y, 1, this.windowHeight, gridColor[1], gridColor[2], gridColor[3]);
+        }
+
+        for (int y = this.y; y < this.y + this.windowHeight + spacing; y += spacing) {
+            RenderUtil.putQuad(mat, bb, this.x, y + (this.windowPanY % spacing), this.windowWidth, 1, gridColor[1], gridColor[2], gridColor[3]);
         }
     }
 

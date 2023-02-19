@@ -1,19 +1,24 @@
 package eu.aaxvv.node_spell.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import eu.aaxvv.node_spell.Constants;
 import eu.aaxvv.node_spell.client.widget.NodeCanvasWidget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.client.widget.NodePickerWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2i;
 
 /**
  * Look at BookEditScreen for inspiration
  */
 public class SpellBookScreen extends Screen {
+    private static ResourceLocation BACKGROUND_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/spell_book_bg.png");
     // normal inventory width. can be extended if needed (e.g. beacon ui is 230)
     private final int mainAreaWidth = 288;
     // height of double chest screen
@@ -42,7 +47,14 @@ public class SpellBookScreen extends Screen {
 
         int x = (this.width / 2) - (this.mainAreaWidth / 2);
         int y = (this.height / 2) - (this.mainAreaHeight / 2);
-        GuiComponent.fill(pose, x, y, mainAreaWidth + x, mainAreaHeight + y, bgColor);
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, BACKGROUND_LOCATION);
+        GuiComponent.blit(pose, x - 8, y - 8, 0, 0, 304, 224, 512, 256);
+        RenderSystem.disableBlend();
+//        GuiComponent.fill(pose, x, y, mainAreaWidth + x, mainAreaHeight + y, bgColor);
 
         super.render(pose, mouseX, mouseY, tickDelta);
     }
@@ -54,6 +66,7 @@ public class SpellBookScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double x, double y, int activeButton, double dx, double dy) {
+        this.canvas.offsetWindowPan((int)dx, (int)dy);
         return super.mouseDragged(x, y, activeButton, dx, dy);
     }
 

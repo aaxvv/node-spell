@@ -32,22 +32,30 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
     @Override
     public void render(PoseStack pose, int mouseX, int mouseY, float tickDelta) {
         // Setup
-        Matrix4f mat = pose.last().pose();
-        BufferBuilder bb = Tesselator.getInstance().getBuilder();
-        RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        // will need scissor here to cut off grid properly
-
-        RenderUtil.putQuad(mat, bb, x, y, width, height, 0, 1, 1);
-
-        BufferUploader.drawWithShader(bb.end());
-        RenderSystem.enableTexture();
-        RenderSystem.disableBlend();
+//        Matrix4f mat = pose.last().pose();
+//        BufferBuilder bb = Tesselator.getInstance().getBuilder();
+//        RenderSystem.enableBlend();
+//        RenderSystem.disableTexture();
+//        RenderSystem.defaultBlendFunc();
+//        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+//        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+//        // will need scissor here to cut off grid properly
+//
+////        RenderUtil.putQuad(mat, bb, x, y, width, height, 0, 1, 1);
+//
+//        BufferUploader.drawWithShader(bb.end());
+//        RenderSystem.enableTexture();
+//        RenderSystem.disableBlend();
 
         this.renderer.renderGraph(pose, mouseX, mouseY, tickDelta);
+    }
+
+    public void offsetWindowPan(int dx, int dy) {
+        this.renderer.offsetWindowPan(dx, dy);
+    }
+
+    public void setWindowPan(int x, int y) {
+        this.renderer.setWindowPan(x, y);
     }
 
     @Override
