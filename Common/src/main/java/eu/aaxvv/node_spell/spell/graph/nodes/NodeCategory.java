@@ -15,16 +15,16 @@ public enum NodeCategory {
     STRING("node_spell.node.category.string", 0.285f, 0.659f, 0.310f),
     CUSTOM("node_spell.node.category.custom", 0.285f, 0.659f, 0.310f);
 
-    NodeCategory(String name, float r, float g, float b) {
-        this.name = name;
+    NodeCategory(String translationKey, float r, float g, float b) {
+        this.translationKey = translationKey;
         this.r = r;
         this.g = g;
         this.b = b;
         this.packedColor = ColorUtil.packColor(r,g, b, 1);
     }
 
-    NodeCategory(String name, int packedColor) {
-        this.name = name;
+    NodeCategory(String translationKey, int packedColor) {
+        this.translationKey = translationKey;
         this.packedColor = packedColor;
         float[] components = new float[4];
         ColorUtil.unpackColor(packedColor, components);
@@ -33,7 +33,7 @@ public enum NodeCategory {
         this.b = components[3];
     }
 
-    public final String name;
+    public final String translationKey;
     public final float r;
     public final float g;
     public final float b;

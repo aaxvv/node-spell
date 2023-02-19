@@ -12,9 +12,13 @@ public class NodeConstants {
     public static final int SOCKET_START_Y = 15;
     public static final int SOCKET_STEP_Y = 12;
     public static final int TITLE_TEXT_COLOR = 0xFF000000;
+    public static final int SOCKET_TEXT_COLOR = 0xFF000000;
+    public static final int NODE_PICKER_WIDGET_HEIGHT = (2 * 9) + (3 * 2);
+    public static final int SPELL_BOOK_BG_COLOR = 0xFFD8D1A9;
+    public static final int SPELL_BOOK_SEPARATOR_COLOR = 0xFF000000;
 
     // TODO temporary
-    public static final SpellGraph TEST_GRAPH = new SpellGraph();;
+    public static final SpellGraph TEST_GRAPH = new SpellGraph();
 
     static {
         NumberConstantNode constNode = new NumberConstantNode();

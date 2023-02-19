@@ -2,6 +2,8 @@ package eu.aaxvv.node_spell.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.client.widget.NodeCanvasWidget;
+import eu.aaxvv.node_spell.client.widget.NodeConstants;
+import eu.aaxvv.node_spell.client.widget.NodePickerWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,14 +20,20 @@ public class SpellBookScreen extends Screen {
     private final int mainAreaHeight = 208;
     private final int bgColor = 0xFFD8D1A9;
     private NodeCanvasWidget canvas;
+    private NodePickerWidget picker;
+    private DragInfo dragInfo;
     public SpellBookScreen(Component title) {
         super(title);
+        this.dragInfo = new DragInfo();
     }
 
     @Override
     protected void init() {
-        //TODO the canvas my also need to contain the node list in order to make dragging from canvas to list possible?
-        this.canvas = addRenderableWidget(new NodeCanvasWidget((this.width / 2) - (this.mainAreaWidth / 2), (this.height / 2) - (this.mainAreaHeight / 2), mainAreaWidth - 64, mainAreaHeight));
+        //TODO the canvas may also need to contain the node list in order to make dragging from canvas to list possible?
+        int x = (this.width / 2) - (this.mainAreaWidth / 2);
+        int y = (this.height / 2) - (this.mainAreaHeight / 2);
+        this.canvas = addRenderableWidget(new NodeCanvasWidget(x, y, mainAreaWidth, mainAreaHeight - NodeConstants.NODE_PICKER_WIDGET_HEIGHT));
+        this.picker = addRenderableWidget(new NodePickerWidget(x, y + mainAreaHeight - NodeConstants.NODE_PICKER_WIDGET_HEIGHT, mainAreaWidth, NodeConstants.NODE_PICKER_WIDGET_HEIGHT));
     }
 
     @Override
@@ -35,14 +43,6 @@ public class SpellBookScreen extends Screen {
         int x = (this.width / 2) - (this.mainAreaWidth / 2);
         int y = (this.height / 2) - (this.mainAreaHeight / 2);
         GuiComponent.fill(pose, x, y, mainAreaWidth + x, mainAreaHeight + y, bgColor);
-
-        int nodeListX = x + this.mainAreaWidth - 63;
-
-        Minecraft.getInstance().font.draw(pose, "Math", nodeListX + 4, y + 4, 0xFF000000);
-        Minecraft.getInstance().font.draw(pose, "Subtract", nodeListX + 4 + 8, y + 4 + 9, 0xFF000000);
-        Minecraft.getInstance().font.draw(pose, "Divide", nodeListX + 4 + 8, y + 4 + 18, 0xFF000000);
-
-        GuiComponent.fill(pose, nodeListX, y, nodeListX - 1, y+ mainAreaHeight, 0xFF000000);
 
         super.render(pose, mouseX, mouseY, tickDelta);
     }
@@ -57,10 +57,18 @@ public class SpellBookScreen extends Screen {
         return super.mouseDragged(x, y, activeButton, dx, dy);
     }
 
+    @Override
+    public boolean mouseClicked(double $$0, double $$1, int $$2) {
+        return super.mouseClicked($$0, $$1, $$2);
+    }
 
+    @Override
+    public boolean mouseReleased(double $$0, double $$1, int $$2) {
+        return super.mouseReleased($$0, $$1, $$2);
+    }
 
     private class DragInfo {
-        public boolean isDragging;
+        public DragState dragState;
         public Vector2i startPoint;
         public Object draggedObject;
 
@@ -75,6 +83,14 @@ public class SpellBookScreen extends Screen {
         public void mouseUp(int x, int y) {
             // if moved some distance -> drag, else click
         }
+
+    }
+
+    private enum DragState {
+        NOT_DRAGGING,
+        PANNING_CANVAS,
+        DRAGGING_NODE,
+        DRAGGING_EDGE,
 
     }
 }

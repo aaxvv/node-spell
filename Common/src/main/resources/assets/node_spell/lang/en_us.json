@@ -1,4 +1,15 @@
 {
   "key.node_spell.test": "Node Spell Test",
-  "key.node_spell.test.desc": "Trigger Node Spell test"
+  "key.node_spell.test.desc": "Trigger Node Spell test",
+  "node_spell.node.category.input": "INPUT",
+  "node_spell.node.category.flow": "FLOW",
+  "node_spell.node.category.action":  "ACTION",
+  "node_spell.node.category.logic": "LOGIC",
+  "node_spell.node.category.comparison":  "COMPARE",
+  "node_spell.node.category.math": "MATH",
+  "node_spell.node.category.memory":  "MEMORY",
+  "node_spell.node.category.vector": "VECTOR",
+  "node_spell.node.category.list":  "LIST",
+  "node_spell.node.category.string": "STRING",
+  "node_spell.node.category.custom":  "CUSTOM"
 }
