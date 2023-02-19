@@ -80,4 +80,8 @@ public class SocketInstance {
     public int getY() {
         return this.getParentInstance().getSocketY(this.base.getPositionOnNode());
     }
+
+    public boolean containsPoint(int x, int y) {
+        return x >= this.getX() && x < this.getX() + 5 && y >= this.getY() && y < this.getY() + 5;
+    }
 }

@@ -148,4 +148,8 @@ public class NodeInstance {
         int socketStartY = y + NodeConstants.SOCKET_START_Y;
         return socketStartY + (index * NodeConstants.SOCKET_STEP_Y);
     }
+
+    public boolean containsPoint(int x, int y) {
+        return x >= this.x && x < this.x + NodeConstants.DEFAULT_NODE_WIDTH && y >= this.y && y < this.y + this.base.getExpectedHeight();
+    }
 }

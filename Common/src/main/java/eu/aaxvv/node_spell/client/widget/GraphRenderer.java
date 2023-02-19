@@ -40,14 +40,22 @@ public class GraphRenderer {
         ColorUtil.unpackColor(NodeConstants.NODE_GRAPH_GRID_COLOR, gridColor);
     }
 
-    public void offsetWindowPan(int dx, int dy) {
-        this.windowPanX += dx;
-        this.windowPanY += dy;
-    }
+//    public void offsetWindowPan(int dx, int dy) {
+//        this.windowPanX += dx;
+//        this.windowPanY += dy;
+//    }
 
     public void setWindowPan(int x, int y) {
         this.windowPanX = x;
         this.windowPanY = y;
+    }
+
+    public int getWindowPanX() {
+        return windowPanX;
+    }
+
+    public int getWindowPanY() {
+        return windowPanY;
     }
 
     public void renderGraph(PoseStack pose, int mouseX, int mouseY, float tickDelta) {

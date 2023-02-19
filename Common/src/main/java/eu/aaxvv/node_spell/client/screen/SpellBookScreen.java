@@ -2,11 +2,12 @@ package eu.aaxvv.node_spell.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import eu.aaxvv.node_spell.Constants;
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.widget.NodeCanvasWidget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.client.widget.NodePickerWidget;
-import net.minecraft.client.Minecraft;
+import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
+import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -14,22 +15,24 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2i;
 
+import java.util.Optional;
+
 /**
  * Look at BookEditScreen for inspiration
  */
 public class SpellBookScreen extends Screen {
-    private static ResourceLocation BACKGROUND_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/spell_book_bg.png");
+    private static final ResourceLocation BACKGROUND_LOCATION = ModConstants.resLoc("textures/gui/spell_book_bg.png");
     // normal inventory width. can be extended if needed (e.g. beacon ui is 230)
     private final int mainAreaWidth = 288;
     // height of double chest screen
     private final int mainAreaHeight = 208;
-    private final int bgColor = 0xFFD8D1A9;
     private NodeCanvasWidget canvas;
     private NodePickerWidget picker;
-    private DragInfo dragInfo;
+    private final DragHandler dragHandler;
+
     public SpellBookScreen(Component title) {
         super(title);
-        this.dragInfo = new DragInfo();
+        this.dragHandler = new DragHandler();
     }
 
     @Override
@@ -37,7 +40,7 @@ public class SpellBookScreen extends Screen {
         //TODO the canvas may also need to contain the node list in order to make dragging from canvas to list possible?
         int x = (this.width / 2) - (this.mainAreaWidth / 2);
         int y = (this.height / 2) - (this.mainAreaHeight / 2);
-        this.canvas = addRenderableWidget(new NodeCanvasWidget(x, y, mainAreaWidth, mainAreaHeight - NodeConstants.NODE_PICKER_WIDGET_HEIGHT));
+        this.canvas = addRenderableWidget(new NodeCanvasWidget(x, y, mainAreaWidth, mainAreaHeight - NodeConstants.NODE_PICKER_WIDGET_HEIGHT, NodeConstants.TEST_GRAPH));
         this.picker = addRenderableWidget(new NodePickerWidget(x, y + mainAreaHeight - NodeConstants.NODE_PICKER_WIDGET_HEIGHT, mainAreaWidth, NodeConstants.NODE_PICKER_WIDGET_HEIGHT));
     }
 
@@ -54,47 +57,94 @@ public class SpellBookScreen extends Screen {
         RenderSystem.setShaderTexture(0, BACKGROUND_LOCATION);
         GuiComponent.blit(pose, x - 8, y - 8, 0, 0, 304, 224, 512, 256);
         RenderSystem.disableBlend();
-//        GuiComponent.fill(pose, x, y, mainAreaWidth + x, mainAreaHeight + y, bgColor);
 
         super.render(pose, mouseX, mouseY, tickDelta);
     }
 
+    private void nodeAddedFromPicker(NodeInstance instance) {
+
+    }
+
     @Override
     public void mouseMoved(double x, double y) {
-        super.mouseMoved(x, y);
+        this.dragHandler.mouseMove((int) x, (int) y);
     }
 
     @Override
     public boolean mouseDragged(double x, double y, int activeButton, double dx, double dy) {
-        this.canvas.offsetWindowPan((int)dx, (int)dy);
-        return super.mouseDragged(x, y, activeButton, dx, dy);
+        return true;
     }
 
     @Override
-    public boolean mouseClicked(double $$0, double $$1, int $$2) {
-        return super.mouseClicked($$0, $$1, $$2);
+    public boolean mouseClicked(double x, double y, int button) {
+        this.dragHandler.mouseDown((int) x, (int) y, button);
+        return true;
     }
 
     @Override
-    public boolean mouseReleased(double $$0, double $$1, int $$2) {
-        return super.mouseReleased($$0, $$1, $$2);
+    public boolean mouseReleased(double x, double y, int button) {
+        this.dragHandler.mouseUp((int) x, (int) y, button);
+        return true;
     }
 
-    private class DragInfo {
-        public DragState dragState;
+
+    private class DragHandler {
+        public DragState dragState = DragState.NOT_DRAGGING;
         public Vector2i startPoint;
         public Object draggedObject;
+        public Vector2i grabOffset;
 
-        public void mouseDown(int x, int y) {
+        public void mouseDown(int x, int y, int button) {
+            if (dragState != DragState.NOT_DRAGGING) {
+                return;
+            }
 
+            if (SpellBookScreen.this.picker.handleClick(x, y, SpellBookScreen.this::nodeAddedFromPicker)) {
+                return;
+            }
+
+            if (!SpellBookScreen.this.canvas.containsPoint(x, y)) {
+                return;
+            }
+
+            Optional<Object> clicked = SpellBookScreen.this.canvas.getObjectAtLocation(x, y);
+
+            if (clicked.isEmpty()) {
+                this.dragState = DragState.PANNING_CANVAS;
+                this.startPoint = new Vector2i(x, y);
+                SpellBookScreen.this.canvas.startWindowPan();
+            } else {
+                if (clicked.get() instanceof SocketInstance socket) {
+                    this.dragState = DragState.DRAGGING_EDGE;
+                    this.draggedObject = socket;
+                } else if (clicked.get() instanceof NodeInstance node) {
+                    this.dragState = DragState.DRAGGING_NODE;
+                    this.draggedObject = node;
+                    Vector2i nodeGlobalPos = SpellBookScreen.this.canvas.getNodePositionGlobal(node);
+                    this.grabOffset = new Vector2i(nodeGlobalPos.x - x, nodeGlobalPos.y - y);
+                } else {
+                    ModConstants.LOG.warn("Received unknown clicked object from node canvas: {}", clicked.get().getClass().getName());
+                }
+            }
         }
 
         public void mouseMove(int x, int y) {
+            if (this.dragState == DragState.PANNING_CANVAS) {
+                int dx = x - this.startPoint.x;
+                int dy = y - this.startPoint.y;
+                SpellBookScreen.this.canvas.setWindowPanOffset(dx, dy);
+            } else if (this.dragState == DragState.DRAGGING_NODE) {
+                SpellBookScreen.this.canvas.setNodePositionLocal((NodeInstance)this.draggedObject, x + this.grabOffset.x ,y + this.grabOffset.y);
+            } else if (this.dragState == DragState.DRAGGING_EDGE) {
 
+            }
         }
 
-        public void mouseUp(int x, int y) {
-            // if moved some distance -> drag, else click
+        public void mouseUp(int x, int y, int button) {
+            // drop nodes, connect edges
+            this.dragState = DragState.NOT_DRAGGING;
+            this.draggedObject = null;
+            this.startPoint = null;
         }
 
     }

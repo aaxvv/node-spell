@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.client.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.spell.graph.nodes.NodeCategory;
+import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
@@ -11,6 +12,8 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public class NodePickerWidget implements Renderable, GuiEventListener, NarratableEntry {
     private final int x;
@@ -50,6 +53,16 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
 
         GuiComponent.fill(pose, this.x, this.y, this.x + this.width, this.y + 1, NodeConstants.SPELL_BOOK_SEPARATOR_COLOR);
 
+    }
+
+    /**
+     * Called when a mouse click occurs.
+     * @param x X coordinate of click
+     * @param y X coordinate of click
+     * @return {@code true} if the event was consumed, {@code false} otherwise
+     */
+    public boolean handleClick(int x, int y, Consumer<NodeInstance> newInstanceConsumer) {
+        return false;
     }
 
     @Override

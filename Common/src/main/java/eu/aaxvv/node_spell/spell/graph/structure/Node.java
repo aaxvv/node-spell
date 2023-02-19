@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Represents a type of node which can be used in a spell graph.
@@ -24,13 +25,15 @@ public abstract class Node {
     private final List<Socket> sockets;
     private int inSocketCount;
     private int outSocketCount;
+    private ResourceLocation resourceLocation;
 
-    public Node(String name, String category) {
+    public Node(String name, String category, ResourceLocation resourceLocation) {
         this.name = name;
         this.category = category;
         this.sockets = new ArrayList<>();
         this.inSocketCount = 0;
         this.outSocketCount = 0;
+        this.resourceLocation = resourceLocation;
     }
 
     private void addSocket(Socket socket) {
@@ -65,6 +68,10 @@ public abstract class Node {
 
     public String getCategory() {
         return category;
+    }
+
+    public ResourceLocation getResourceLocation() {
+        return resourceLocation;
     }
 
     public int getExpectedHeight() {
