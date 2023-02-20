@@ -3,12 +3,12 @@ package eu.aaxvv.node_spell.spell.graph.nodes;
 import eu.aaxvv.node_spell.util.ColorUtil;
 
 public enum NodeCategory {
-    INPUT("node_spell.node.category.input", 0.285f, 0.659f, 0.310f),
+    INPUT("node_spell.node.category.input", 0xFF3EA84F),
     FLOW("node_spell.node.category.flow", 0.285f, 0.659f, 0.310f),
     ACTION("node_spell.node.category.action", 0.285f, 0.659f, 0.310f),
     LOGIC("node_spell.node.category.logic", 0.285f, 0.659f, 0.310f),
     COMPARISON("node_spell.node.category.comparison", 0.285f, 0.659f, 0.310f),
-    MATH("node_spell.node.category.math", 0.285f, 0.659f, 0.310f),
+    MATH("node_spell.node.category.math", 0xFF3B94A5),
     MEMORY("node_spell.node.category.memory", 0.285f, 0.659f, 0.310f),
     VECTOR("node_spell.node.category.vector", 0.285f, 0.659f, 0.310f),
     LIST("node_spell.node.category.list", 0.285f, 0.659f, 0.310f),

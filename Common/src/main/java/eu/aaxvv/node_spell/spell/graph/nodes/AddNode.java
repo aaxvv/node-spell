@@ -14,7 +14,7 @@ public class AddNode extends Node {
     public final Socket sResult;
 
     public AddNode() {
-        super("Add", "Arithmetic", ModConstants.resLoc("add"));
+        super("Add", NodeCategory.MATH, ModConstants.resLoc("add"));
         this.sA = addInputSocket(Datatype.NUMBER, "a");
         this.sB = addInputSocket(Datatype.NUMBER, "b");
         this.sResult = addOutputSocket(Datatype.NUMBER, "Result");

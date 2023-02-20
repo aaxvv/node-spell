@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.structure;
 
 import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.graph.nodes.NodeCategory;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 
@@ -21,13 +22,13 @@ import net.minecraft.resources.ResourceLocation;
  */
 public abstract class Node {
     private final String name;
-    private final String category;
+    private final NodeCategory category;
     private final List<Socket> sockets;
     private int inSocketCount;
     private int outSocketCount;
-    private ResourceLocation resourceLocation;
+    private final ResourceLocation resourceLocation;
 
-    public Node(String name, String category, ResourceLocation resourceLocation) {
+    public Node(String name, NodeCategory category, ResourceLocation resourceLocation) {
         this.name = name;
         this.category = category;
         this.sockets = new ArrayList<>();
@@ -66,7 +67,7 @@ public abstract class Node {
         return name;
     }
 
-    public String getCategory() {
+    public NodeCategory getCategory() {
         return category;
     }
 
@@ -76,6 +77,10 @@ public abstract class Node {
 
     public int getExpectedHeight() {
         return NodeConstants.SOCKET_START_Y + Math.max(this.inSocketCount, this.outSocketCount) * NodeConstants.SOCKET_STEP_Y;
+    }
+
+    public int getWidth() {
+        return NodeConstants.DEFAULT_NODE_WIDTH;
     }
 
     public abstract Object createInstanceData();
