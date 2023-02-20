@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
+import eu.aaxvv.node_spell.spell.graph.nodes.NodeCategory;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
@@ -14,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 
 public class GraphRenderer {
     private final SpellGraph graph;
@@ -26,8 +28,10 @@ public class GraphRenderer {
     private int windowPanY;
 
     private final float[] gridColor;
+    private final NodeCanvasWidget parent;
 
-    public GraphRenderer(int x, int y, int windowWidth, int windowHeight, SpellGraph graph) {
+    public GraphRenderer(NodeCanvasWidget parent, int x, int y, int windowWidth, int windowHeight, SpellGraph graph) {
+        this.parent = parent;
         this.graph = graph;
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
@@ -39,11 +43,6 @@ public class GraphRenderer {
         this.gridColor = new float[4];
         ColorUtil.unpackColor(NodeConstants.NODE_GRAPH_GRID_COLOR, gridColor);
     }
-
-//    public void offsetWindowPan(int dx, int dy) {
-//        this.windowPanX += dx;
-//        this.windowPanY += dy;
-//    }
 
     public void setWindowPan(int x, int y) {
         this.windowPanX = x;
@@ -60,43 +59,51 @@ public class GraphRenderer {
 
     public void renderGraph(PoseStack pose, int mouseX, int mouseY, float tickDelta) {
         // Setup
+        double scale = Minecraft.getInstance().getWindow().getGuiScale();
+        // it took me a while to realize that GlScissor uses a bottom left origin, not top left
+        int framebufferHeight = Minecraft.getInstance().getWindow().getHeight();
+        RenderSystem.enableScissor((int)(x*scale), framebufferHeight - ((int)(y*scale) + (int)(windowHeight*scale)), (int)(windowWidth*scale), (int)(windowHeight*scale));
+
+        renderGrid(pose);
+
+        renderEdges(pose);
+
+        renderNodes(pose);
+
+        RenderSystem.disableScissor();
+    }
+
+    private void renderEdges(PoseStack pose) {
         Matrix4f mat = pose.last().pose();
         BufferBuilder bb = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        double scale = Minecraft.getInstance().getWindow().getGuiScale();
-        // it took me a while to realize that GlScissor uses a bottom left origin, not top left
-        int framebufferHeight = Minecraft.getInstance().getWindow().getHeight();
-        RenderSystem.enableScissor((int)(x*scale), framebufferHeight - ((int)(y*scale) + (int)(windowHeight*scale)), (int)(windowWidth*scale), (int)(windowHeight*scale));
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-        renderGrid(mat, bb);
-
-        // Edges
         for (Edge instance : graph.getEdges()) {
             renderEdge(mat, bb, instance);
         }
 
-        // Nodes
-        for (NodeInstance instance : graph.getNodeInstances()) {
-            renderNode(mat, bb, instance);
+        if (this.parent.getDraggedEdge() != null) {
+            renderEdge(mat, bb, this.parent.getDraggedEdge());
         }
 
         BufferUploader.drawWithShader(bb.end());
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
-
-        // Node Text
-        for (NodeInstance instance : graph.getNodeInstances()) {
-            renderNodeText(pose, instance);
-        }
-
-        RenderSystem.disableScissor();
     }
 
-    private void renderGrid(Matrix4f mat, BufferBuilder bb) {
+    private void renderGrid(PoseStack pose) {
+        Matrix4f mat = pose.last().pose();
+        BufferBuilder bb = Tesselator.getInstance().getBuilder();
+        RenderSystem.enableBlend();
+        RenderSystem.disableTexture();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+
         int spacing = NodeConstants.NODE_GRAPH_GRID_SPACING;
 
         for (int x = this.x; x < this.x + this.windowWidth + spacing; x += spacing) {
@@ -106,10 +113,20 @@ public class GraphRenderer {
         for (int y = this.y; y < this.y + this.windowHeight + spacing; y += spacing) {
             RenderUtil.putQuad(mat, bb, this.x, y + (this.windowPanY % spacing), this.windowWidth, 1, gridColor[1], gridColor[2], gridColor[3]);
         }
+
+        BufferUploader.drawWithShader(bb.end());
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
     }
 
-    public void renderSingleNode(PoseStack pose, NodeInstance instance) {
-        // Setup
+    private void renderNodes(PoseStack pose) {
+        // Nodes
+        for (NodeInstance instance : graph.getNodeInstances()) {
+            renderNode(pose, instance);
+        }
+    }
+
+    private void renderNode(PoseStack pose, NodeInstance instance) {
         Matrix4f mat = pose.last().pose();
         BufferBuilder bb = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
@@ -118,29 +135,14 @@ public class GraphRenderer {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-        renderNode(mat, bb, instance);
-
-        BufferUploader.drawWithShader(bb.end());
-        RenderSystem.enableTexture();
-        RenderSystem.disableBlend();
-
-        // Node Text
-        renderNodeText(pose, instance);
-    }
-
-    private void renderNode(Matrix4f mat, BufferBuilder bb, NodeInstance instance) {
-        if (instance.isDragged()) {
-            // has special handling in NodeCanvasWidget
-            return;
-        }
-
         int x = instance.getX() + this.x + this.windowPanX;
         int y = instance.getY() + this.y + this.windowPanY;
 
-        int nodeWidth = NodeConstants.DEFAULT_NODE_WIDTH;
+        int nodeWidth = instance.getBaseNode().getWidth();
         int nodeHeight = instance.getBaseNode().getExpectedHeight();
         RenderUtil.putQuad(mat, bb, x, y, nodeWidth, nodeHeight, 0, 0, 0);
-        RenderUtil.putQuad(mat, bb, x + 1, y + 1, nodeWidth - 2, NodeConstants.HEADER_HEIGHT, 0.285f, 0.659f, 0.310f);
+        NodeCategory category = instance.getBaseNode().getCategory();
+        RenderUtil.putQuad(mat, bb, x + 1, y + 1, nodeWidth - 2, NodeConstants.HEADER_HEIGHT, category.r, category.g, category.b);
         RenderUtil.putQuad(mat, bb, x + 1, y + NodeConstants.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - NodeConstants.HEADER_HEIGHT - 2, 0.9f, 0.9f, 0.9f);
 
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
@@ -148,33 +150,57 @@ public class GraphRenderer {
             int socketX = socketInstance.getX() + this.x + this.windowPanX;
             int socketY = socketInstance.getY() + this.y + this.windowPanY;
 
-            RenderUtil.putQuad(mat, bb, socketX + 1, socketY, 3, 5, dt.r, dt.g, dt.b);
-            RenderUtil.putQuad(mat, bb, socketX, socketY + 1, 5, 3, dt.r, dt.g, dt.b);
+            if (dt != Datatype.FLOW) {
+                RenderUtil.putQuad(mat, bb, socketX + 1, socketY, 3, 5, dt.r, dt.g, dt.b);
+                RenderUtil.putQuad(mat, bb, socketX, socketY + 1, 5, 3, dt.r, dt.g, dt.b);
+            } else {
+                RenderUtil.putQuad(mat, bb, socketX, socketY, 4, 1, dt.r, dt.g, dt.b);
+                RenderUtil.putQuad(mat, bb, socketX + 1, socketY + 1, 4, 3, dt.r, dt.g, dt.b);
+                RenderUtil.putQuad(mat, bb, socketX, socketY + 4, 4, 1, dt.r, dt.g, dt.b);
+            }
         }
+
+        BufferUploader.drawWithShader(bb.end());
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
+
+        renderNodeText(pose, instance);
     }
 
     private void renderEdge(Matrix4f mat, BufferBuilder bb, Edge edge) {
-        int x1 = edge.getStart().getX() + this.x + this.windowPanX;
-        int y1 = edge.getStart().getY() + this.y + this.windowPanY + 2;
-        int x2 = edge.getEnd().getX() + this.x + this.windowPanX;
-        int y2 = edge.getEnd().getY() + this.y + this.windowPanY + 2;
+        if (this.parent.getDraggedEdge() == edge) {
+            Vector2i dragPos = this.parent.getDragPos();
+            if (this.parent.isDraggingStart()) {
+                renderEdgeRaw(mat, bb, dragPos.x, dragPos.y, edge.getEnd().getX() + 2, edge.getEnd().getY() + 2, edge.getDatatype());
+            } else {
+                renderEdgeRaw(mat, bb, edge.getStart().getX() + 2, edge.getStart().getY() + 2, dragPos.x, dragPos.y, edge.getDatatype());
+            }
+        } else {
+            renderEdgeRaw(mat, bb, edge.getStart().getX() + 2, edge.getStart().getY() + 2, edge.getEnd().getX() + 2, edge.getEnd().getY() + 2, edge.getDatatype());
+        }
+    }
+
+    private void renderEdgeRaw(Matrix4f mat, BufferBuilder bb, int xStart, int yStart, int xEnd, int yEnd, Datatype dt) {
+        int x1 = xStart + this.x + this.windowPanX;
+        int y1 = yStart + this.y + this.windowPanY;
+        int x2 = xEnd + this.x + this.windowPanX;
+        int y2 = yEnd + this.y + this.windowPanY;
 
         int leftX, leftY;
         int rightX, rightY;
 
         if (x1 < x2) {
-            leftX = x1 + 5;
+            leftX = x1;
             leftY = y1;
-            rightX = x2 - 1;
+            rightX = x2;
             rightY = y2;
         } else {
-            leftX = x2 + 5;
+            leftX = x2;
             leftY = y2;
-            rightX = x1 - 1;
+            rightX = x1;
             rightY = y1;
         }
 
-        Datatype dt = edge.getDatatype();
         int middleX = leftX + (int) Math.ceil((rightX - leftX) / 2.0f);
         int topY = Math.min(leftY, rightY);
         int height = Math.abs(rightY - leftY);
@@ -204,4 +230,24 @@ public class GraphRenderer {
             }
         }
     }
+
+//    public void renderSingleNode(PoseStack pose, NodeInstance instance) {
+//        // Setup
+//        Matrix4f mat = pose.last().pose();
+//        BufferBuilder bb = Tesselator.getInstance().getBuilder();
+//        RenderSystem.enableBlend();
+//        RenderSystem.disableTexture();
+//        RenderSystem.defaultBlendFunc();
+//        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+//        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+//
+//        renderNode(mat, bb, instance);
+//
+//        BufferUploader.drawWithShader(bb.end());
+//        RenderSystem.enableTexture();
+//        RenderSystem.disableBlend();
+//
+//        // Node Text
+//        renderNodeText(pose, instance);
+//    }
 }

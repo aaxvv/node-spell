@@ -25,13 +25,11 @@ public class NodeInstance {
 
     private int x;
     private int y;
-    private boolean isDragged;  // not serialized
 
     public NodeInstance(Node base) {
         this.base = base;
         this.instanceData = base.createInstanceData();
         this.socketInstances = new HashMap<>();
-        this.isDragged = false;
         base.getSockets().forEach(s -> this.socketInstances.put(s, s.createInstance(this)));
     }
 
@@ -41,14 +39,6 @@ public class NodeInstance {
 
     public Node getBaseNode() {
         return base;
-    }
-
-    public boolean isDragged() {
-        return isDragged;
-    }
-
-    public void setDragged(boolean dragged) {
-        isDragged = dragged;
     }
 
     public Value getSocketValue(Socket socket, SpellContext ctx) {
@@ -140,7 +130,7 @@ public class NodeInstance {
 
     public int getSocketX(Socket.Direction direction) {
         int inputX = x - 2;
-        int outputX = x + NodeConstants.DEFAULT_NODE_WIDTH - 3;
+        int outputX = x + this.base.getWidth() - 3;
         return direction == Socket.Direction.IN ? inputX : outputX;
     }
 
@@ -150,6 +140,6 @@ public class NodeInstance {
     }
 
     public boolean containsPoint(int x, int y) {
-        return x >= this.x && x < this.x + NodeConstants.DEFAULT_NODE_WIDTH && y >= this.y && y < this.y + this.base.getExpectedHeight();
+        return x >= this.x && x < this.x + this.base.getWidth() && y >= this.y && y < this.y + this.base.getExpectedHeight();
     }
 }

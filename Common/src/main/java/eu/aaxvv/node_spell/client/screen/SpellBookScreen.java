@@ -6,6 +6,7 @@ import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.widget.NodeCanvasWidget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.client.widget.NodePickerWidget;
+import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import net.minecraft.client.gui.GuiComponent;
@@ -117,6 +118,7 @@ public class SpellBookScreen extends Screen {
                 if (clicked.get() instanceof SocketInstance socket) {
                     this.dragState = DragState.DRAGGING_EDGE;
                     this.draggedObject = socket;
+                    SpellBookScreen.this.canvas.startDragEdge(socket, x, y);
                 } else if (clicked.get() instanceof NodeInstance node) {
                     this.dragState = DragState.DRAGGING_NODE;
                     this.draggedObject = node;
@@ -136,12 +138,16 @@ public class SpellBookScreen extends Screen {
             } else if (this.dragState == DragState.DRAGGING_NODE) {
                 SpellBookScreen.this.canvas.setNodePositionLocal((NodeInstance)this.draggedObject, x + this.grabOffset.x ,y + this.grabOffset.y);
             } else if (this.dragState == DragState.DRAGGING_EDGE) {
-
+                SpellBookScreen.this.canvas.setDraggedEdgePos(x, y);
             }
         }
 
         public void mouseUp(int x, int y, int button) {
             // drop nodes, connect edges
+            if (this.dragState == DragState.DRAGGING_EDGE) {
+                SpellBookScreen.this.canvas.stopDragEdge(x, y);
+            }
+
             this.dragState = DragState.NOT_DRAGGING;
             this.draggedObject = null;
             this.startPoint = null;

@@ -35,7 +35,9 @@ public class SocketInstance {
 
     public void addConnection(Edge edge) {
         if (this.base.getDirection() == Socket.Direction.IN) {
-            this.connections.forEach(Edge::remove);
+            if (this.connections.size() > 0) {
+                this.connections.get(0).remove();
+            }
             this.connections.clear();
             this.connections.add(edge);
         } else {

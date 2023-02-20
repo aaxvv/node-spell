@@ -1,18 +1,16 @@
 package eu.aaxvv.node_spell.client.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
+import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
+import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.GameRenderer;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
 
 import java.util.Optional;
@@ -29,14 +27,18 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
     private final GraphRenderer renderer;
     private int prevWindowPanX;
     private int prevWindowPanY;
-    private SpellGraph graph;
+    private final SpellGraph graph;
+
+    private Edge draggedEdge;
+    private boolean isDraggingStart;
+    private Vector2i dragPos;
     public NodeCanvasWidget(int x, int y, int width, int height, SpellGraph graph) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.graph = graph;
-        this.renderer = new GraphRenderer(x, y, width, height, graph);
+        this.renderer = new GraphRenderer(this, x, y, width, height, graph);
         this.prevWindowPanX = 0;
         this.prevWindowPanY = 0;
     }
@@ -53,6 +55,68 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
 
     public void setWindowPanOffset(int dx, int dy) {
         this.renderer.setWindowPan(this.prevWindowPanX + dx, this.prevWindowPanY + dy);
+    }
+
+    public void startDragEdge(SocketInstance instance, int x, int y) {
+        // if socket is empty or is output -> start new edge
+        // if it is input and not empty -> move existing edge
+        if (instance.getBase().getDirection() == Socket.Direction.OUT || instance.getConnections().size() == 0) {
+            // start new connection
+            this.draggedEdge = Edge.createIncomplete(instance);
+            this.isDraggingStart = false;
+        } else {
+            // move existing
+            this.draggedEdge = instance.getSingleConnection();
+            this.isDraggingStart = this.draggedEdge.getStart() == instance;
+        }
+
+        int localX = x - this.x - this.renderer.getWindowPanX();
+        int localY = y - this.y - this.renderer.getWindowPanY();
+        this.dragPos = new Vector2i(localX, localY);
+    }
+
+    public void setDraggedEdgePos(int x, int y) {
+        int localX = x - this.x - this.renderer.getWindowPanX();
+        int localY = y - this.y - this.renderer.getWindowPanY();
+        this.dragPos = new Vector2i(localX, localY);
+    }
+
+    public void stopDragEdge(int x, int y) {
+        Optional<Object> target = this.getObjectAtLocation(x, y);
+
+        if (target.isPresent() && target.get() instanceof SocketInstance socket) {
+            // hit a socket
+            if (this.draggedEdge.isIncomplete()) {
+                // only add if data types match and direction is different
+                if (this.draggedEdge.getDatatype() == socket.getBase().getDataType() && this.draggedEdge.getStart().getBase().getDirection() != socket.getBase().getDirection()) {
+                    this.graph.addEdge(this.draggedEdge.complete(socket));
+                }
+            } else {
+                Socket.Direction existingDirection = (this.isDraggingStart ? this.draggedEdge.getStart() : this.draggedEdge.getEnd()).getBase().getDirection();
+                if (this.draggedEdge.getDatatype() == socket.getBase().getDataType() && existingDirection != socket.getBase().getDirection()) {
+                    this.graph.moveEdge(this.draggedEdge, socket, this.isDraggingStart);
+                }
+            }
+        } else {
+            // hit something else -> delete edge
+            if (!this.draggedEdge.isIncomplete()) {
+                this.graph.removeEdge(this.draggedEdge);
+            }
+        }
+
+        this.draggedEdge = null;
+    }
+
+    public Edge getDraggedEdge() {
+        return draggedEdge;
+    }
+
+    public Vector2i getDragPos() {
+        return dragPos;
+    }
+
+    public boolean isDraggingStart() {
+        return isDraggingStart;
     }
 
     public Optional<Object> getObjectAtLocation(int x, int y) {
