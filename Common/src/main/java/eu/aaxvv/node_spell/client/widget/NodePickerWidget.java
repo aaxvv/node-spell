@@ -1,8 +1,10 @@
 package eu.aaxvv.node_spell.client.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import eu.aaxvv.node_spell.spell.graph.NodeRegistry;
 import eu.aaxvv.node_spell.spell.graph.nodes.NodeCategory;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
+import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
@@ -13,9 +15,14 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class NodePickerWidget implements Renderable, GuiEventListener, NarratableEntry {
+    private static Map<NodeCategory, List<Node>> nodesByCategory;
     private final int x;
     private final int y;
     private final int width;
@@ -26,6 +33,18 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
         this.y = y;
         this.width = width;
         this.height = height;
+
+        if (nodesByCategory == null) {
+            nodesByCategory = new HashMap<>();
+
+            for (var entry : NodeRegistry.INSTANCE.entrySet()) {
+                NodeCategory category = entry.getValue().getCategory();
+                if (!nodesByCategory.containsKey(category)) {
+                    nodesByCategory.put(category, new ArrayList<>());
+                }
+                nodesByCategory.get(category).add(entry.getValue());
+            }
+        }
     }
 
     @Override
@@ -46,7 +65,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
 
             font.draw(pose, Component.translatable(categories[i].translationKey), x, y, NodeConstants.TITLE_TEXT_COLOR);
 
-            if (mouseX >= x - 1 && mouseX < x + xStride - 1 && mouseY >= y - 1 && mouseY < y + 8) {
+            if (mouseX >= x && mouseX < x + xStride && mouseY >= y && mouseY < y + 9) {
                 GuiComponent.fill(pose, x - 1, y - 1, x + xStride - 1, y + 8, 0x20000000);
             }
         }

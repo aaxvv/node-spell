@@ -1,5 +1,8 @@
 package eu.aaxvv.node_spell.platform.services;
 
+import eu.aaxvv.node_spell.spell.graph.structure.Node;
+import net.minecraft.core.Registry;
+
 public interface IPlatformHelper {
 
     /**
@@ -30,7 +33,8 @@ public interface IPlatformHelper {
      * @return The name of the environment type.
      */
     default String getEnvironmentName() {
-
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    Registry<Node> createNodeRegistry();
 }
