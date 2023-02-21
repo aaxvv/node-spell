@@ -167,4 +167,10 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
 
     }
 
+    public void nodeAddedFromPicker(NodeInstance instance, int x, int y) {
+        this.graph.addInstance(instance);
+        int localX = x - this.x - this.renderer.getWindowPanX();
+        int localY = y - this.y - this.renderer.getWindowPanY();
+        instance.setPosition(localX, localY);
+    }
 }

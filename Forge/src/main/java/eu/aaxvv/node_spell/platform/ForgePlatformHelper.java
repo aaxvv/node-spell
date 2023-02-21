@@ -1,7 +1,9 @@
 package eu.aaxvv.node_spell.platform;
 
 import eu.aaxvv.node_spell.platform.services.IPlatformHelper;
+import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
+import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.core.Registry;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -29,6 +31,12 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public Registry<Node> createNodeRegistry() {
+        //TODO: figure out how to do this on forge
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public Registry<NodeCategory> createNodeCategoryRegistry() {
         //TODO: figure out how to do this on forge
         throw new NotImplementedException();
     }

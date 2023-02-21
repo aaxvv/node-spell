@@ -6,7 +6,6 @@ import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.widget.NodeCanvasWidget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.client.widget.NodePickerWidget;
-import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import net.minecraft.client.gui.GuiComponent;
@@ -41,8 +40,11 @@ public class SpellBookScreen extends Screen {
         //TODO the canvas may also need to contain the node list in order to make dragging from canvas to list possible?
         int x = (this.width / 2) - (this.mainAreaWidth / 2);
         int y = (this.height / 2) - (this.mainAreaHeight / 2);
-        this.canvas = addRenderableWidget(new NodeCanvasWidget(x, y, mainAreaWidth, mainAreaHeight - NodeConstants.NODE_PICKER_WIDGET_HEIGHT, NodeConstants.TEST_GRAPH));
-        this.picker = addRenderableWidget(new NodePickerWidget(x, y + mainAreaHeight - NodeConstants.NODE_PICKER_WIDGET_HEIGHT, mainAreaWidth, NodeConstants.NODE_PICKER_WIDGET_HEIGHT));
+        this.picker = new NodePickerWidget(this, x, y + mainAreaHeight, mainAreaWidth);
+        this.canvas = new NodeCanvasWidget(x, y, mainAreaWidth, mainAreaHeight - this.picker.getHeight(), NodeConstants.TEST_GRAPH);
+
+        addRenderableWidget(this.canvas);
+        addRenderableWidget(this.picker);
     }
 
     @Override
@@ -60,10 +62,6 @@ public class SpellBookScreen extends Screen {
         RenderSystem.disableBlend();
 
         super.render(pose, mouseX, mouseY, tickDelta);
-    }
-
-    private void nodeAddedFromPicker(NodeInstance instance) {
-
     }
 
     @Override
@@ -88,8 +86,15 @@ public class SpellBookScreen extends Screen {
         return true;
     }
 
+    public NodeCanvasWidget getCanvas() {
+        return canvas;
+    }
 
-    private class DragHandler {
+    public DragHandler getDragHandler() {
+        return dragHandler;
+    }
+
+    public class DragHandler {
         public DragState dragState = DragState.NOT_DRAGGING;
         public Vector2i startPoint;
         public Object draggedObject;
@@ -100,7 +105,7 @@ public class SpellBookScreen extends Screen {
                 return;
             }
 
-            if (SpellBookScreen.this.picker.handleClick(x, y, SpellBookScreen.this::nodeAddedFromPicker)) {
+            if (SpellBookScreen.this.picker.handleClick(x, y)) {
                 return;
             }
 
@@ -155,7 +160,7 @@ public class SpellBookScreen extends Screen {
 
     }
 
-    private enum DragState {
+    public enum DragState {
         NOT_DRAGGING,
         PANNING_CANVAS,
         DRAGGING_NODE,

@@ -19,8 +19,8 @@ public class BranchNode extends FlowNode {
         super("Branch", NodeCategories.FLOW, ModConstants.resLoc("branch"));
         this.fIn = addInputSocket(Datatype.FLOW, "");
         this.sValue = addInputSocket(Datatype.BOOL, "Value");
-        this.fTrueOut = addInputSocket(Datatype.FLOW, "True");
-        this.fFalseOut = addInputSocket(Datatype.FLOW, "False");
+        this.fTrueOut = addOutputSocket(Datatype.FLOW, "True");
+        this.fFalseOut = addOutputSocket(Datatype.FLOW, "False");
     }
 
     @Override
@@ -40,5 +40,10 @@ public class BranchNode extends FlowNode {
         } else {
             return this.fFalseOut;
         }
+    }
+
+    @Override
+    public int getWidth() {
+        return (int)(super.getWidth() * 1.5);
     }
 }
