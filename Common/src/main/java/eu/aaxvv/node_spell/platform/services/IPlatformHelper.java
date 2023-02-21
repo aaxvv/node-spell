@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.platform.services;
 
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
+import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.core.Registry;
 
 public interface IPlatformHelper {
@@ -37,4 +38,6 @@ public interface IPlatformHelper {
     }
 
     Registry<Node> createNodeRegistry();
+
+    Registry<NodeCategory> createNodeCategoryRegistry();
 }

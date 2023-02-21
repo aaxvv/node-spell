@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.spell.graph.nodes;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
@@ -14,7 +15,7 @@ public class AddNode extends Node {
     public final Socket sResult;
 
     public AddNode() {
-        super("Add", NodeCategory.MATH, ModConstants.resLoc("add"));
+        super("Add", NodeCategories.MATH, ModConstants.resLoc("add"));
         this.sA = addInputSocket(Datatype.NUMBER, "a");
         this.sB = addInputSocket(Datatype.NUMBER, "b");
         this.sResult = addOutputSocket(Datatype.NUMBER, "Result");
