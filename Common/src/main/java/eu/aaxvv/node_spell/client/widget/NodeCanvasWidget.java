@@ -173,4 +173,8 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
         int localY = y - this.y - this.renderer.getWindowPanY();
         instance.setPosition(localX, localY);
     }
+
+    public void deleteNode(NodeInstance instance) {
+        this.graph.removeInstance(instance);
+    }
 }

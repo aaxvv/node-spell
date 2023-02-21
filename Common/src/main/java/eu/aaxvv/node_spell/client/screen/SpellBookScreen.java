@@ -26,6 +26,9 @@ public class SpellBookScreen extends Screen {
     private final int mainAreaWidth = 288;
     // height of double chest screen
     private final int mainAreaHeight = 208;
+    private int x;
+    private int y;
+
     private NodeCanvasWidget canvas;
     private NodePickerWidget picker;
     private final DragHandler dragHandler;
@@ -38,8 +41,8 @@ public class SpellBookScreen extends Screen {
     @Override
     protected void init() {
         //TODO the canvas may also need to contain the node list in order to make dragging from canvas to list possible?
-        int x = (this.width / 2) - (this.mainAreaWidth / 2);
-        int y = (this.height / 2) - (this.mainAreaHeight / 2);
+        this.x = (this.width / 2) - (this.mainAreaWidth / 2);
+        this.y = (this.height / 2) - (this.mainAreaHeight / 2);
         this.picker = new NodePickerWidget(this, x, y + mainAreaHeight, mainAreaWidth);
         this.canvas = new NodeCanvasWidget(x, y, mainAreaWidth, mainAreaHeight - this.picker.getHeight(), NodeConstants.TEST_GRAPH);
 
@@ -51,8 +54,8 @@ public class SpellBookScreen extends Screen {
     public void render(PoseStack pose, int mouseX, int mouseY, float tickDelta) {
         this.fillGradient(pose, 0, 0, this.width, this.height, -1072689136, -804253680);
 
-        int x = (this.width / 2) - (this.mainAreaWidth / 2);
-        int y = (this.height / 2) - (this.mainAreaHeight / 2);
+//        int x = (this.width / 2) - (this.mainAreaWidth / 2);
+//        int y = (this.height / 2) - (this.mainAreaHeight / 2);
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
@@ -62,6 +65,18 @@ public class SpellBookScreen extends Screen {
         RenderSystem.disableBlend();
 
         super.render(pose, mouseX, mouseY, tickDelta);
+
+        // draw delete icon
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, BACKGROUND_LOCATION);
+        GuiComponent.blit(pose, x + this.mainAreaWidth - 16, y, 0, 224, 16, 16, 512, 256);
+        RenderSystem.disableBlend();
+
+        if (mouseX >= x + this.mainAreaWidth - 16 && mouseX < x + this.mainAreaWidth && mouseY >= y && mouseY < y + this.mainAreaHeight) {
+            renderTooltip(pose, Component.literal("Drag Node here to delete"), mouseX, mouseY);
+        }
     }
 
     @Override
@@ -151,6 +166,12 @@ public class SpellBookScreen extends Screen {
             // drop nodes, connect edges
             if (this.dragState == DragState.DRAGGING_EDGE) {
                 SpellBookScreen.this.canvas.stopDragEdge(x, y);
+            }
+
+            if (this.dragState == DragState.DRAGGING_NODE) {
+                if (x >= SpellBookScreen.this.x + SpellBookScreen.this.mainAreaWidth - 16 && x < x + SpellBookScreen.this.mainAreaWidth && y >= SpellBookScreen.this.y && y < y + SpellBookScreen.this.mainAreaHeight) {
+                    SpellBookScreen.this.canvas.deleteNode((NodeInstance)this.draggedObject);
+                }
             }
 
             this.dragState = DragState.NOT_DRAGGING;

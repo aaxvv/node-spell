@@ -86,4 +86,10 @@ public class SocketInstance {
     public boolean containsPoint(int x, int y) {
         return x >= this.getX() && x < this.getX() + 5 && y >= this.getY() && y < this.getY() + 5;
     }
+
+    public void disconnectAll() {
+        while (!this.connections.isEmpty()) {
+            this.connections.get(0).remove();
+        }
+    }
 }

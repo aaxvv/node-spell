@@ -50,7 +50,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
 
         // dynamic height based on number of categories
         int rows = (int)Math.ceil(categoriesOrdered.size() / (float) NodeConstants.NODE_PICKER_COLUMNS);
-        this.height = (rows * (9 + 2)) + 2;
+        this.height = (rows * (10)) + 3;
         this.y = y - this.height;
     }
 
@@ -93,7 +93,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
 
     @Override
     public void render(@NotNull PoseStack pose, int mouseX, int mouseY, float tickDelta) {
-        GuiComponent.fill(pose, this.x, this.y, this.x + this.width, this.y + this.height, NodeConstants.SPELL_BOOK_BG_COLOR);
+//        GuiComponent.fill(pose, this.x, this.y, this.x + this.width, this.y + this.height, NodeConstants.SPELL_BOOK_BG_COLOR);
 
         Font font = Minecraft.getInstance().font;
         int xStride = this.width / NodeConstants.NODE_PICKER_COLUMNS;
@@ -106,6 +106,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
             int y = getCategoryY(i);
             int x = getCategoryX(i);
 
+            GuiComponent.fill(pose, x - 1, y - 1, x + xStride - 2, y + 8, categoriesOrdered.get(i).packedColor);
             font.draw(pose, Component.translatable(categoriesOrdered.get(i).translationKey), x, y, NodeConstants.TITLE_TEXT_COLOR);
 
             if (mouseX >= x && mouseX < x + xStride && mouseY >= y && mouseY < y + 9) {
@@ -124,8 +125,8 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
             int popupWidth = maxNodeNameWidth.get(category) + 6;
 
             GuiComponent.fill(pose, popupX + 2, popupY + 2, popupX + popupWidth + 2, popupY + popupHeight + 2, 0xA0000000); // drop shadow
-            GuiComponent.fill(pose, popupX, popupY, popupX + popupWidth, popupY + popupHeight, NodeConstants.SPELL_BOOK_SEPARATOR_COLOR);
-            GuiComponent.fill(pose, popupX + 1, popupY + 1, popupX + popupWidth - 1, popupY + popupHeight - 1, NodeConstants.SPELL_BOOK_BG_COLOR);
+            GuiComponent.fill(pose, popupX, popupY, popupX + popupWidth, popupY + popupHeight, 0xFF000000);
+            GuiComponent.fill(pose, popupX + 1, popupY + 1, popupX + popupWidth - 1, popupY + popupHeight - 1, category.packedColor);
 
             for (int i = 0; i < nodes.size(); i++) {
                 int x = popupX + 3;
@@ -147,7 +148,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
     }
 
     private int getCategoryY(int categoryIndex) {
-        return this.y + ((categoryIndex / NodeConstants.NODE_PICKER_COLUMNS) * 12) + 3;
+        return this.y + ((categoryIndex / NodeConstants.NODE_PICKER_COLUMNS) * 11) + 3;
     }
 
     /**

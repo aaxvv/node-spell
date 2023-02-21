@@ -44,6 +44,15 @@ public class SpellGraph {
         return instance;
     }
 
+    public void removeInstance(NodeInstance instance) {
+        this.nodeInstances.remove(instance);
+
+        for (SocketInstance socket : instance.getSocketInstances()) {
+            socket.disconnectAll();
+        }
+        recomputeEdges();
+    }
+
     public Edge addEdge(Edge edge) {
         this.edges.add(edge);
         recomputeEdges();
@@ -85,6 +94,7 @@ public class SpellGraph {
 
         this.edges.addAll(allEdges);
     }
+
 
     public record Argument(String name, Datatype type){};
 }
