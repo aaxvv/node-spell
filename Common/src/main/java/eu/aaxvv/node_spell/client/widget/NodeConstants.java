@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.client.widget;
 
+import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.nodes.AddNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.NumberConstantNode;
@@ -21,22 +22,24 @@ public class NodeConstants {
     public static final int NODE_GRAPH_GRID_SPACING = 16;
 
     // TODO temporary
-    public static final SpellGraph TEST_GRAPH = new SpellGraph();
+    public static final Spell TEST_SPELL = new Spell("Test Spell");
 
     static {
+        SpellGraph graph = TEST_SPELL.getGraph();
+
         NumberConstantNode constNode = new NumberConstantNode();
         AddNode addNode = new AddNode();
         ForLoopNode loopNode = new ForLoopNode();
-        NodeInstance constInstance1 = TEST_GRAPH.addInstance(constNode.createInstance());
+        NodeInstance constInstance1 = graph.addInstance(constNode.createInstance());
         constInstance1.setPosition(0, 0);
-        NodeInstance constInstance2 = TEST_GRAPH.addInstance(constNode.createInstance());
+        NodeInstance constInstance2 = graph.addInstance(constNode.createInstance());
         constInstance2.setPosition(0, 64);
-        NodeInstance addInstance = TEST_GRAPH.addInstance(addNode.createInstance());
+        NodeInstance addInstance = graph.addInstance(addNode.createInstance());
         addInstance.setPosition(72, 24);
-        NodeInstance loopInstance = TEST_GRAPH.addInstance(loopNode.createInstance());
+        NodeInstance loopInstance = graph.addInstance(loopNode.createInstance());
         loopInstance.setPosition(72, 128);
 
-        TEST_GRAPH.addEdge(Edge.create(constInstance1.getSocketInstance(constNode.sValue), addInstance.getSocketInstance(addNode.sA)));
-        TEST_GRAPH.addEdge(Edge.create(constInstance2.getSocketInstance(constNode.sValue), addInstance.getSocketInstance(addNode.sB)));
+        graph.addEdge(Edge.create(constInstance1.getSocketInstance(constNode.sValue), addInstance.getSocketInstance(addNode.sA)));
+        graph.addEdge(Edge.create(constInstance2.getSocketInstance(constNode.sValue), addInstance.getSocketInstance(addNode.sB)));
     }
 }

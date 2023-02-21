@@ -124,7 +124,9 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
         int localY = y - this.y - this.renderer.getWindowPanY();
 
         // first check sockets, then nodes
-        for (NodeInstance instance : this.graph.getNodeInstances()) {
+        // iterate in reverse to pick topmost nodes first
+        for (int i = this.graph.getNodeInstances().size() - 1; i >= 0; i--) {
+            NodeInstance instance = this.graph.getNodeInstances().get(i);
             for (SocketInstance socket : instance.getSocketInstances()) {
                 if (socket.containsPoint(localX, localY)) {
                     return Optional.of(socket);

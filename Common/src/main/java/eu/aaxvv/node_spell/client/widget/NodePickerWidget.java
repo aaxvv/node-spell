@@ -189,10 +189,10 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
 
             NodeInstance inst = hitNode.createInstance();
 
-            this.parent.getDragHandler().dragState = SpellBookScreen.DragState.DRAGGING_NODE;
-            this.parent.getDragHandler().draggedObject = inst;
+            this.parent.getInteractionHandler().dragState = SpellBookScreen.DragState.DRAGGING_NODE;
+            this.parent.getInteractionHandler().draggedObject = inst;
             Vector2i grabOffset = new Vector2i(-hitNode.getWidth() / 2, -hitNode.getExpectedHeight() / 2);
-            this.parent.getDragHandler().grabOffset = grabOffset;
+            this.parent.getInteractionHandler().grabOffset = grabOffset;
             this.parent.getCanvas().nodeAddedFromPicker(inst, mouseX + grabOffset.x, mouseY + grabOffset.y);
             this.expandedCategory = -1;
             return true;

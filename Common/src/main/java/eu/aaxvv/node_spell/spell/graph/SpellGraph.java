@@ -44,6 +44,11 @@ public class SpellGraph {
         return instance;
     }
 
+    public void moveInstanceToTop(NodeInstance instance) {
+        this.nodeInstances.remove(instance);
+        this.nodeInstances.add(instance);
+    }
+
     public void removeInstance(NodeInstance instance) {
         this.nodeInstances.remove(instance);
 

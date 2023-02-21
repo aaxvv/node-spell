@@ -4,9 +4,19 @@ import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import net.minecraft.nbt.CompoundTag;
 
 public class Spell {
-    private String name;
+    private final String name;
 
-    private SpellGraph graph;
+    private final SpellGraph graph;
+
+    public Spell(String name) {
+        this.name = name;
+        this.graph = new SpellGraph();
+    }
+
+    private Spell(String name, SpellGraph graph) {
+        this.name = name;
+        this.graph = graph;
+    }
 
     public void run(SpellContext ctx) {
 
@@ -18,5 +28,13 @@ public class Spell {
 
     public void deserialize(CompoundTag nbt) {
 
+    }
+
+    public SpellGraph getGraph() {
+        return graph;
+    }
+
+    public String getName() {
+        return name;
     }
 }
