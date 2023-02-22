@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.client.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
@@ -165,6 +166,11 @@ public class GraphRenderer {
         RenderSystem.disableBlend();
 
         renderNodeText(pose, instance);
+
+        if (instance.getWidget() != null) {
+            Widget<?> widget = instance.getWidget();
+            widget.draw(pose, x + widget.getLocalX(), y + widget.getLocalY());
+        }
     }
 
     private void renderEdge(Matrix4f mat, BufferBuilder bb, Edge edge) {

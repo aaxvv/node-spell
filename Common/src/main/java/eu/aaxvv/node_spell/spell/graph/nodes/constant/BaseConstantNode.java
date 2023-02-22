@@ -17,9 +17,9 @@ public abstract class BaseConstantNode<T> extends Node {
     private final Function<T, Value> valueCreatorFunc;
     private final Supplier<T> defaultValueSupplier;
 
-    public BaseConstantNode(String name, ResourceLocation resourceLocation, Supplier<T> defaultValueSupplier, Function<T, Value> valueCreatorFunc) {
+    public BaseConstantNode(String name, Datatype datatype, ResourceLocation resourceLocation, Supplier<T> defaultValueSupplier, Function<T, Value> valueCreatorFunc) {
         super(name, NodeCategories.INPUT, resourceLocation);
-        this.sValue = addOutputSocket(Datatype.NUMBER, "Value");
+        this.sValue = addOutputSocket(datatype, "");
         this.defaultValueSupplier = defaultValueSupplier;
         this.valueCreatorFunc = valueCreatorFunc;
     }

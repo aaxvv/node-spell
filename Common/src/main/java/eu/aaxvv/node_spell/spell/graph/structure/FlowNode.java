@@ -42,4 +42,9 @@ public abstract class FlowNode extends Node {
     public SpellRunner getSubRunner(SpellContext ctx, NodeInstance instance) {
         return null;
     }
+
+    @Override
+    public boolean hasSideEffects() {
+        return true;
+    }
 }

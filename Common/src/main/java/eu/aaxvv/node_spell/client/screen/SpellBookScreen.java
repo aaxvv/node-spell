@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.widget.NodeCanvasWidget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.client.widget.NodePickerWidget;
@@ -46,7 +47,6 @@ public class SpellBookScreen extends Screen {
 
     @Override
     protected void init() {
-        //TODO the canvas may also need to contain the node list in order to make dragging from canvas to list possible?
         this.x = (this.width / 2) - (this.mainAreaWidth / 2);
         this.y = (this.height / 2) - (this.mainAreaHeight / 2);
         this.picker = new NodePickerWidget(this, x, y + mainAreaHeight, mainAreaWidth);
@@ -107,6 +107,25 @@ public class SpellBookScreen extends Screen {
         return true;
     }
 
+    @Override
+    public boolean keyPressed(int key, int scanCode, int modifiers) {
+        if (!this.dragHandler.keyPressed(key, scanCode, modifiers)) {
+            if (key == GLFW.GLFW_KEY_ESCAPE) {
+                return super.keyPressed(key, scanCode, modifiers);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean charTyped(char character, int modifiers) {
+        if (!this.dragHandler.charTyped(character, modifiers)) {
+            super.charTyped(character, modifiers);
+        }
+
+        return true;
+    }
+
     public NodeCanvasWidget getCanvas() {
         return canvas;
     }
@@ -120,8 +139,14 @@ public class SpellBookScreen extends Screen {
         public Vector2i startPoint;
         public Object draggedObject;
         public Vector2i grabOffset;
+        public Widget<?> focusedWidget;
 
         public void mouseDown(int mouseX, int mouseY, int button) {
+            if (this.focusedWidget != null) {
+                this.focusedWidget.setFocused(false);
+                this.focusedWidget = null;
+            }
+
             if (dragState != DragState.NOT_DRAGGING) {
                 return;
             }
@@ -145,6 +170,14 @@ public class SpellBookScreen extends Screen {
                     this.dragState = DragState.DRAGGING_EDGE;
                     this.draggedObject = socket;
                     SpellBookScreen.this.canvas.startDragEdge(socket, mouseX, mouseY);
+                } else if (clicked.get() instanceof Widget<?> widget){
+                    this.focusedWidget = widget;
+                    widget.setFocused(true);
+                    Vector2i mouseLocal = SpellBookScreen.this.canvas.toLocal(mouseX, mouseY);
+                    widget.receiveMouseInput(mouseLocal.x, mouseLocal.y, button);
+                    if (!this.focusedWidget.isFocused()) {
+                        this.focusedWidget = null;
+                    }
                 } else if (clicked.get() instanceof NodeInstance node) {
                     this.dragState = DragState.DRAGGING_NODE;
                     Vector2i nodeGlobalPos = SpellBookScreen.this.canvas.getNodePositionGlobal(node);
@@ -194,6 +227,28 @@ public class SpellBookScreen extends Screen {
             this.startPoint = null;
         }
 
+        public boolean keyPressed(int key, int scanCode, int modifiers) {
+            if (this.focusedWidget != null) {
+                this.focusedWidget.receiveKeyPress(key, scanCode, modifiers);
+                if (!this.focusedWidget.isFocused()) {
+                    this.focusedWidget = null;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean charTyped(char character, int modifiers) {
+            if (this.focusedWidget != null) {
+                this.focusedWidget.receiveCharTyped(character, modifiers);
+                if (!this.focusedWidget.isFocused()) {
+                    this.focusedWidget = null;
+                }
+                return true;
+            }
+
+            return false;
+        }
     }
 
     public enum DragState {

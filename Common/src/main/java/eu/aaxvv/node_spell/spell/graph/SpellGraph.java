@@ -59,6 +59,9 @@ public class SpellGraph {
     }
 
     public Edge addEdge(Edge edge) {
+        if (edge.getStart().getParentInstance() == edge.getEnd().getParentInstance()) {
+            return null;
+        }
         this.edges.add(edge);
         recomputeEdges();
         return edge;
@@ -77,9 +80,9 @@ public class SpellGraph {
     }
 
     public void moveEdge(Edge draggedEdge, SocketInstance socket, boolean isDraggingStart) {
-        SocketInstance exisitingEnd = isDraggingStart ? draggedEdge.getStart() : draggedEdge.getEnd();
+        SocketInstance existingEnd = isDraggingStart ? draggedEdge.getEnd() : draggedEdge.getStart();
         removeEdge(draggedEdge);
-        addEdge(Edge.create(exisitingEnd, socket));
+        addEdge(Edge.create(existingEnd, socket));
     }
 
     public void removeEdge(Edge draggedEdge) {

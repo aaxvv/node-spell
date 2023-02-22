@@ -70,7 +70,10 @@ public class SocketInstance {
         if (this.base.getDirection() == Socket.Direction.IN) {
             return getSingleConnection().getOpposite(this).getComputedValue(ctx);
         } else {
-            this.parentInstance.run(ctx);
+            //TODO: guard against running a node with side-effects multiple times
+            if (!this.parentInstance.getBaseNode().hasSideEffects()) {
+                this.parentInstance.run(ctx);
+            }
             return this.currentValue;
         }
     }

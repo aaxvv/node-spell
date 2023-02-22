@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.client.widget;
 
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
@@ -92,7 +92,7 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
                     this.graph.addEdge(this.draggedEdge.complete(socket));
                 }
             } else {
-                Socket.Direction existingDirection = (this.isDraggingStart ? this.draggedEdge.getStart() : this.draggedEdge.getEnd()).getBase().getDirection();
+                Socket.Direction existingDirection = (this.isDraggingStart ? this.draggedEdge.getEnd() : this.draggedEdge.getStart()).getBase().getDirection();
                 if (this.draggedEdge.getDatatype() == socket.getBase().getDataType() && existingDirection != socket.getBase().getDirection()) {
                     this.graph.moveEdge(this.draggedEdge, socket, this.isDraggingStart);
                 }
@@ -133,6 +133,10 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
                 }
             }
 
+            if (instance.getWidget() != null && instance.getWidget().isHit(localX, localY)) {
+                return Optional.of(instance.getWidget());
+            }
+
             if (instance.containsPoint(localX, localY)) {
                 return Optional.of(instance);
             }
@@ -153,6 +157,13 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
         int localY = y - this.y - this.renderer.getWindowPanY();
 
         nodeInstance.setPosition(localX, localY);
+    }
+
+    public Vector2i toLocal(int x, int y) {
+        int localX = x - this.x - this.renderer.getWindowPanX();
+        int localY = y - this.y - this.renderer.getWindowPanY();
+
+        return new Vector2i(localX, localY);
     }
 
     public boolean containsPoint(int x, int y) {

@@ -55,7 +55,7 @@ public class Value {
         }
     }
 
-    public String StringValue() {
+    public String stringValue() {
         if (this.datatype == Datatype.STRING) {
             return (String)this.value;
         } else {
@@ -136,5 +136,21 @@ public class Value {
 
     public static Value createList(List<Value> value) {
         return new Value(Datatype.LIST, value);
+    }
+
+    @Override
+    public String toString() {
+        return switch (this.getDatatype()) {
+            case BOOL -> this.boolValue().toString();
+            case NUMBER -> String.format("%f.2", this.numberValue());
+            case STRING -> this.stringValue();
+            case VECTOR -> String.format("(%f.2, %f.2, %f.2)", this.vectorValue().x, this.vectorValue().y, this.vectorValue().z);
+            case ENTITY -> this.entityValue().getDisplayName().toString();
+            case BLOCK -> this.blockValue().getName().toString();
+            case ITEM -> this.itemValue().toString();
+            case LIST -> "[" + String.join(", ", this.listValue().stream().map(Value::toString).toList()) + "]";
+            case FLOW -> "<FLOW>";
+            case ANY -> "<ANY>";
+        };
     }
 }

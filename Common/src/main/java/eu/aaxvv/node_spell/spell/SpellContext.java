@@ -14,6 +14,13 @@ import java.util.Map;
 public class SpellContext {
     private Map<String, Value> locals;
     private Entity caster;
-
     private Level level;
+
+    public Entity getCaster() {
+        return caster;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
 }

@@ -20,6 +20,9 @@
     "entrypoints": {
       "main": [
         "eu.aaxvv.node_spell.NodeSpellMod"
+      ],
+      "client": [
+        "eu.aaxvv.node_spell.client.NodeSpellModClient"
       ]
     },
     "mixins": [

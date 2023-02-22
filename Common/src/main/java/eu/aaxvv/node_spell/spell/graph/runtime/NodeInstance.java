@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.runtime;
 
+import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -18,7 +19,9 @@ public class NodeInstance {
     private final Node base;
 
     /** Additional data which must be stored with this instance e.g. the value of a constant node */
-    private final Object instanceData;
+    private Object instanceData;
+
+    private final Widget<?> widget;
 
     /** The socket instances of this node */
     private final Map<Socket, SocketInstance> socketInstances;
@@ -29,6 +32,7 @@ public class NodeInstance {
     public NodeInstance(Node base) {
         this.base = base;
         this.instanceData = base.createInstanceData();
+        this.widget = base.createWidget(this);
         this.socketInstances = new HashMap<>();
         base.getSockets().forEach(s -> this.socketInstances.put(s, s.createInstance(this)));
     }
@@ -37,8 +41,20 @@ public class NodeInstance {
         return instanceData;
     }
 
+    public void setInstanceData(Object data) {
+        if (!this.getInstanceData().getClass().isAssignableFrom(data.getClass())) {
+            throw new IllegalArgumentException("Node instance data type does not match widget type.");
+        }
+
+        this.instanceData = data;
+    }
+
     public Node getBaseNode() {
         return base;
+    }
+
+    public Widget<?> getWidget() {
+        return widget;
     }
 
     public Value getSocketValue(Socket socket, SpellContext ctx) {

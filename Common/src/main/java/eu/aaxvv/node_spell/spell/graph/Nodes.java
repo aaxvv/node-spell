@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.spell.graph;
 
 import eu.aaxvv.node_spell.platform.Services;
 import eu.aaxvv.node_spell.spell.graph.nodes.AddNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.BoolConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.NumberConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.StringConstantNode;
@@ -22,6 +23,8 @@ public class Nodes {
     public static final Node BRANCH = new BranchNode();
     public static final Node FOR_RANGE = new ForLoopNode();
 
+    public static final Node PRINT = new DebugPrintNode();
+
     public static void registerNodes() {
         register(NUMBER_CONSTANT);
         register(BOOL_CONSTANT);
@@ -31,6 +34,8 @@ public class Nodes {
 
         register(BRANCH);
         register(FOR_RANGE);
+
+        register(PRINT);
     }
 
     private static void register(Node node) {

@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.structure;
 
+import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
@@ -73,6 +74,10 @@ public abstract class Node {
         return resourceLocation;
     }
 
+    public boolean hasSideEffects() {
+        return false;
+    }
+
     public int getExpectedHeight() {
         return NodeConstants.SOCKET_START_Y + Math.max(this.inSocketCount, this.outSocketCount) * NodeConstants.SOCKET_STEP_Y;
     }
@@ -81,7 +86,13 @@ public abstract class Node {
         return NodeConstants.DEFAULT_NODE_WIDTH;
     }
 
-    public abstract Object createInstanceData();
+    public Object createInstanceData() {
+        return null;
+    }
+
+    public Widget<?> createWidget(NodeInstance instance) {
+        return null;
+    }
 
     public abstract void run(SpellContext ctx, NodeInstance instance);
 }

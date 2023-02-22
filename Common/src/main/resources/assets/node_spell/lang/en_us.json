@@ -1,6 +1,7 @@
 {
   "key.node_spell.test": "Node Spell Test",
   "key.node_spell.test.desc": "Trigger Node Spell test",
+
   "node_spell.node.category.input": "INPUT",
   "node_spell.node.category.flow": "FLOW",
   "node_spell.node.category.action":  "ACTION",
