@@ -11,9 +11,19 @@ public class SpellRunner {
     protected SpellGraph graph;
     protected SpellContext ctx;
 
-    public void run() {
+    public SpellRunner(SpellGraph graph, SpellContext ctx) {
+        this(ctx);
+        this.graph = graph;
+    }
+
+    public SpellRunner(SpellContext ctx) {
+        this.ctx = ctx;
+    }
+
+    public boolean run() {
         NodeInstance entrypoint = this.graph.getEntrypoint();
         this.runFromNode(entrypoint);
+        return true;
     }
 
     protected void runFromNode(NodeInstance instance) {

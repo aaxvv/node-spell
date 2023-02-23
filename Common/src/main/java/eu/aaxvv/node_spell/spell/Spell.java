@@ -4,7 +4,7 @@ import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import net.minecraft.nbt.CompoundTag;
 
 public class Spell {
-    private final String name;
+    private String name;
 
     private final SpellGraph graph;
 
@@ -23,11 +23,19 @@ public class Spell {
     }
 
     public void serialize(CompoundTag nbt) {
-
+        nbt.putString("Name", this.name);
+        this.graph.serialize(nbt);
     }
 
     public void deserialize(CompoundTag nbt) {
+        this.name = nbt.getString("Name");
+        this.graph.deserialize(nbt);
+    }
 
+    public static Spell fromNbt(CompoundTag nbt) {
+        Spell spell = new Spell(null);
+        spell.deserialize(nbt);
+        return spell;
     }
 
     public SpellGraph getGraph() {

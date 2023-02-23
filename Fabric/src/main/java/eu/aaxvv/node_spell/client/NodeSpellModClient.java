@@ -5,6 +5,7 @@ import eu.aaxvv.node_spell.client.screen.SpellBookScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -15,8 +16,11 @@ public class NodeSpellModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        NodeSpellClient.init();
+
         testMapping = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.node_spell.test", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, "key.node_spell.test.desc"));
         ClientTickEvents.START_CLIENT_TICK.register(this::startTick);
+        HudRenderCallback.EVENT.register(NodeSpellClient.getSpellSelectionOverlay()::render);
     }
 
     private void startTick(Minecraft client) {

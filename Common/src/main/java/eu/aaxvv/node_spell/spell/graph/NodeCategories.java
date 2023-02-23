@@ -23,6 +23,7 @@ public class NodeCategories {
     public static final NodeCategory CUSTOM = new NodeCategory(ModConstants.resLoc("custom"), 1000, Datatype.FLOW.packedColor);
 
     public static void registerCategories() {
+        ModConstants.LOG.info("Registering node categories.");
         register(INPUT);
         register(FLOW);
         register(MATH);

@@ -1,6 +1,9 @@
 package eu.aaxvv.node_spell;
 
+import eu.aaxvv.node_spell.item.ModItems;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class NodeSpellMod implements ModInitializer {
     @Override
@@ -11,7 +14,8 @@ public class NodeSpellMod implements ModInitializer {
         // project.
 
         // Use Fabric to bootstrap the Common mod.
-        ModConstants.LOG.info("Hello Fabric world!");
+//        ModConstants.LOG.info("Hello Fabric world!");
         NodeSpellCommon.init();
+        ModItems.register((resLoc, item) -> Registry.register(BuiltInRegistries.ITEM, resLoc, item));
     }
 }

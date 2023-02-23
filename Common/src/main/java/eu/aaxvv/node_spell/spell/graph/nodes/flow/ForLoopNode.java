@@ -67,15 +67,15 @@ public class ForLoopNode extends FlowNode {
     private class SubRunner extends SpellRunner {
         private final NodeInstance nodeInstance;
         public SubRunner(NodeInstance nodeInstance, SpellContext ctx) {
+            super(ctx);
             this.nodeInstance = nodeInstance;
-            super.ctx = ctx;
         }
 
         @Override
-        public void run() {
+        public boolean run() {
             List<Edge> loopBodyConnections = nodeInstance.getSocketConnections(ForLoopNode.this.fRepeat);
             if (loopBodyConnections.size() == 0) {
-                return;
+                return true;
             } else if (loopBodyConnections.size() > 1) {
                 throw new IllegalStateException("Flow Output cannot have multiple outgoing connections.");
             }
@@ -88,6 +88,8 @@ public class ForLoopNode extends FlowNode {
                 this.nodeInstance.setSocketValue(ForLoopNode.this.sIndex, Value.createNumber(i));
                 this.runFromNode(firstLoopNode);
             }
+
+            return true;
         }
     }
 }

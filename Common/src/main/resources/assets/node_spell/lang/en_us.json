@@ -1,6 +1,13 @@
 {
+  "item.node_spell.wand": "Wand",
+  "item.node_spell.spell_book": "Spell Book",
+
   "key.node_spell.test": "Node Spell Test",
   "key.node_spell.test.desc": "Trigger Node Spell test",
+
+  "gui.node_spell.spell_book_not_found": "No spell book in inventory",
+  "gui.node_spell.multiple_spell_books_found": "Multiple spell books in inventory",
+  "gui.node_spell.wand_spell_tooltip": "Current Spell: %s",
 
   "node_spell.node.category.input": "INPUT",
   "node_spell.node.category.flow": "FLOW",

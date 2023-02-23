@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph;
 
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.platform.Services;
 import eu.aaxvv.node_spell.spell.graph.nodes.AddNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
@@ -26,6 +27,7 @@ public class Nodes {
     public static final Node PRINT = new DebugPrintNode();
 
     public static void registerNodes() {
+        ModConstants.LOG.info("Registering node types.");
         register(NUMBER_CONSTANT);
         register(BOOL_CONSTANT);
         register(STRING_CONSTANT);
