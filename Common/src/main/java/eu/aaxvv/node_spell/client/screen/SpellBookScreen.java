@@ -142,10 +142,7 @@ public class SpellBookScreen extends Screen {
         public Widget<?> focusedWidget;
 
         public void mouseDown(int mouseX, int mouseY, int button) {
-            if (this.focusedWidget != null) {
-                this.focusedWidget.setFocused(false);
-                this.focusedWidget = null;
-            }
+            Widget<?> prevWidget = this.focusedWidget;
 
             if (dragState != DragState.NOT_DRAGGING) {
                 return;
@@ -161,6 +158,8 @@ public class SpellBookScreen extends Screen {
 
             Optional<Object> clicked = SpellBookScreen.this.canvas.getObjectAtLocation(mouseX, mouseY);
 
+            boolean focusedWidgetClicked = false;
+
             if (clicked.isEmpty()) {
                 this.dragState = DragState.PANNING_CANVAS;
                 this.startPoint = new Vector2i(mouseX, mouseY);
@@ -171,6 +170,10 @@ public class SpellBookScreen extends Screen {
                     this.draggedObject = socket;
                     SpellBookScreen.this.canvas.startDragEdge(socket, mouseX, mouseY);
                 } else if (clicked.get() instanceof Widget<?> widget){
+                    if (widget == prevWidget) {
+                        focusedWidgetClicked = true;
+                    }
+
                     this.focusedWidget = widget;
                     widget.setFocused(true);
                     Vector2i mouseLocal = SpellBookScreen.this.canvas.toLocal(mouseX, mouseY);
@@ -195,6 +198,11 @@ public class SpellBookScreen extends Screen {
                 } else {
                     ModConstants.LOG.warn("Received unknown clicked object from node canvas: {}", clicked.get().getClass().getName());
                 }
+            }
+
+            if (!focusedWidgetClicked && prevWidget != null) {
+                prevWidget.setFocused(false);
+                prevWidget.rollbackValue();
             }
         }
 

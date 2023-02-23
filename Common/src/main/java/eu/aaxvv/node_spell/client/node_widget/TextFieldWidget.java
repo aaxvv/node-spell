@@ -20,6 +20,7 @@ public class TextFieldWidget extends Widget<String> {
 
         String displayString = getStringWithCursor();
         if (!displayString.isEmpty()) {
+            //TODO: string doesn't scroll back when cursor exists visible window
             String text = Minecraft.getInstance().font.plainSubstrByWidth(displayString, this.width - 4, this.focused);
             Minecraft.getInstance().font.draw(pose, text, x + 2, y + 2, 0xFFFFFFFF);
         }

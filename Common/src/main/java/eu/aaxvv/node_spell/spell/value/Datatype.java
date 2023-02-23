@@ -17,16 +17,16 @@ import eu.aaxvv.node_spell.util.ColorUtil;
  * ANY - Light Grey
  */
 public enum Datatype {
-    BOOL(0.8f, 0.2f, 0.2f),
-    NUMBER(0.2f, 0.6f, 0.8f),
-    STRING(0.8f, 0.2f, 0.5f),
-    VECTOR(0.8f, 0.8f, 0.2f),
-    ENTITY(0.2f, 0.2f, 0.8f),
-    BLOCK(0.2f, 0.8f, 0.2f),
-    ITEM(0.8f, 0.2f, 0.8f),
-    LIST(0.8f, 0.6f, 0.2f),
-    FLOW(0.3f, 0.3f, 0.3f),
-    ANY(0.7f, 0.7f, 0.7f);
+    BOOL(0xFFCC3333),
+    NUMBER(0xFF3399CC),
+    STRING(0xFFCC33A0),
+    VECTOR(0xFFCCC633),
+    ENTITY(0xFF3333CC),
+    BLOCK(0xFF33CC33),
+    ITEM(0xFF8535CC),
+    LIST(0xFFCC8828),
+    FLOW(0xFF444444),
+    ANY(0xFF999999);
 
     Datatype(float r, float g, float b) {
         this.r = r;
@@ -49,5 +49,13 @@ public enum Datatype {
     public final float g;
     public final float b;
     public final int packedColor;
+
+    public boolean isAssignableFrom(Datatype other) {
+        if (this == Datatype.ANY) {
+            return true;
+        }
+
+        return this == other;
+    }
 
 }

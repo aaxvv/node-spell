@@ -88,12 +88,12 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
             // hit a socket
             if (this.draggedEdge.isIncomplete()) {
                 // only add if data types match and direction is different
-                if (this.draggedEdge.getDatatype() == socket.getBase().getDataType() && this.draggedEdge.getStart().getBase().getDirection() != socket.getBase().getDirection()) {
+                if (Edge.typesCompatible(this.draggedEdge.getStart(), socket)) { // && this.draggedEdge.getDatatype() == socket.getBase().getDataType() && this.draggedEdge.getStart().getBase().getDirection() != socket.getBase().getDirection()
                     this.graph.addEdge(this.draggedEdge.complete(socket));
                 }
             } else {
-                Socket.Direction existingDirection = (this.isDraggingStart ? this.draggedEdge.getEnd() : this.draggedEdge.getStart()).getBase().getDirection();
-                if (this.draggedEdge.getDatatype() == socket.getBase().getDataType() && existingDirection != socket.getBase().getDirection()) {
+                SocketInstance existingSocket = this.isDraggingStart ? this.draggedEdge.getEnd() : this.draggedEdge.getStart();
+                if (Edge.typesCompatible(existingSocket, socket)) { // this.draggedEdge.getDatatype() == socket.getBase().getDataType() && existingDirection != socket.getBase().getDirection()
                     this.graph.moveEdge(this.draggedEdge, socket, this.isDraggingStart);
                 }
             }

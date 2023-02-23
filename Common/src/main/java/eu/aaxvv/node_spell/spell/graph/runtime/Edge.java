@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.runtime;
 
+import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 
 public class Edge {
@@ -14,12 +15,8 @@ public class Edge {
             return;
         }
 
-        if (startSocket.getBase().getDataType() != endSocket.getBase().getDataType()) {
-            throw new IllegalArgumentException("Start and end data types of edge do not match.");
-        }
-
-        if (startSocket.getBase().getDirection() == endSocket.getBase().getDirection()) {
-            throw new IllegalArgumentException("Start and end sockets must not have same direction.");
+        if (!typesCompatible(startSocket, endSocket)) {
+            throw new IllegalArgumentException("Incompatible start and end sockets.");
         }
 
         this.startSocket.addConnection(this);
@@ -35,7 +32,15 @@ public class Edge {
     }
 
     public Datatype getDatatype() {
-        return this.startSocket.getBase().getDataType();
+        if (this.endSocket == null) {
+            return this.startSocket.getBase().getDataType();
+        }
+
+        if (this.startSocket.getBase().getDirection() == Socket.Direction.IN) {
+            return this.endSocket.getBase().getDataType();
+        } else {
+            return this.startSocket.getBase().getDataType();
+        }
     }
 
     public boolean isIncomplete() {
@@ -67,5 +72,17 @@ public class Edge {
     public void remove() {
         this.startSocket.removeConnection(this);
         this.endSocket.removeConnection(this);
+    }
+
+    public static boolean typesCompatible(SocketInstance start, SocketInstance end) {
+        if (start.getBase().getDirection() == end.getBase().getDirection()) {
+            return false;
+        }
+
+        if (start.getBase().getDirection() == Socket.Direction.IN) {
+            return start.getBase().getDataType().isAssignableFrom(end.getBase().getDataType());
+        } else {
+            return end.getBase().getDataType().isAssignableFrom(start.getBase().getDataType());
+        }
     }
 }
