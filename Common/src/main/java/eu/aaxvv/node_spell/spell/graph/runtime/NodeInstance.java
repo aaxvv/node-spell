@@ -3,9 +3,13 @@ package eu.aaxvv.node_spell.spell.graph.runtime;
 import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Value;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
 
@@ -35,6 +39,21 @@ public class NodeInstance {
         this.widget = base.createWidget(this);
         this.socketInstances = new HashMap<>();
         base.getSockets().forEach(s -> this.socketInstances.put(s, s.createInstance(this)));
+    }
+
+    public static NodeInstance fromNbt(CompoundTag instanceNbt) {
+        ResourceLocation baseNodeResLoc = ResourceLocation.tryParse(instanceNbt.getString("Base"));
+        Node baseNode = Nodes.REGISTRY.get(baseNodeResLoc);
+        if (baseNode == null) {
+            return null;
+        }
+
+        NodeInstance instance = baseNode.createInstance();
+        instance.deserialize(instanceNbt);
+        if (instance.widget != null) {
+            instance.widget.rollbackValue();
+        }
+        return instance;
     }
 
     public Object getInstanceData() {
@@ -157,5 +176,34 @@ public class NodeInstance {
 
     public boolean containsPoint(int x, int y) {
         return x >= this.x && x < this.x + this.base.getWidth() && y >= this.y && y < this.y + this.base.getExpectedHeight();
+    }
+
+    public void serialize(CompoundTag nodeTag) {
+        nodeTag.putString("Base", this.base.getResourceLocation().toString());
+        nodeTag.putInt("X", this.x);
+        nodeTag.putInt("Y", this.y);
+        if (this.getInstanceData() != null) {
+            CompoundTag dataTag = new CompoundTag();
+            this.base.serializeInstanceData(this.instanceData, dataTag);
+            nodeTag.put("Data", dataTag);
+        }
+    }
+
+    public void deserialize(CompoundTag nodeTag) {
+        this.x = nodeTag.getInt("X");
+        this.y = nodeTag.getInt("Y");
+        if (nodeTag.contains("Data", Tag.TAG_COMPOUND)) {
+            this.instanceData = this.base.deserializeInstanceData(nodeTag.getCompound("Data"));
+        }
+    }
+
+    public SocketInstance getSocketWithHash(int socketHash) {
+        for (SocketInstance socket : this.getSocketInstances()) {
+            if (socket.getSerializationHash() == socketHash) {
+                return socket;
+            }
+        }
+
+        return null;
     }
 }

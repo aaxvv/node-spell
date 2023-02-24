@@ -6,6 +6,7 @@ import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
+import net.minecraft.nbt.CompoundTag;
 
 public class NumberConstantNode extends BaseConstantNode<Double> {
     public NumberConstantNode() {
@@ -17,5 +18,15 @@ public class NumberConstantNode extends BaseConstantNode<Double> {
         NumberFieldWidget field = new NumberFieldWidget(instance, this.getWidth() - 6);
         field.setLocalPosition(2, NodeConstants.HEADER_HEIGHT + 2);
         return field;
+    }
+
+    @Override
+    public void serializeInstanceData(Object instanceData, CompoundTag dataTag) {
+        dataTag.putDouble("Val", (Double) instanceData);
+    }
+
+    @Override
+    public Object deserializeInstanceData(CompoundTag dataTag) {
+        return dataTag.getDouble("Val");
     }
 }

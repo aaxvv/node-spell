@@ -5,6 +5,9 @@ import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.*;
 
@@ -72,11 +75,64 @@ public class SpellGraph {
     }
 
     public void serialize(CompoundTag nbt) {
+        ListTag instanceList = new ListTag();
+        for (NodeInstance instance : this.nodeInstances) {
+            CompoundTag nodeTag = new CompoundTag();
+            instance.serialize(nodeTag);
+            instanceList.add(nodeTag);
+        }
 
+        ListTag edgeList = new ListTag();
+        for (Edge edge : this.edges) {
+            int startNodeIdx = this.nodeInstances.indexOf(edge.getStart().getParentInstance());
+            int endNodeIdx = this.nodeInstances.indexOf(edge.getEnd().getParentInstance());
+            int startSocketHash = edge.getStart().getSerializationHash();
+            int endSocketHash = edge.getEnd().getSerializationHash();
+
+            edgeList.add(new IntArrayTag(new int[] {startNodeIdx, endNodeIdx, startSocketHash, endSocketHash}));
+        }
+
+        nbt.put("Nodes", instanceList);
+        nbt.put("Edges", edgeList);
     }
 
     public void deserialize(CompoundTag nbt) {
+        ListTag instanceList = nbt.getList("Nodes", Tag.TAG_COMPOUND);
+        for (int i = 0; i < instanceList.size(); i++) {
+            CompoundTag instanceNbt = instanceList.getCompound(i);
+            NodeInstance instance = NodeInstance.fromNbt(instanceNbt);
+            this.nodeInstances.add(instance);
+        }
 
+        ListTag edgeList = nbt.getList("Edges", Tag.TAG_INT_ARRAY);
+        for (int i = 0; i < edgeList.size(); i++) {
+            int[] edgeNbt = edgeList.getIntArray(i);
+            if (edgeNbt.length != 4) {
+                continue;
+            }
+
+            Edge edge = buildEdge(edgeNbt);
+            if (edge != null) {
+                this.edges.add(edge);
+            }
+        }
+    }
+
+    private Edge buildEdge(int[] nbtData) {
+        try {
+            NodeInstance startNode = this.nodeInstances.get(nbtData[0]);
+            NodeInstance endNode = this.nodeInstances.get(nbtData[1]);
+            SocketInstance startSocket = startNode.getSocketWithHash(nbtData[2]);
+            SocketInstance endSocket = endNode.getSocketWithHash(nbtData[3]);
+
+            if (startSocket == null || endSocket == null) {
+                return null;
+            } else {
+                return Edge.create(startSocket, endSocket);
+            }
+        } catch (IndexOutOfBoundsException ex) {
+            return null;
+        }
     }
 
     public void moveEdge(Edge draggedEdge, SocketInstance socket, boolean isDraggingStart) {

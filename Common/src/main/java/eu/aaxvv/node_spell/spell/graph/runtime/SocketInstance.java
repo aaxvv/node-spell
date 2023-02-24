@@ -95,4 +95,13 @@ public class SocketInstance {
             this.connections.get(0).remove();
         }
     }
+
+    public int getSerializationHash() {
+        return this.base.getSerializationHash();
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

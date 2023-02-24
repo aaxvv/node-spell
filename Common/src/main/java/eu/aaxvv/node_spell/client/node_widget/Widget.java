@@ -13,11 +13,12 @@ public abstract class Widget<T> {
     protected int height;
     protected boolean focused;
 
+    @SuppressWarnings("unchecked")
     public Widget(NodeInstance parent, int width, int height) {
         this.parent = parent;
         this.width = width;
         this.height = height;
-        this.currentValue = getDefaultValue();
+        this.currentValue = (T) this.parent.getInstanceData();
         if (!parent.getInstanceData().getClass().isAssignableFrom(this.currentValue.getClass())) {
             throw new IllegalArgumentException("Node instance data type does not match widget type.");
         }

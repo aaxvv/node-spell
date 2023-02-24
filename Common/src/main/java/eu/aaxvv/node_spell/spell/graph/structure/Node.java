@@ -5,6 +5,7 @@ import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -37,6 +38,11 @@ public abstract class Node {
     }
 
     private void addSocket(Socket socket) {
+        for (Socket existingSocket : this.sockets) {
+            if (existingSocket.getSerializationHash() == socket.getSerializationHash()) {
+                throw new RuntimeException(String.format("All node sockets must be differentiable by hash. (Conflict: %s / %s)", socket, existingSocket));
+            }
+        }
         this.sockets.add(socket);
     }
 
@@ -95,4 +101,11 @@ public abstract class Node {
     }
 
     public abstract void run(SpellContext ctx, NodeInstance instance);
+
+    public void serializeInstanceData(Object instanceData, CompoundTag dataTag) {
+    }
+
+    public Object deserializeInstanceData(CompoundTag dataTag) {
+        return null;
+    }
 }

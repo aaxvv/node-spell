@@ -30,6 +30,7 @@ public class Spell {
     public void deserialize(CompoundTag nbt) {
         this.name = nbt.getString("Name");
         this.graph.deserialize(nbt);
+
     }
 
     public static Spell fromNbt(CompoundTag nbt) {
@@ -44,5 +45,9 @@ public class Spell {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

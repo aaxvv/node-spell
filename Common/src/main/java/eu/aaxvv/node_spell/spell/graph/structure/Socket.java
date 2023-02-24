@@ -4,6 +4,8 @@ import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 
+import java.util.Objects;
+
 /**
  * A connection on the side of a node.
  * <p>
@@ -51,5 +53,17 @@ public class Socket {
     public enum Direction {
         IN,
         OUT
+    }
+
+    public int getSerializationHash() {
+        int typeIdx = this.getDataType().ordinal();
+        int direction = this.getDirection().ordinal();
+        int nameHash = this.getName().hashCode();
+        return Objects.hash(nameHash, typeIdx, direction);
+    }
+
+    @Override
+    public String toString() {
+        return this.name + "[" + this.dataType + ", " + this.direction + "]";
     }
 }
