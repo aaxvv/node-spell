@@ -1,10 +1,12 @@
 package eu.aaxvv.node_spell.platform.services;
 
+import eu.aaxvv.node_spell.platform.Services;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.core.Registry;
 
-public interface IPlatformHelper {
+public interface PlatformHelper {
+    PlatformHelper INSTANCE = Services.load(PlatformHelper.class);
 
     /**
      * Gets the name of the current platform

@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.platform.Services;
+import eu.aaxvv.node_spell.platform.services.PlatformHelper;
 import eu.aaxvv.node_spell.spell.graph.nodes.AddNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.BoolConstantNode;
@@ -13,7 +13,7 @@ import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import net.minecraft.core.Registry;
 
 public class Nodes {
-    public static final Registry<Node> REGISTRY = Services.PLATFORM.createNodeRegistry();
+    public static final Registry<Node> REGISTRY = PlatformHelper.INSTANCE.createNodeRegistry();
 
     public static final Node NUMBER_CONSTANT = new NumberConstantNode();
     public static final Node BOOL_CONSTANT = new BoolConstantNode();

@@ -1,7 +1,6 @@
 package eu.aaxvv.node_spell.platform;
 
-import eu.aaxvv.node_spell.platform.services.IPlatformHelper;
-import eu.aaxvv.node_spell.spell.graph.NodeCategories;
+import eu.aaxvv.node_spell.platform.services.PlatformHelper;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.core.Registry;
@@ -9,7 +8,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.commons.lang3.NotImplementedException;
 
-public class ForgePlatformHelper implements IPlatformHelper {
+public class ForgePlatformHelper implements PlatformHelper {
 
     @Override
     public String getPlatformName() {

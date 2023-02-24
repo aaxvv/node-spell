@@ -1,13 +1,13 @@
 package eu.aaxvv.node_spell.spell.graph;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.platform.Services;
+import eu.aaxvv.node_spell.platform.services.PlatformHelper;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.core.Registry;
 
 public class NodeCategories {
-    public static final Registry<NodeCategory> REGISTRY = Services.PLATFORM.createNodeCategoryRegistry();
+    public static final Registry<NodeCategory> REGISTRY = PlatformHelper.INSTANCE.createNodeCategoryRegistry();
 
     public static final NodeCategory INPUT = new NodeCategory(ModConstants.resLoc("input"), 0, Datatype.BLOCK.packedColor);
     public static final NodeCategory FLOW = new NodeCategory(ModConstants.resLoc("flow"), 100, Datatype.ANY.packedColor);
