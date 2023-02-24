@@ -7,6 +7,8 @@ import eu.aaxvv.node_spell.spell.SpellRunner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -75,6 +77,7 @@ public class WandItem extends Item {
         }
 
         if (spellToCast == null) {
+            ((ServerPlayer)player).displayClientMessage(Component.translatable("gui.node_spell.spell_not_active").withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);
         }
 
@@ -105,12 +108,13 @@ public class WandItem extends Item {
     }
 
     private Spell getSpellFromBook(ItemStack spellBook, String spellName) {
-        CompoundTag bookSpellsTag = spellBook.getOrCreateTag().getCompound("ActiveSpells");
-        if (!bookSpellsTag.contains(spellName)) {
+        ListTag bookActiveSpellsTag = spellBook.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
+        if (!bookActiveSpellsTag.contains(StringTag.valueOf(spellName))) {
             return null;
         }
 
-        return Spell.fromNbt(bookSpellsTag.getCompound(spellName));
+        CompoundTag bookSpellListTag = spellBook.getOrCreateTagElement("Spells");
+        return Spell.fromNbt(bookSpellListTag.getCompound(spellName));
     }
 
     private record SpellBookResult(ItemStack bookStack, boolean duplicate){}
