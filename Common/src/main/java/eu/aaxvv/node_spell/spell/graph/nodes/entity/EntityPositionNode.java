@@ -10,8 +10,7 @@ import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.world.entity.Entity;
 
-public class EntityPositionNode extends Node
-{
+public class EntityPositionNode extends Node {
     public final Socket sEntity;
     public final Socket sPosition;
 

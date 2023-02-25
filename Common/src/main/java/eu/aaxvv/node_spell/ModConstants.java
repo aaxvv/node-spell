@@ -9,6 +9,8 @@ public class ModConstants {
 	public static final String MOD_NAME = "NodeSpell";
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
+	public static final int SPELL_INTERACTION_RANGE = 16;
+
 	public static ResourceLocation resLoc(String name) {
 		return new ResourceLocation(MOD_ID, name);
 	}

@@ -158,4 +158,17 @@ public class Value {
             case ANY -> "<ANY>";
         };
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Value otherValue)) {
+            return false;
+        }
+
+        if (otherValue.getDatatype() != this.getDatatype()) {
+            return false;
+        }
+
+        return this.value.equals(otherValue.value);
+    }
 }

@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.spell.graph.nodes;
+package eu.aaxvv.node_spell.spell.graph.nodes.comparison;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.SpellContext;
@@ -9,16 +9,16 @@ import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 
-public class AddNode extends Node {
+public class NotEqualsNode extends Node {
     public final Socket sA;
     public final Socket sB;
     public final Socket sResult;
 
-    public AddNode() {
-        super("Add", NodeCategories.MATH, ModConstants.resLoc("add"));
-        this.sA = addInputSocket(Datatype.NUMBER, "a");
-        this.sB = addInputSocket(Datatype.NUMBER, "b");
-        this.sResult = addOutputSocket(Datatype.NUMBER, "Result");
+    public NotEqualsNode() {
+        super("Not Equal", NodeCategories.COMPARISON, ModConstants.resLoc("not_equal"));
+        this.sA = addInputSocket(Datatype.ANY, "a");
+        this.sB = addInputSocket(Datatype.ANY, "b");
+        this.sResult = addOutputSocket(Datatype.BOOL, "Result");
     }
 
     @Override
@@ -28,9 +28,9 @@ public class AddNode extends Node {
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
-        double valueA = instance.getSocketValue(this.sA, ctx).numberValue();
-        double valueB = instance.getSocketValue(this.sA, ctx).numberValue();
+        Value valueA = instance.getSocketValue(this.sA, ctx);
+        Value valueB = instance.getSocketValue(this.sA, ctx);
 
-        instance.setSocketValue(this.sResult, Value.createNumber(valueA + valueB));
+        instance.setSocketValue(this.sResult, Value.createBool(!(valueA.equals(valueB))));
     }
 }
