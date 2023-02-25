@@ -58,11 +58,11 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
         // first time init of node lists
         if (nodesByCategory == null) {
             nodesByCategory = new HashMap<>();
-            for (var entry : NodeCategories.REGISTRY.entrySet()) {
+            for (var entry : NodeCategories.REGISTRY_SUPPLIER.get().entrySet()) {
                 nodesByCategory.put(entry.getValue(), new ArrayList<>());
             }
 
-            for (var entry : Nodes.REGISTRY.entrySet()) {
+            for (var entry : Nodes.REGISTRY_SUPPLIER.get().entrySet()) {
                 NodeCategory category = entry.getValue().getCategory();
                 nodesByCategory.get(category).add(entry.getValue());
             }
@@ -75,7 +75,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
         if (categoriesOrdered == null) {
             categoriesOrdered = new ArrayList<>();
 
-            categoriesOrdered = NodeCategories.REGISTRY.entrySet().stream()
+            categoriesOrdered = NodeCategories.REGISTRY_SUPPLIER.get().entrySet().stream()
                     .map(Map.Entry::getValue)
                     .sorted(Comparator.comparing(NodeCategory::getPriority))
                     .toList();

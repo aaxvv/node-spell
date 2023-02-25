@@ -26,14 +26,4 @@ public class FabricPlatformHelper implements PlatformHelper {
 
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
-
-    @Override
-    public Registry<Node> createNodeRegistry() {
-        return FabricRegistryBuilder.createSimple(Node.class, ModConstants.resLoc("nodes")).buildAndRegister();
-    }
-
-    @Override
-    public Registry<NodeCategory> createNodeCategoryRegistry() {
-        return FabricRegistryBuilder.createSimple(NodeCategory.class, ModConstants.resLoc("node_categories")).buildAndRegister();
-    }
 }

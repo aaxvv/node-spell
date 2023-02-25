@@ -1,13 +1,14 @@
 package eu.aaxvv.node_spell.spell.graph;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.platform.services.PlatformHelper;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.core.Registry;
 
+import java.util.function.Supplier;
+
 public class NodeCategories {
-    public static final Registry<NodeCategory> REGISTRY = PlatformHelper.INSTANCE.createNodeCategoryRegistry();
+    public static Supplier<Registry<NodeCategory>> REGISTRY_SUPPLIER;
 
     public static final NodeCategory INPUT = new NodeCategory(ModConstants.resLoc("input"), 0, Datatype.BLOCK.packedColor);
     public static final NodeCategory FLOW = new NodeCategory(ModConstants.resLoc("flow"), 100, Datatype.ANY.packedColor);
@@ -21,6 +22,10 @@ public class NodeCategories {
     public static final NodeCategory LIST = new NodeCategory(ModConstants.resLoc("list"), 800, Datatype.VECTOR.packedColor);
     public static final NodeCategory STRING = new NodeCategory(ModConstants.resLoc("string"), 900, Datatype.VECTOR.packedColor);
     public static final NodeCategory CUSTOM = new NodeCategory(ModConstants.resLoc("custom"), 1000, Datatype.FLOW.packedColor);
+
+    public static void initRegistry(Supplier<Registry<NodeCategory>> nodeRegistry) {
+        REGISTRY_SUPPLIER = nodeRegistry;
+    }
 
     public static void registerCategories() {
         ModConstants.LOG.info("Registering node categories.");
@@ -39,6 +44,6 @@ public class NodeCategories {
     }
 
     private static void register(NodeCategory category) {
-        Registry.register(REGISTRY, category.resourceLocation, category);
+        Registry.register(REGISTRY_SUPPLIER.get(), category.resourceLocation, category);
     }
 }

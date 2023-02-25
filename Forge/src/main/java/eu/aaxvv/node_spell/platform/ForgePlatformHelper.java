@@ -1,11 +1,16 @@
 package eu.aaxvv.node_spell.platform;
 
+import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.mixin.RegistryBuilderAccessor;
 import eu.aaxvv.node_spell.platform.services.PlatformHelper;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.core.Registry;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class ForgePlatformHelper implements PlatformHelper {
@@ -26,17 +31,5 @@ public class ForgePlatformHelper implements PlatformHelper {
     public boolean isDevelopmentEnvironment() {
 
         return !FMLLoader.isProduction();
-    }
-
-    @Override
-    public Registry<Node> createNodeRegistry() {
-        //TODO: figure out how to do this on forge
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Registry<NodeCategory> createNodeCategoryRegistry() {
-        //TODO: figure out how to do this on forge
-        throw new NotImplementedException();
     }
 }

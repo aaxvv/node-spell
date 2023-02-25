@@ -38,8 +38,4 @@ public interface PlatformHelper {
     default String getEnvironmentName() {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
-
-    Registry<Node> createNodeRegistry();
-
-    Registry<NodeCategory> createNodeCategoryRegistry();
 }
