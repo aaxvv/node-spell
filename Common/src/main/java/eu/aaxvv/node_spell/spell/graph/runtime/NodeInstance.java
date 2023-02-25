@@ -113,9 +113,13 @@ public class NodeInstance {
     }
 
     public Optional<NodeInstance> getSingleSocketPartner(Socket socket) {
-        SocketInstance instance =  this.socketInstances.get(socket);
+        SocketInstance instance = this.socketInstances.get(socket);
         if (instance == null) {
             throw new IllegalArgumentException("Socket does not exist on this instance.");
+        }
+
+        if (instance.getConnections().isEmpty()) {
+            return Optional.empty();
         }
 
         Edge connection = instance.getSingleConnection();
