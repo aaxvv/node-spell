@@ -78,9 +78,4 @@ public class TextFieldWidget extends Widget<String> {
         super.receiveMouseInput(mouseX, mouseY, button);
         this.cursorPos = this.currentValue.length();
     }
-
-    @Override
-    protected String getDefaultValue() {
-        return "";
-    }
 }

@@ -129,9 +129,4 @@ public class NumberFieldWidget extends Widget<Double> {
         DecimalFormat format = new DecimalFormat("#0.##");
         this.currentStringValue = format.format(this.currentValue);
     }
-
-    @Override
-    protected Double getDefaultValue() {
-        return 0.0;
-    }
 }
