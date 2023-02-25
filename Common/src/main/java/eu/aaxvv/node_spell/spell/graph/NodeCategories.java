@@ -15,7 +15,7 @@ public class NodeCategories {
     public static final NodeCategory MATH = new NodeCategory(ModConstants.resLoc("math"), 200, Datatype.NUMBER.packedColor);
     public static final NodeCategory COMPARISON = new NodeCategory(ModConstants.resLoc("comparison"), 300, Datatype.NUMBER.packedColor);
     public static final NodeCategory LOGIC = new NodeCategory(ModConstants.resLoc("logic"), 400, Datatype.NUMBER.packedColor);
-    public static final NodeCategory VECTOR = new NodeCategory(ModConstants.resLoc("vector"), 500, Datatype.VECTOR.packedColor);
+    public static final NodeCategory ENTITY = new NodeCategory(ModConstants.resLoc("entity"), 500, Datatype.VECTOR.packedColor);
 
     public static final NodeCategory ACTION = new NodeCategory(ModConstants.resLoc("action"), 600, Datatype.BOOL.packedColor);
     public static final NodeCategory MEMORY = new NodeCategory(ModConstants.resLoc("memory"), 700, Datatype.LIST.packedColor);
@@ -34,7 +34,7 @@ public class NodeCategories {
         register(MATH);
         register(COMPARISON);
         register(LOGIC);
-        register(VECTOR);
+        register(ENTITY);
 
         register(ACTION);
         register(MEMORY);

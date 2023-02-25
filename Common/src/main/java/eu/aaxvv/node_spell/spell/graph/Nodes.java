@@ -6,8 +6,11 @@ import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.BoolConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.NumberConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.StringConstantNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.entity.EntityPositionNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.ForLoopNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.input.CasterNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import net.minecraft.core.Registry;
 
@@ -19,11 +22,15 @@ public class Nodes {
     public static final Node NUMBER_CONSTANT = new NumberConstantNode();
     public static final Node BOOL_CONSTANT = new BoolConstantNode();
     public static final Node STRING_CONSTANT = new StringConstantNode();
+    public static final Node CASTER = new CasterNode();
 
     public static final Node ADD = new AddNode();
 
+    public static final Node ENTRY_POINT = new EntryPointNode();
     public static final Node BRANCH = new BranchNode();
     public static final Node FOR_RANGE = new ForLoopNode();
+
+    public static final Node ENTITY_POSITION = new EntityPositionNode();
 
     public static final Node PRINT = new DebugPrintNode();
 
@@ -36,11 +43,15 @@ public class Nodes {
         register(NUMBER_CONSTANT);
         register(BOOL_CONSTANT);
         register(STRING_CONSTANT);
+        register(CASTER);
 
         register(ADD);
 
+        register(ENTRY_POINT);
         register(BRANCH);
         register(FOR_RANGE);
+
+        register(ENTITY_POSITION);
 
         register(PRINT);
     }

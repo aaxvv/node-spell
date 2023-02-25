@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph;
 
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
@@ -94,6 +95,7 @@ public class SpellGraph {
 
         nbt.put("Nodes", instanceList);
         nbt.put("Edges", edgeList);
+        nbt.putInt("Entrypoint", this.nodeInstances.indexOf(this.entrypoint));
     }
 
     public void deserialize(CompoundTag nbt) {
@@ -115,6 +117,10 @@ public class SpellGraph {
             if (edge != null) {
                 this.edges.add(edge);
             }
+        }
+
+        if (nbt.contains("Entrypoint")) {
+            this.entrypoint = this.nodeInstances.get(nbt.getInt("Entrypoint"));
         }
     }
 
@@ -157,6 +163,21 @@ public class SpellGraph {
         }
 
         this.edges.addAll(allEdges);
+    }
+
+    public void findEntrypoint() {
+        boolean found = false;
+        for (NodeInstance instance : this.nodeInstances) {
+            if (instance.getBaseNode() == Nodes.ENTRY_POINT) {
+                if (found) {
+                    ModConstants.LOG.error("Spell graph had multiple entry points.");
+                    break;
+                }
+
+                this.entrypoint = instance;
+                found = true;
+            }
+        }
     }
 
 

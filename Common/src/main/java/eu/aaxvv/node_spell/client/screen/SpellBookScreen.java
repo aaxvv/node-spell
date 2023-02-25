@@ -75,6 +75,7 @@ public class SpellBookScreen extends Screen {
         this.updateLocalCopy();
         int slot = this.hand == InteractionHand.MAIN_HAND ? this.player.getInventory().selected : Inventory.SLOT_OFFHAND;
         CompoundTag spellTag = new CompoundTag();
+        this.spell.getGraph().findEntrypoint();
         this.spell.serialize(spellTag);
         ClientPlatformHelper.INSTANCE.sendToServer(new UpdateSpellBookSpellC2SPacket(slot, this.spell.getName(), spellTag));
         super.onClose();

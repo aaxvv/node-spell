@@ -77,8 +77,6 @@ public abstract class Widget<T> {
     public void receiveMouseInput(int mouseX, int mouseY, int button) {
     }
 
-    protected abstract T getDefaultValue();
-
     public void commitValue() {
         this.parent.setInstanceData(this.currentValue);
         this.setFocused(false);

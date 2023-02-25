@@ -17,7 +17,7 @@
   "node_spell.node.category.comparison":  "COMPARE",
   "node_spell.node.category.math": "MATH",
   "node_spell.node.category.memory":  "MEMORY",
-  "node_spell.node.category.vector": "VECTOR",
+  "node_spell.node.category.entity": "ENTITY",
   "node_spell.node.category.list":  "LIST",
   "node_spell.node.category.string": "STRING",
   "node_spell.node.category.custom":  "CUSTOM"

@@ -3,9 +3,13 @@ package eu.aaxvv.node_spell.spell.value;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import org.joml.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -15,6 +19,7 @@ import java.util.Optional;
 public class Value {
     private final Datatype datatype;
     private final Object value;
+    private static final NumberFormat format = new DecimalFormat("#0.##", DecimalFormatSymbols.getInstance(Locale.US));
 
     public Value(Datatype datatype, Object value) {
         this.datatype = datatype;
@@ -63,9 +68,9 @@ public class Value {
         }
     }
 
-    public Vector3d vectorValue() {
+    public Vec3 vectorValue() {
         if (this.datatype == Datatype.VECTOR) {
-            return (Vector3d)this.value;
+            return (Vec3)this.value;
         } else {
             throw new IllegalStateException("Requested type does not match actual type: " + this.datatype);
         }
@@ -118,7 +123,7 @@ public class Value {
         return new Value(Datatype.STRING, value);
     }
 
-    public static Value createVector(Vector3d value) {
+    public static Value createVector(Vec3 value) {
         return new Value(Datatype.VECTOR, value);
     }
 
@@ -142,9 +147,9 @@ public class Value {
     public String toString() {
         return switch (this.getDatatype()) {
             case BOOL -> this.boolValue().toString();
-            case NUMBER -> String.format("%f.2", this.numberValue());
+            case NUMBER -> format.format(this.numberValue());
             case STRING -> this.stringValue();
-            case VECTOR -> String.format("(%f.2, %f.2, %f.2)", this.vectorValue().x, this.vectorValue().y, this.vectorValue().z);
+            case VECTOR -> "(" + format.format(this.vectorValue().x) + ", " + format.format(this.vectorValue().y) + ", " + format.format(this.vectorValue().z) + ")";
             case ENTITY -> this.entityValue().getDisplayName().toString();
             case BLOCK -> this.blockValue().getName().toString();
             case ITEM -> this.itemValue().toString();
