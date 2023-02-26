@@ -155,11 +155,15 @@ public class GraphRenderer {
             if (dt != Datatype.FLOW) {
                 RenderUtil.putQuad(mat, bb, socketX + 1, socketY, 3, 5, dt.r, dt.g, dt.b);
                 RenderUtil.putQuad(mat, bb, socketX, socketY + 1, 5, 3, dt.r, dt.g, dt.b);
+                if (socketInstance.getConnections().isEmpty() && socketInstance.getBase().getDirection() == Socket.Direction.IN) {
+                    RenderUtil.putQuad(mat, bb, socketX + 2, socketY + 2, 1, 1, 0, 0, 0);
+                }
             } else {
                 RenderUtil.putQuad(mat, bb, socketX, socketY, 4, 1, dt.r, dt.g, dt.b);
                 RenderUtil.putQuad(mat, bb, socketX + 1, socketY + 1, 4, 3, dt.r, dt.g, dt.b);
                 RenderUtil.putQuad(mat, bb, socketX, socketY + 4, 4, 1, dt.r, dt.g, dt.b);
             }
+
         }
 
         BufferUploader.drawWithShader(bb.end());

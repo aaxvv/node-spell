@@ -98,10 +98,10 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
         Font font = Minecraft.getInstance().font;
         int xStride = this.width / NodeConstants.NODE_PICKER_COLUMNS;
 
-        for (int i = 0; i < 12; i++) {
-            if (i >= categoriesOrdered.size()) {
-                break;
-            }
+        for (int i = 0; i < categoriesOrdered.size(); i++) {
+//            if (i >= categoriesOrdered.size()) {
+//                break;
+//            }
 
             int y = getCategoryY(i);
             int x = getCategoryX(i);

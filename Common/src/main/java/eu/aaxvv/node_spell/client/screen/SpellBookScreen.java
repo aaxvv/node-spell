@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,6 +34,7 @@ import java.util.Optional;
  */
 public class SpellBookScreen extends Screen {
     private static final ResourceLocation BACKGROUND_LOCATION = ModConstants.resLoc("textures/gui/spell_book_bg.png");
+    private static final List<Component> DELETE_TOOLTIP = List.of(Component.translatable("gui.node_spell.delete_tooltip_1"), Component.translatable("gui.node_spell.delete_tooltip_2"));
     // normal inventory width. can be extended if needed (e.g. beacon ui is 230)
     private final int mainAreaWidth = 288;
     // height of double chest screen
@@ -113,7 +115,7 @@ public class SpellBookScreen extends Screen {
         RenderSystem.disableBlend();
 
         if (mouseX >= x + this.mainAreaWidth - 16 && mouseX < x + this.mainAreaWidth && mouseY >= y && mouseY < y + 16) {
-            renderTooltip(pose, Component.literal("Drag Node here to delete"), mouseX, mouseY);
+            renderTooltip(pose, DELETE_TOOLTIP, Optional.empty(), mouseX, mouseY);
         }
     }
 
@@ -178,6 +180,10 @@ public class SpellBookScreen extends Screen {
 
             if (dragState != DragState.NOT_DRAGGING) {
                 return;
+            }
+
+            if (mouseOverDeleteIcon(mouseX, mouseY)) {
+                SpellBookScreen.this.canvas.clearGraph();
             }
 
             if (SpellBookScreen.this.picker.handleClick(mouseX, mouseY)) {
@@ -257,7 +263,7 @@ public class SpellBookScreen extends Screen {
             }
 
             if (this.dragState == DragState.DRAGGING_NODE) {
-                if (mouseX >= SpellBookScreen.this.x + SpellBookScreen.this.mainAreaWidth - 16 && mouseX < SpellBookScreen.this.x + SpellBookScreen.this.mainAreaWidth && mouseY >= SpellBookScreen.this.y && mouseY < mouseY + SpellBookScreen.this.mainAreaHeight) {
+                if (mouseOverDeleteIcon(mouseX, mouseY)) {
                     SpellBookScreen.this.canvas.deleteNode((NodeInstance)this.draggedObject);
                 }
             }
@@ -288,6 +294,13 @@ public class SpellBookScreen extends Screen {
             }
 
             return false;
+        }
+
+        private boolean mouseOverDeleteIcon(int mouseX, int mouseY) {
+            return mouseX >= SpellBookScreen.this.x + SpellBookScreen.this.mainAreaWidth - 16
+                    && mouseX < SpellBookScreen.this.x + SpellBookScreen.this.mainAreaWidth
+                    && mouseY >= SpellBookScreen.this.y
+                    && mouseY < SpellBookScreen.this.y + 16;
         }
     }
 

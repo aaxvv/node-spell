@@ -190,4 +190,8 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
     public void deleteNode(NodeInstance instance) {
         this.graph.removeInstance(instance);
     }
+
+    public void clearGraph() {
+        this.graph.clear();
+    }
 }

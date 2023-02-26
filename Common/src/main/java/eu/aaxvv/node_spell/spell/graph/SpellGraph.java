@@ -95,7 +95,9 @@ public class SpellGraph {
 
         nbt.put("Nodes", instanceList);
         nbt.put("Edges", edgeList);
-        nbt.putInt("Entrypoint", this.nodeInstances.indexOf(this.entrypoint));
+        if (this.entrypoint != null && this.nodeInstances.contains(this.entrypoint)) {
+            nbt.putInt("Entrypoint", this.nodeInstances.indexOf(this.entrypoint));
+        }
     }
 
     public void deserialize(CompoundTag nbt) {
@@ -122,7 +124,10 @@ public class SpellGraph {
         }
 
         if (nbt.contains("Entrypoint")) {
-            this.entrypoint = this.nodeInstances.get(nbt.getInt("Entrypoint"));
+            int entryPointIndex = nbt.getInt("Entrypoint");
+            if (entryPointIndex > 0 && entryPointIndex < this.nodeInstances.size()) {
+                this.entrypoint = this.nodeInstances.get(nbt.getInt("Entrypoint"));
+            }
         }
     }
 
@@ -187,6 +192,12 @@ public class SpellGraph {
                 found = true;
             }
         }
+    }
+
+    public void clear() {
+        this.nodeInstances.clear();
+        this.edges.clear();
+        this.entrypoint = null;
     }
 
 
