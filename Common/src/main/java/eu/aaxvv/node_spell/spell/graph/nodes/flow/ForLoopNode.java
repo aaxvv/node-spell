@@ -65,31 +65,83 @@ public class ForLoopNode extends FlowNode {
     }
 
     private class SubRunner extends SpellRunner {
-        private final NodeInstance nodeInstance;
-        public SubRunner(NodeInstance nodeInstance, SpellContext ctx) {
+        private final NodeInstance loopNode;
+
+        private long startIdx;
+        private long endIdx;
+        private long currIdx;
+
+        public SubRunner(NodeInstance loopNode, SpellContext ctx) {
             super(ctx);
-            this.nodeInstance = nodeInstance;
+            this.loopNode = loopNode;
         }
 
         @Override
-        public boolean run() {
-            List<Edge> loopBodyConnections = nodeInstance.getSocketConnections(ForLoopNode.this.fRepeat);
-            if (loopBodyConnections.size() == 0) {
-                return true;
-            } else if (loopBodyConnections.size() > 1) {
-                throw new IllegalStateException("Flow Output cannot have multiple outgoing connections.");
+        public void start() {
+            this.startIdx = Math.round(loopNode.getSocketValue(ForLoopNode.this.sStartIdx, super.ctx).numberValue());
+            this.endIdx = Math.round(loopNode.getSocketValue(ForLoopNode.this.sEndIdx, super.ctx).numberValue());
+            this.currIdx = this.startIdx;
+            this.currentNode = getFirstNodeInLoop();
+
+            if (this.currentNode != null) {
+                this.running = true;
             }
-            NodeInstance firstLoopNode = loopBodyConnections.get(0).getOpposite(nodeInstance.getSocketInstance(ForLoopNode.this.fRepeat)).getParentInstance();
-
-            long startIdx = Math.round(nodeInstance.getSocketValue(ForLoopNode.this.sStartIdx, super.ctx).numberValue());
-            long endIdx = Math.round(nodeInstance.getSocketValue(ForLoopNode.this.sEndIdx, super.ctx).numberValue());
-
-            for (long i = startIdx; i < endIdx; i++) {
-                this.nodeInstance.setSocketValue(ForLoopNode.this.sIndex, Value.createNumber(i));
-                this.runFromNode(firstLoopNode);
-            }
-
-            return true;
         }
+
+        @Override
+        public void stop() {
+            super.stop();
+            this.currIdx = this.startIdx;
+        }
+
+        @Override
+        protected void tickInner() {
+            if (this.currIdx > this.endIdx) {
+                this.stop();
+                return;
+            }
+
+            this.loopNode.setSocketValue(ForLoopNode.this.sIndex, Value.createNumber(this.currIdx));
+            super.tickInner();
+        }
+
+        @Override
+        protected NodeInstance getNextInstanceInFlow() {
+            NodeInstance next = super.getNextInstanceInFlow();
+            if (next == null) {
+                this.currIdx++;
+                return getFirstNodeInLoop();
+            }
+            return next;
+        }
+
+        private NodeInstance getFirstNodeInLoop() {
+            List<Edge> loopBodyConnections = loopNode.getSocketConnections(ForLoopNode.this.fRepeat);
+            if (loopBodyConnections.isEmpty()) {
+                return null;
+            }
+            return loopBodyConnections.get(0).getOpposite(loopNode.getSocketInstance(ForLoopNode.this.fRepeat)).getParentInstance();
+        }
+
+//        @Override
+//        public boolean run() {
+//            List<Edge> loopBodyConnections = loopNode.getSocketConnections(ForLoopNode.this.fRepeat);
+//            if (loopBodyConnections.size() == 0) {
+//                return true;
+//            } else if (loopBodyConnections.size() > 1) {
+//                throw new IllegalStateException("Flow Output cannot have multiple outgoing connections.");
+//            }
+//            NodeInstance firstLoopNode = loopBodyConnections.get(0).getOpposite(loopNode.getSocketInstance(ForLoopNode.this.fRepeat)).getParentInstance();
+//
+//            long startIdx = Math.round(loopNode.getSocketValue(ForLoopNode.this.sStartIdx, super.ctx).numberValue());
+//            long endIdx = Math.round(loopNode.getSocketValue(ForLoopNode.this.sEndIdx, super.ctx).numberValue());
+//
+//            for (long i = startIdx; i < endIdx; i++) {
+//                this.loopNode.setSocketValue(ForLoopNode.this.sIndex, Value.createNumber(i));
+//                this.runFromNode(firstLoopNode);
+//            }
+//
+//            return true;
+//        }
     }
 }

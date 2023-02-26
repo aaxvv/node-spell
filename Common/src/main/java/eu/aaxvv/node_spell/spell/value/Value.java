@@ -109,7 +109,26 @@ public class Value {
         }
     }
 
+    public Object uncheckedValue() {
+        return this.value;
+    }
+
     // ==== value constructors ====
+    @SuppressWarnings("unchecked")
+    public static Value create(Datatype type, Object value) {
+        return switch (type) {
+            case BOOL -> Value.createBool((Boolean) value);
+            case NUMBER -> Value.createNumber((Double) value);
+            case STRING -> Value.createString((String) value);
+            case VECTOR -> Value.createVector((Vec3) value);
+            case ENTITY -> Value.createEntity((Entity) value);
+            case BLOCK -> Value.createBlock((Block) value);
+            case ITEM -> Value.createItem((ItemStack) value);
+            case LIST -> Value.createList((List<Value>) value);
+            case FLOW -> throw new IllegalArgumentException("Cannot create value of type flow.");
+            case ANY -> throw new IllegalArgumentException("Cannot create value of type any.");
+        };
+    }
 
     public static Value createBool(boolean value) {
         return new Value(Datatype.BOOL, value);

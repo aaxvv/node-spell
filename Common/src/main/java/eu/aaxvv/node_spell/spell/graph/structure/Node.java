@@ -93,6 +93,10 @@ public abstract class Node {
         return false;
     }
 
+    public int getExecutionDelay() {
+        return 1;
+    }
+
     public int getExpectedHeight() {
         return NodeConstants.SOCKET_START_Y + Math.max(this.inSocketCount, this.outSocketCount) * NodeConstants.SOCKET_STEP_Y;
     }

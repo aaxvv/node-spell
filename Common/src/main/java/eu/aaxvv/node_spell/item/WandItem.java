@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.item;
 
+import eu.aaxvv.node_spell.NodeSpellCommon;
 import eu.aaxvv.node_spell.spell.execution.PlayerSpellCache;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
@@ -66,12 +67,12 @@ public class WandItem extends Item {
         }
 
         String spellName = tag.getString("Spell");
-        Optional<Spell> cachedSpell = PlayerSpellCache.get(player.getUUID(), spellName);
+        Optional<Spell> cachedSpell = NodeSpellCommon.playerSpellCache.get(player.getUUID(), spellName);
 
         Spell spellToCast;
         if (cachedSpell.isEmpty()) {
             spellToCast = this.getSpellFromBook(spellBook.bookStack, spellName);
-            PlayerSpellCache.put(player.getUUID(), spellName, spellToCast);
+            NodeSpellCommon.playerSpellCache.put(player.getUUID(), spellName, spellToCast);
         } else {
             spellToCast = cachedSpell.get();
         }
@@ -81,14 +82,13 @@ public class WandItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
-        SpellRunner runner = new SpellRunner(spellToCast.getGraph(), new SpellContext(player, level));
-        boolean success = runner.run();
+        NodeSpellCommon.spellTaskRunner.startSpell(player.getUUID(), spellToCast, new SpellContext(player, level));
 
-        if (!success) {
-            return InteractionResultHolder.fail(stack);
-        } else {
+//        if (!success) {
+//            return InteractionResultHolder.fail(stack);
+//        } else {
             return InteractionResultHolder.consume(stack);
-        }
+//        }
     }
 
     private SpellBookResult findPlayerSpellBook(Player player) {

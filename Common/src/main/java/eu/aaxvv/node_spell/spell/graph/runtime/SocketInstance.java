@@ -68,6 +68,10 @@ public class SocketInstance {
 
     public Value getComputedValue(SpellContext ctx) {
         if (this.base.getDirection() == Socket.Direction.IN) {
+            if (this.connections.isEmpty()) {
+                return this.base.getDataType().defaultValue.get();
+            }
+
             return getSingleConnection().getOpposite(this).getComputedValue(ctx);
         } else {
             //TODO: guard against running a node with side-effects multiple times
