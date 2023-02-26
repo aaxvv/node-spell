@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.spell;
+package eu.aaxvv.node_spell.spell.execution;
 
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;

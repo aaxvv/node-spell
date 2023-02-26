@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell;
 
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import net.minecraft.nbt.CompoundTag;
 

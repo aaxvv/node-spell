@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.spell;
+package eu.aaxvv.node_spell.spell.execution;
 
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.world.entity.Entity;
