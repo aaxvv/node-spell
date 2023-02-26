@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.spell.graph.nodes.block_and_item;
+package eu.aaxvv.node_spell.spell.graph.nodes.block;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
@@ -18,7 +18,7 @@ public class BlockFromItemNode extends Node {
     public final Socket sBlock;
 
     public BlockFromItemNode() {
-        super(NodeCategories.ENTITY, ModConstants.resLoc("block_from_item"));
+        super(NodeCategories.BLOCK, ModConstants.resLoc("block_from_item"));
         this.sItem = addInputSocket(Datatype.ITEM, "socket.node_spell.item");
         this.sBlock = addOutputSocket(Datatype.BLOCK, "socket.node_spell.block");
     }

@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.spell.graph.nodes.math;
+package eu.aaxvv.node_spell.spell.graph.nodes.vector;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
@@ -16,7 +16,7 @@ public class VectorDotNode extends Node {
     public final Socket sResult;
 
     public VectorDotNode() {
-        super(NodeCategories.MATH, ModConstants.resLoc("vec_dot"));
+        super(NodeCategories.VECTOR, ModConstants.resLoc("vec_dot"));
         this.sA = addInputSocket(Datatype.VECTOR, "socket.node_spell.a");
         this.sB = addInputSocket(Datatype.VECTOR, "socket.node_spell.b");
         this.sResult = addOutputSocket(Datatype.NUMBER, "socket.node_spell.result");

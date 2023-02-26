@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.spell.graph.nodes.math;
+package eu.aaxvv.node_spell.spell.graph.nodes.vector;
 
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
@@ -20,7 +20,7 @@ public class BasicVectorOpNode extends Node {
     private final BiFunction<Vec3, Vec3, Vec3> operation;
 
     public BasicVectorOpNode(ResourceLocation resLoc, BiFunction<Vec3, Vec3, Vec3> operation) {
-        super(NodeCategories.MATH, resLoc);
+        super(NodeCategories.VECTOR, resLoc);
         this.sA = addInputSocket(Datatype.VECTOR, "socket.node_spell.a");
         this.sB = addInputSocket(Datatype.VECTOR, "socket.node_spell.b");
         this.sResult = addOutputSocket(Datatype.VECTOR, "socket.node_spell.result");

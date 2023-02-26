@@ -19,7 +19,7 @@ public class BasicVecToNumberNode extends Node {
     private final Function<Vec3, Double> operation;
 
     public BasicVecToNumberNode(ResourceLocation resLoc, Function<Vec3, Double> operation) {
-        super(NodeCategories.MATH, resLoc);
+        super(NodeCategories.VECTOR, resLoc);
         this.sA = addInputSocket(Datatype.VECTOR, "socket.node_spell.empty");
         this.sResult = addOutputSocket(Datatype.NUMBER, "socket.node_spell.result");
         this.operation = operation;
