@@ -103,7 +103,9 @@ public class SpellGraph {
         for (int i = 0; i < instanceList.size(); i++) {
             CompoundTag instanceNbt = instanceList.getCompound(i);
             NodeInstance instance = NodeInstance.fromNbt(instanceNbt);
-            this.nodeInstances.add(instance);
+            if (instance != null) {
+                this.nodeInstances.add(instance);
+            }
         }
 
         ListTag edgeList = nbt.getList("Edges", Tag.TAG_INT_ARRAY);
@@ -128,15 +130,22 @@ public class SpellGraph {
         try {
             NodeInstance startNode = this.nodeInstances.get(nbtData[0]);
             NodeInstance endNode = this.nodeInstances.get(nbtData[1]);
+            if (startNode == null || endNode == null) {
+                ModConstants.LOG.warn("Could not deserialize edge due to missing node instance.");
+                return null;
+            }
+
             SocketInstance startSocket = startNode.getSocketWithHash(nbtData[2]);
             SocketInstance endSocket = endNode.getSocketWithHash(nbtData[3]);
 
             if (startSocket == null || endSocket == null) {
+                ModConstants.LOG.warn("Could not deserialize edge due to missing socket instance.");
                 return null;
             } else {
                 return Edge.create(startSocket, endSocket);
             }
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException | IllegalArgumentException ex) {
+            ModConstants.LOG.warn("Could not deserialize edge.", ex);
             return null;
         }
     }
