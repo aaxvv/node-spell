@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.math;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -18,16 +18,16 @@ public class BasicNumberOpNode extends Node {
 
     private final BiFunction<Double, Double, Double> operation;
 
-    public BasicNumberOpNode(String name, ResourceLocation resLoc, BiFunction<Double, Double, Double> operation) {
-        super(name, NodeCategories.MATH, resLoc);
-        this.sA = addInputSocket(Datatype.NUMBER, "a");
-        this.sB = addInputSocket(Datatype.NUMBER, "b");
-        this.sResult = addOutputSocket(Datatype.NUMBER, "Result");
+    public BasicNumberOpNode(ResourceLocation resLoc, BiFunction<Double, Double, Double> operation) {
+        super(NodeCategories.MATH, resLoc);
+        this.sA = addInputSocket(Datatype.NUMBER, "socket.node_spell.a");
+        this.sB = addInputSocket(Datatype.NUMBER, "socket.node_spell.b");
+        this.sResult = addOutputSocket(Datatype.NUMBER, "socket.node_spell.result");
         this.operation = operation;
     }
 
-    public BasicNumberOpNode(String name, ResourceLocation resLoc, String inputAName, String inputBName, BiFunction<Double, Double, Double> operation) {
-        super(name, NodeCategories.MATH, resLoc);
+    public BasicNumberOpNode(ResourceLocation resLoc, String inputAName, String inputBName, BiFunction<Double, Double, Double> operation) {
+        super(NodeCategories.MATH, resLoc);
         this.sA = addInputSocket(Datatype.NUMBER, inputAName);
         this.sB = addInputSocket(Datatype.NUMBER, inputBName);
         this.sResult = addOutputSocket(Datatype.NUMBER, "Result");

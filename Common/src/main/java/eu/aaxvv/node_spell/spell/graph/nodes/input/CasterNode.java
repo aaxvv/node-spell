@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.input;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -12,8 +12,8 @@ import eu.aaxvv.node_spell.spell.value.Value;
 public class CasterNode extends Node {
     public final Socket sOut;
     public CasterNode() {
-        super("Caster", NodeCategories.INPUT, ModConstants.resLoc("caster"));
-        sOut = addOutputSocket(Datatype.ENTITY, "Caster");
+        super(NodeCategories.INPUT, ModConstants.resLoc("caster"));
+        sOut = addOutputSocket(Datatype.ENTITY, "socket.node_spell.caster");
     }
 
     @Override

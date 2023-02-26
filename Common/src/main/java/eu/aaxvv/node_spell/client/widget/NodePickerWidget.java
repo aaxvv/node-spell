@@ -68,7 +68,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
             }
 
             for (List<Node> list : nodesByCategory.values()) {
-                list.sort(Comparator.comparing(Node::getName));
+                list.sort(Comparator.comparing(n -> (Component.translatable(n.getTranslationKey()).toString())));
             }
         }
 
@@ -85,7 +85,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
             maxNodeNameWidth = new HashMap<>();
 
             for (var entry : nodesByCategory.entrySet()) {
-                int maxWidth = entry.getValue().stream().mapToInt(node -> Minecraft.getInstance().font.width(node.getName())).max().orElse(0);
+                int maxWidth = entry.getValue().stream().mapToInt(node -> Minecraft.getInstance().font.width(Component.translatable(node.getTranslationKey()))).max().orElse(0);
                 maxNodeNameWidth.put(entry.getKey(), maxWidth);
             }
         }
@@ -131,7 +131,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
             for (int i = 0; i < nodes.size(); i++) {
                 int x = popupX + 3;
                 int y = popupY + (12 * i) + 3;
-                font.draw(pose, nodes.get(i).getName(), x, y, NodeConstants.TITLE_TEXT_COLOR);
+                font.draw(pose, Component.translatable(nodes.get(i).getTranslationKey()), x, y, NodeConstants.TITLE_TEXT_COLOR);
 
                 if (mouseX >= x && mouseX < x + popupWidth - 4 && mouseY >= y && mouseY < y + 9) {
                     GuiComponent.fill(pose, x - 1, y - 1, x + popupWidth - 4, y + 8, 0x20000000);

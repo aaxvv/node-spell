@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.action;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.SimpleFlowNode;
@@ -14,8 +14,8 @@ import net.minecraft.server.level.ServerPlayer;
 public class DebugPrintNode extends SimpleFlowNode {
     public final Socket sVal;
     public DebugPrintNode() {
-        super("Print", NodeCategories.ACTION, ModConstants.resLoc("print"));
-        this.sVal = addInputSocket(Datatype.ANY, "Value");
+        super(NodeCategories.ACTION, ModConstants.resLoc("print"));
+        this.sVal = addInputSocket(Datatype.ANY, "socket.node_spell.value");
     }
 
     @Override

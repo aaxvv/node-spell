@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.runtime;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Value;
 

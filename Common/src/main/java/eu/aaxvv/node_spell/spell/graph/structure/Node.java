@@ -2,7 +2,7 @@ package eu.aaxvv.node_spell.spell.graph.structure;
 
 import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.nbt.CompoundTag;
@@ -21,15 +21,24 @@ import java.util.List;
  * @see NodeInstance
  */
 public abstract class Node {
-    private final String name;
+    private final String translationKey;
     private final NodeCategory category;
     private final List<Socket> sockets;
     private int inSocketCount;
     private int outSocketCount;
     private final ResourceLocation resourceLocation;
 
-    public Node(String name, NodeCategory category, ResourceLocation resourceLocation) {
-        this.name = name;
+    public Node(NodeCategory category, ResourceLocation resourceLocation) {
+        this.translationKey = resourceLocation.toLanguageKey("node");
+        this.category = category;
+        this.sockets = new ArrayList<>();
+        this.inSocketCount = 0;
+        this.outSocketCount = 0;
+        this.resourceLocation = resourceLocation;
+    }
+
+    public Node(String translationKey, NodeCategory category, ResourceLocation resourceLocation) {
+        this.translationKey = translationKey;
         this.category = category;
         this.sockets = new ArrayList<>();
         this.inSocketCount = 0;
@@ -50,15 +59,15 @@ public abstract class Node {
         return Collections.unmodifiableList(this.sockets);
     }
 
-    protected final Socket addInputSocket(Datatype datatype, String name) {
-        Socket socket = new Socket(datatype, name, this, Socket.Direction.IN, this.inSocketCount);
+    protected final Socket addInputSocket(Datatype datatype, String translationKey) {
+        Socket socket = new Socket(datatype, translationKey, this, Socket.Direction.IN, this.inSocketCount);
         addSocket(socket);
         this.inSocketCount++;
         return socket;
     }
 
-    protected final Socket addOutputSocket(Datatype datatype, String name) {
-        Socket socket = new Socket(datatype, name, this, Socket.Direction.OUT, this.outSocketCount);
+    protected final Socket addOutputSocket(Datatype datatype, String translationKey) {
+        Socket socket = new Socket(datatype, translationKey, this, Socket.Direction.OUT, this.outSocketCount);
         addSocket(socket);
         this.outSocketCount++;
         return socket;
@@ -68,8 +77,8 @@ public abstract class Node {
         return new NodeInstance(this);
     }
 
-    public String getName() {
-        return name;
+    public String getTranslationKey() {
+        return translationKey;
     }
 
     public NodeCategory getCategory() {

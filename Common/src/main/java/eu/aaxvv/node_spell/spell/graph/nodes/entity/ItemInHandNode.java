@@ -2,7 +2,7 @@ package eu.aaxvv.node_spell.spell.graph.nodes.entity;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.item.ModItems;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -19,9 +19,9 @@ public class ItemInHandNode extends Node {
     public final Socket sItem;
 
     public ItemInHandNode() {
-        super("Item in hand", NodeCategories.ENTITY, ModConstants.resLoc("entity_item_in_hand"));
-        this.sEntity = addInputSocket(Datatype.ENTITY, "Entity");
-        this.sItem = addOutputSocket(Datatype.ITEM, "Item");
+        super(NodeCategories.ENTITY, ModConstants.resLoc("entity_item_in_hand"));
+        this.sEntity = addInputSocket(Datatype.ENTITY, "socket.node_spell.entity");
+        this.sItem = addOutputSocket(Datatype.ITEM, "socket.node_spell.item");
     }
 
     @Override

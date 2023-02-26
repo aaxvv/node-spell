@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.spell.graph.structure;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
+import net.minecraft.network.chat.Component;
 
 import java.util.Objects;
 
@@ -13,14 +14,14 @@ import java.util.Objects;
  */
 public class Socket {
     private final Datatype dataType;
-    private final String name;
+    private final String translationKey;
     private final Node parentNode;
     private final Direction direction;
     private final int positionOnNode;
 
-    public Socket(Datatype dataType, String name, Node parentNode, Direction direction, int positionOnNode) {
+    public Socket(Datatype dataType, String translationKey, Node parentNode, Direction direction, int positionOnNode) {
         this.dataType = dataType;
-        this.name = name;
+        this.translationKey = translationKey;
         this.parentNode = parentNode;
         this.direction = direction;
         this.positionOnNode = positionOnNode;
@@ -34,8 +35,8 @@ public class Socket {
         return this.direction;
     }
 
-    public String getName() {
-        return name;
+    public String getTranslationKey() {
+        return translationKey;
     }
 
     public Node getParentNode() {
@@ -58,12 +59,12 @@ public class Socket {
     public int getSerializationHash() {
         int typeIdx = this.getDataType().ordinal();
         int direction = this.getDirection().ordinal();
-        int nameHash = this.getName().hashCode();
+        int nameHash = this.getTranslationKey().hashCode();
         return Objects.hash(nameHash, typeIdx, direction);
     }
 
     @Override
     public String toString() {
-        return this.name + "[" + this.dataType + ", " + this.direction + "]";
+        return Component.translatable(this.translationKey) + "[" + this.dataType + ", " + this.direction + "]";
     }
 }

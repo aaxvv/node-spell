@@ -2,7 +2,7 @@ package eu.aaxvv.node_spell.network.packet;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.item.ModItems;
-import eu.aaxvv.node_spell.spell.PlayerSpellCache;
+import eu.aaxvv.node_spell.spell.execution.PlayerSpellCache;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;

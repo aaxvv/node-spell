@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.math;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -16,10 +16,10 @@ public class VectorDotNode extends Node {
     public final Socket sResult;
 
     public VectorDotNode() {
-        super("Vec. Dot", NodeCategories.MATH, ModConstants.resLoc("vec_dot"));
-        this.sA = addInputSocket(Datatype.VECTOR, "a");
-        this.sB = addInputSocket(Datatype.VECTOR, "b");
-        this.sResult = addOutputSocket(Datatype.NUMBER, "Result");
+        super(NodeCategories.MATH, ModConstants.resLoc("vec_dot"));
+        this.sA = addInputSocket(Datatype.VECTOR, "socket.node_spell.a");
+        this.sB = addInputSocket(Datatype.VECTOR, "socket.node_spell.b");
+        this.sResult = addOutputSocket(Datatype.NUMBER, "socket.node_spell.result");
     }
 
     @Override

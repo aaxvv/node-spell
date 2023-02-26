@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.flow;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
@@ -12,8 +12,8 @@ public class EntryPointNode extends FlowNode {
     public final Socket fOut;
 
     public EntryPointNode() {
-        super("Entrypoint", NodeCategories.FLOW, ModConstants.resLoc("entrypoint"));
-        this.fOut = addOutputSocket(Datatype.FLOW, "Start");
+        super(NodeCategories.FLOW, ModConstants.resLoc("entrypoint"));
+        this.fOut = addOutputSocket(Datatype.FLOW, "socket.node_spell.start");
     }
 
     @Override

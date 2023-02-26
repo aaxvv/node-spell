@@ -1,38 +1,31 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.action;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
-import eu.aaxvv.node_spell.spell.SpellExecutionException;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellExecutionException;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
-import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import eu.aaxvv.node_spell.spell.graph.structure.SimpleFlowNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.function.Predicate;
 
 public class PlaceBlockNode extends SimpleFlowNode {
     public final Socket sPos;
     public final Socket sBlock;
 
     public PlaceBlockNode() {
-        super("Place Block", NodeCategories.ACTION, ModConstants.resLoc("place_block"));
-        this.sPos = addInputSocket(Datatype.VECTOR, "Pos");
-        this.sBlock = addInputSocket(Datatype.BLOCK, "Block");
+        super(NodeCategories.ACTION, ModConstants.resLoc("place_block"));
+        this.sPos = addInputSocket(Datatype.VECTOR, "socket.node_spell.pos");
+        this.sBlock = addInputSocket(Datatype.BLOCK, "socket.node_spell.block");
     }
 
     @Override

@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.string;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -20,11 +20,11 @@ public class BasicStringOpNode<T> extends Node {
     private final BiFunction<String, String, T> operation;
     private final Function<T, Value> valueFunc;
 
-    public BasicStringOpNode(String name, ResourceLocation resLoc, Datatype outputType, Function<T, Value> valueFunc, BiFunction<String, String, T> operation) {
-        super(name, NodeCategories.STRING, resLoc);
-        this.sA = addInputSocket(Datatype.STRING, "a");
-        this.sB = addInputSocket(Datatype.STRING, "b");
-        this.sResult = addOutputSocket(outputType, "Result");
+    public BasicStringOpNode(ResourceLocation resLoc, Datatype outputType, Function<T, Value> valueFunc, BiFunction<String, String, T> operation) {
+        super(NodeCategories.STRING, resLoc);
+        this.sA = addInputSocket(Datatype.STRING, "socket.node_spell.a");
+        this.sB = addInputSocket(Datatype.STRING, "socket.node_spell.b");
+        this.sResult = addOutputSocket(outputType, "socket.node_spell.result");
         this.operation = operation;
         this.valueFunc = valueFunc;
     }

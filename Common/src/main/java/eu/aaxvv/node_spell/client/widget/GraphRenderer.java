@@ -15,6 +15,7 @@ import eu.aaxvv.node_spell.util.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 
@@ -221,10 +222,10 @@ public class GraphRenderer {
         int x = instance.getX() + this.x + this.windowPanX;
         int y = instance.getY() + this.y + this.windowPanY;
 
-        font.draw(pose, instance.getBaseNode().getName(), x + 2, y + 2, NodeConstants.TITLE_TEXT_COLOR);
+        font.draw(pose, Component.translatable(instance.getBaseNode().getTranslationKey()), x + 2, y + 2, NodeConstants.TITLE_TEXT_COLOR);
 
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
-            String name = socketInstance.getBase().getName();
+            Component name = Component.translatable(socketInstance.getBase().getTranslationKey());
             int socketX = socketInstance.getX() + this.x + this.windowPanX;
             int socketY = socketInstance.getY() + this.y + this.windowPanY;
 

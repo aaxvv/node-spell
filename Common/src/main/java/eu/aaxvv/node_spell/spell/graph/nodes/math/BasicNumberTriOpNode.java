@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.math;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -18,17 +18,17 @@ public class BasicNumberTriOpNode extends Node {
 
     private final TriFunction<Double, Double, Double, Double> operation;
 
-    public BasicNumberTriOpNode(String name, ResourceLocation resLoc, TriFunction<Double, Double, Double, Double> operation) {
-        super(name, NodeCategories.MATH, resLoc);
-        this.sA = addInputSocket(Datatype.NUMBER, "a");
-        this.sB = addInputSocket(Datatype.NUMBER, "b");
-        this.sC = addInputSocket(Datatype.NUMBER, "c");
-        this.sResult = addOutputSocket(Datatype.NUMBER, "Result");
+    public BasicNumberTriOpNode(ResourceLocation resLoc, TriFunction<Double, Double, Double, Double> operation) {
+        super(NodeCategories.MATH, resLoc);
+        this.sA = addInputSocket(Datatype.NUMBER, "socket.node_spell.a");
+        this.sB = addInputSocket(Datatype.NUMBER, "socket.node_spell.b");
+        this.sC = addInputSocket(Datatype.NUMBER, "socket.node_spell.c");
+        this.sResult = addOutputSocket(Datatype.NUMBER, "socket.node_spell.result");
         this.operation = operation;
     }
 
-    public BasicNumberTriOpNode(String name, ResourceLocation resLoc, String inputAName, String inputBName, String inputCName, TriFunction<Double, Double, Double, Double> operation) {
-        super(name, NodeCategories.MATH, resLoc);
+    public BasicNumberTriOpNode(ResourceLocation resLoc, String inputAName, String inputBName, String inputCName, TriFunction<Double, Double, Double, Double> operation) {
+        super(NodeCategories.MATH, resLoc);
         this.sA = addInputSocket(Datatype.NUMBER, inputAName);
         this.sB = addInputSocket(Datatype.NUMBER, inputBName);
         this.sC = addInputSocket(Datatype.NUMBER, inputCName);

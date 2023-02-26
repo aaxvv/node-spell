@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class BoolConstantNode extends BaseConstantNode<Boolean> {
     public BoolConstantNode() {
-        super("Const. Bool", Datatype.BOOL, ModConstants.resLoc("const_bool"), () -> false, Value::createBool);
+        super(Datatype.BOOL, ModConstants.resLoc("const_bool"), () -> false, Value::createBool);
     }
 
     @Override

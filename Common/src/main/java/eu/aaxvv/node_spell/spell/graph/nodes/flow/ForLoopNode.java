@@ -1,8 +1,8 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.flow;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
-import eu.aaxvv.node_spell.spell.SpellRunner;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellRunner;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
@@ -23,13 +23,13 @@ public class ForLoopNode extends FlowNode {
     public final Socket fRepeat;
 
     public ForLoopNode() {
-        super("For Range", NodeCategories.FLOW, ModConstants.resLoc("for_range"));
-        this.fIn = addInputSocket(Datatype.FLOW, "");
-        this.fComplete = addOutputSocket(Datatype.FLOW, "Done");
-        this.sStartIdx = addInputSocket(Datatype.NUMBER, "Start Idx");
-        this.sEndIdx = addInputSocket(Datatype.NUMBER, "End Idx");
-        this.fRepeat = addOutputSocket(Datatype.FLOW, "Repeat");
-        this.sIndex = addOutputSocket(Datatype.NUMBER, "Index");
+        super(NodeCategories.FLOW, ModConstants.resLoc("for_range"));
+        this.fIn = addInputSocket(Datatype.FLOW, "socket.node_spell.empty");
+        this.fComplete = addOutputSocket(Datatype.FLOW, "socket.node_spell.done");
+        this.sStartIdx = addInputSocket(Datatype.NUMBER, "socket.node_spell.start_idx");
+        this.sEndIdx = addInputSocket(Datatype.NUMBER, "socket.node_spell.end_idx");
+        this.fRepeat = addOutputSocket(Datatype.FLOW, "socket.node_spell.repeat");
+        this.sIndex = addOutputSocket(Datatype.NUMBER, "socket.node_spell.index");
     }
 
     @Override

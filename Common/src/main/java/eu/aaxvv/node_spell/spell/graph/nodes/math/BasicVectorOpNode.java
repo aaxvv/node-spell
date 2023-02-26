@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.math;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -19,11 +19,11 @@ public class BasicVectorOpNode extends Node {
 
     private final BiFunction<Vec3, Vec3, Vec3> operation;
 
-    public BasicVectorOpNode(String name, ResourceLocation resLoc, BiFunction<Vec3, Vec3, Vec3> operation) {
-        super(name, NodeCategories.MATH, resLoc);
-        this.sA = addInputSocket(Datatype.VECTOR, "a");
-        this.sB = addInputSocket(Datatype.VECTOR, "b");
-        this.sResult = addOutputSocket(Datatype.VECTOR, "Result");
+    public BasicVectorOpNode(ResourceLocation resLoc, BiFunction<Vec3, Vec3, Vec3> operation) {
+        super(NodeCategories.MATH, resLoc);
+        this.sA = addInputSocket(Datatype.VECTOR, "socket.node_spell.a");
+        this.sB = addInputSocket(Datatype.VECTOR, "socket.node_spell.b");
+        this.sResult = addOutputSocket(Datatype.VECTOR, "socket.node_spell.result");
         this.operation = operation;
     }
 

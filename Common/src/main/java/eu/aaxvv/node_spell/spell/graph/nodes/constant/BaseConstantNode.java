@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.constant;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -17,9 +17,9 @@ public abstract class BaseConstantNode<T> extends Node {
     private final Function<T, Value> valueCreatorFunc;
     private final Supplier<T> defaultValueSupplier;
 
-    public BaseConstantNode(String name, Datatype datatype, ResourceLocation resourceLocation, Supplier<T> defaultValueSupplier, Function<T, Value> valueCreatorFunc) {
-        super(name, NodeCategories.INPUT, resourceLocation);
-        this.sValue = addOutputSocket(datatype, "");
+    public BaseConstantNode(Datatype datatype, ResourceLocation resourceLocation, Supplier<T> defaultValueSupplier, Function<T, Value> valueCreatorFunc) {
+        super(NodeCategories.INPUT, resourceLocation);
+        this.sValue = addOutputSocket(datatype, "socket.node_spell.empty");
         this.defaultValueSupplier = defaultValueSupplier;
         this.valueCreatorFunc = valueCreatorFunc;
     }

@@ -38,35 +38,35 @@ public class Nodes {
 
 //    public static final Node ADD = new AddNode();
     // ===== MATH =====
-    public static final Node ADD = new BasicNumberOpNode("Add", ModConstants.resLoc("add"), Double::sum);
-    public static final Node SUBTRACT = new BasicNumberOpNode("Subtract", ModConstants.resLoc("subtract"), (a, b) -> a - b);
-    public static final Node MULTIPLY = new BasicNumberOpNode("Multiply", ModConstants.resLoc("multiply"), (a, b) -> a * b);
-    public static final Node DIVIDE = new BasicNumberOpNode("Divide", ModConstants.resLoc("divide"), (a, b) -> b == 0 ? (a < 0 ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY) : a / b);
-    public static final Node POW = new BasicNumberOpNode("Power", ModConstants.resLoc("power"), "Base", "Exp.", Math::pow);
-    public static final Node SQRT = new BasicNumberUnaryOpNode("Sqrt.", ModConstants.resLoc("sqrt"), Math::sqrt);
-    public static final Node SIGN = new BasicNumberUnaryOpNode("Sign", ModConstants.resLoc("sign"), Math::signum);
-    public static final Node CLAMP = new BasicNumberTriOpNode("Clamp", ModConstants.resLoc("clamp"), "Low", "High", "Val", (l, h, v) -> Math.max(l, Math.min(h, v)));
+    public static final Node ADD = new BasicNumberOpNode(ModConstants.resLoc("add"), Double::sum);
+    public static final Node SUBTRACT = new BasicNumberOpNode(ModConstants.resLoc("subtract"), (a, b) -> a - b);
+    public static final Node MULTIPLY = new BasicNumberOpNode(ModConstants.resLoc("multiply"), (a, b) -> a * b);
+    public static final Node DIVIDE = new BasicNumberOpNode(ModConstants.resLoc("divide"), (a, b) -> b == 0 ? (a < 0 ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY) : a / b);
+    public static final Node POW = new BasicNumberOpNode(ModConstants.resLoc("power"), "socket.node_spell.base", "socket.node_spell.exponent", Math::pow);
+    public static final Node SQRT = new BasicNumberUnaryOpNode(ModConstants.resLoc("sqrt"), Math::sqrt);
+    public static final Node SIGN = new BasicNumberUnaryOpNode(ModConstants.resLoc("sign"), Math::signum);
+    public static final Node CLAMP = new BasicNumberTriOpNode(ModConstants.resLoc("clamp"), "Low", "High", "Val", (l, h, v) -> Math.max(l, Math.min(h, v)));
     // map
 
-    public static final Node VEC_ADD = new BasicVectorOpNode("Vec. Add", ModConstants.resLoc("vec_add"), Vec3::add);
-    public static final Node VEC_SUB = new BasicVectorOpNode("Vec. Sub.", ModConstants.resLoc("vec_subtract"), Vec3::subtract);
-    public static final Node VEC_LENGTH = new BasicVecToNumberNode("Vec. Length", ModConstants.resLoc("vec_length"), Vec3::length);
+    public static final Node VEC_ADD = new BasicVectorOpNode(ModConstants.resLoc("vec_add"), Vec3::add);
+    public static final Node VEC_SUB = new BasicVectorOpNode(ModConstants.resLoc("vec_subtract"), Vec3::subtract);
+    public static final Node VEC_LENGTH = new BasicVecToNumberNode(ModConstants.resLoc("vec_length"), Vec3::length);
     public static final Node VEC_DOT = new VectorDotNode();
-    public static final Node VEC_CROSS = new BasicVectorOpNode("Vec. Cross", ModConstants.resLoc("vec_cross"), Vec3::cross);
+    public static final Node VEC_CROSS = new BasicVectorOpNode(ModConstants.resLoc("vec_cross"), Vec3::cross);
     // scale
 
     // ===== LOGIC =====
-    public static final Node AND = new BasicBoolOpNode("And", ModConstants.resLoc("and"), (a, b) -> a && b);
-    public static final Node OR = new BasicBoolOpNode("Or", ModConstants.resLoc("or"), (a, b) -> a || b);
-    public static final Node XOR = new BasicBoolOpNode("Xor", ModConstants.resLoc("xor"), (a, b) -> a ^ b);
+    public static final Node AND = new BasicBoolOpNode(ModConstants.resLoc("and"), (a, b) -> a && b);
+    public static final Node OR = new BasicBoolOpNode(ModConstants.resLoc("or"), (a, b) -> a || b);
+    public static final Node XOR = new BasicBoolOpNode(ModConstants.resLoc("xor"), (a, b) -> a ^ b);
 
     // ===== COMPARE =====
     public static final Node EQUALS = new EqualsNode();
     public static final Node NOT_EQUAL = new NotEqualsNode();
-    public static final Node LESS_THAN = new BasicNumberCompNode("<", ModConstants.resLoc("less_than"), (a, b) -> a < b);
-    public static final Node GREATER_THAN = new BasicNumberCompNode(">", ModConstants.resLoc("greater_than"), (a, b) -> a > b);
-    public static final Node LESS_THAN_OR_EQUALS = new BasicNumberCompNode("<=", ModConstants.resLoc("less_than_or_eq"), (a, b) -> a <= b);
-    public static final Node GREATER_THAN_OR_EQUALS = new BasicNumberCompNode(">=", ModConstants.resLoc("greater_than_or_eq"), (a, b) -> a >= b);
+    public static final Node LESS_THAN = new BasicNumberCompNode(ModConstants.resLoc("less_than"), (a, b) -> a < b);
+    public static final Node GREATER_THAN = new BasicNumberCompNode(ModConstants.resLoc("greater_than"), (a, b) -> a > b);
+    public static final Node LESS_THAN_OR_EQUALS = new BasicNumberCompNode(ModConstants.resLoc("less_than_or_eq"), (a, b) -> a <= b);
+    public static final Node GREATER_THAN_OR_EQUALS = new BasicNumberCompNode(ModConstants.resLoc("greater_than_or_eq"), (a, b) -> a >= b);
 
     // ===== FLOW =====
     public static final Node ENTRY_POINT = new EntryPointNode();
@@ -81,11 +81,11 @@ public class Nodes {
     public static final Node BLOCK_FROM_ITEM = new BlockFromItemNode();
 
     // ===== STRING =====
-    public static final Node STRING_APPEND = new BasicStringOpNode<>("Append", ModConstants.resLoc("string_append"), Datatype.STRING, Value::createString, (a, b) -> a + b);
-    public static final Node STRING_CONTAINS = new BasicStringOpNode<>("Contains", ModConstants.resLoc("string_contains"), Datatype.BOOL, Value::createBool, String::contains);
-    public static final Node STRING_STARTS_WITH = new BasicStringOpNode<>("Starts with", ModConstants.resLoc("string_starts_with"), Datatype.BOOL, Value::createBool, String::startsWith);
-    public static final Node STRING_ENDS_WITH = new BasicStringOpNode<>("Ends with", ModConstants.resLoc("string_ends_with"), Datatype.BOOL, Value::createBool, String::endsWith);
-    public static final Node STRING_INDEX_OF = new BasicStringOpNode<>("Index of", ModConstants.resLoc("string_index_of"), Datatype.NUMBER, Value::createNumber, (a, b) -> (double)a.indexOf(b));
+    public static final Node STRING_APPEND = new BasicStringOpNode<>(ModConstants.resLoc("string_append"), Datatype.STRING, Value::createString, (a, b) -> a + b);
+    public static final Node STRING_CONTAINS = new BasicStringOpNode<>(ModConstants.resLoc("string_contains"), Datatype.BOOL, Value::createBool, String::contains);
+    public static final Node STRING_STARTS_WITH = new BasicStringOpNode<>(ModConstants.resLoc("string_starts_with"), Datatype.BOOL, Value::createBool, String::startsWith);
+    public static final Node STRING_ENDS_WITH = new BasicStringOpNode<>(ModConstants.resLoc("string_ends_with"), Datatype.BOOL, Value::createBool, String::endsWith);
+    public static final Node STRING_INDEX_OF = new BasicStringOpNode<>(ModConstants.resLoc("string_index_of"), Datatype.NUMBER, Value::createNumber, (a, b) -> (double)a.indexOf(b));
     // substring, char at,
 
     // ===== ACTION =====

@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.entity;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -15,9 +15,9 @@ public class EntityPositionNode extends Node {
     public final Socket sPosition;
 
     public EntityPositionNode() {
-        super("Entity Pos.", NodeCategories.ENTITY, ModConstants.resLoc("entity_pos"));
-        this.sEntity = addInputSocket(Datatype.ENTITY, "Entity");
-        this.sPosition = addOutputSocket(Datatype.VECTOR, "Pos.");
+        super(NodeCategories.ENTITY, ModConstants.resLoc("entity_pos"));
+        this.sEntity = addInputSocket(Datatype.ENTITY, "socket.node_spell.entity");
+        this.sPosition = addOutputSocket(Datatype.VECTOR, "socket.node_spell.pos");
     }
 
     @Override

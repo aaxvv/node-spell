@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.math;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -18,10 +18,10 @@ public class BasicVecToNumberNode extends Node {
 
     private final Function<Vec3, Double> operation;
 
-    public BasicVecToNumberNode(String name, ResourceLocation resLoc, Function<Vec3, Double> operation) {
-        super(name, NodeCategories.MATH, resLoc);
-        this.sA = addInputSocket(Datatype.VECTOR, "");
-        this.sResult = addOutputSocket(Datatype.NUMBER, "Result");
+    public BasicVecToNumberNode(ResourceLocation resLoc, Function<Vec3, Double> operation) {
+        super(NodeCategories.MATH, resLoc);
+        this.sA = addInputSocket(Datatype.VECTOR, "socket.node_spell.empty");
+        this.sResult = addOutputSocket(Datatype.NUMBER, "socket.node_spell.result");
         this.operation = operation;
     }
 

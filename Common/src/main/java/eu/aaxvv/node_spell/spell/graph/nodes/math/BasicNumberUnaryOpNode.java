@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.math;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -17,10 +17,10 @@ public class BasicNumberUnaryOpNode extends Node {
 
     private final Function<Double, Double> operation;
 
-    public BasicNumberUnaryOpNode(String name, ResourceLocation resLoc, Function<Double, Double> operation) {
-        super(name, NodeCategories.MATH, resLoc);
-        this.sA = addInputSocket(Datatype.NUMBER, "");
-        this.sResult = addOutputSocket(Datatype.NUMBER, "Result");
+    public BasicNumberUnaryOpNode(ResourceLocation resLoc, Function<Double, Double> operation) {
+        super(NodeCategories.MATH, resLoc);
+        this.sA = addInputSocket(Datatype.NUMBER, "socket.node_spell.empty");
+        this.sResult = addOutputSocket(Datatype.NUMBER, "socket.node_spell.result");
         this.operation = operation;
     }
 

@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class StringConstantNode extends BaseConstantNode<String> {
     public StringConstantNode() {
-        super("Const. Str.", Datatype.STRING, ModConstants.resLoc("const_str"), () -> "", Value::createString);
+        super(Datatype.STRING, ModConstants.resLoc("const_str"), () -> "", Value::createString);
     }
 
     @Override

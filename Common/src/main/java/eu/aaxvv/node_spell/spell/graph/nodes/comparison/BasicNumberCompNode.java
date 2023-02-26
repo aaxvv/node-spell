@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.comparison;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -8,7 +8,6 @@ import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.function.BiFunction;
 
@@ -19,11 +18,11 @@ public class BasicNumberCompNode extends Node {
 
     private final BiFunction<Double, Double, Boolean> operation;
 
-    public BasicNumberCompNode(String name, ResourceLocation resLoc, BiFunction<Double, Double, Boolean> operation) {
-        super(name, NodeCategories.COMPARISON, resLoc);
-        this.sA = addInputSocket(Datatype.NUMBER, "a");
-        this.sB = addInputSocket(Datatype.NUMBER, "b");
-        this.sResult = addOutputSocket(Datatype.BOOL, "Result");
+    public BasicNumberCompNode(ResourceLocation resLoc, BiFunction<Double, Double, Boolean> operation) {
+        super(NodeCategories.COMPARISON, resLoc);
+        this.sA = addInputSocket(Datatype.NUMBER, "socket.node_spell.a");
+        this.sB = addInputSocket(Datatype.NUMBER, "socket.node_spell.b");
+        this.sResult = addOutputSocket(Datatype.BOOL, "socket.node_spell.result");
         this.operation = operation;
     }
 

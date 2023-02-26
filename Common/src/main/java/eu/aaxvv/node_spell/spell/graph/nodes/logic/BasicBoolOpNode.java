@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.logic;
 
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -18,11 +18,11 @@ public class BasicBoolOpNode extends Node {
 
     private final BiFunction<Boolean, Boolean, Boolean> operation;
 
-    public BasicBoolOpNode(String name, ResourceLocation resLoc, BiFunction<Boolean, Boolean, Boolean> operation) {
-        super(name, NodeCategories.LOGIC, resLoc);
-        this.sA = addInputSocket(Datatype.BOOL, "a");
-        this.sB = addInputSocket(Datatype.BOOL, "b");
-        this.sResult = addOutputSocket(Datatype.BOOL, "Result");
+    public BasicBoolOpNode(ResourceLocation resLoc, BiFunction<Boolean, Boolean, Boolean> operation) {
+        super(NodeCategories.LOGIC, resLoc);
+        this.sA = addInputSocket(Datatype.BOOL, "socket.node_spell.a");
+        this.sB = addInputSocket(Datatype.BOOL, "socket.node_spell.b");
+        this.sResult = addOutputSocket(Datatype.BOOL, "socket.node_spell.result");
         this.operation = operation;
     }
 

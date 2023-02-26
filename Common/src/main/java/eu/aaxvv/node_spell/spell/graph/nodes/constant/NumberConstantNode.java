@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class NumberConstantNode extends BaseConstantNode<Double> {
     public NumberConstantNode() {
-        super("Const. Num.", Datatype.NUMBER, ModConstants.resLoc("const_num"), () -> 0.0, Value::createNumber);
+        super(Datatype.NUMBER, ModConstants.resLoc("const_num"), () -> 0.0, Value::createNumber);
     }
 
     @Override

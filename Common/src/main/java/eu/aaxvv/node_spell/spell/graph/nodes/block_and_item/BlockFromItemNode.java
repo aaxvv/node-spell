@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.block_and_item;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -18,9 +18,9 @@ public class BlockFromItemNode extends Node {
     public final Socket sBlock;
 
     public BlockFromItemNode() {
-        super("Item -> Block", NodeCategories.ENTITY, ModConstants.resLoc("entity_block_from_item"));
-        this.sItem = addInputSocket(Datatype.ITEM, "Item");
-        this.sBlock = addOutputSocket(Datatype.BLOCK, "Block");
+        super(NodeCategories.ENTITY, ModConstants.resLoc("block_from_item"));
+        this.sItem = addInputSocket(Datatype.ITEM, "socket.node_spell.item");
+        this.sBlock = addOutputSocket(Datatype.BLOCK, "socket.node_spell.block");
     }
 
     @Override

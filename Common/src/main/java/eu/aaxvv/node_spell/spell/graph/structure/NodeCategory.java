@@ -13,20 +13,10 @@ public class NodeCategory {
     public final float b;
 
     public NodeCategory(ResourceLocation resourceLocation, int priority, int packedColor) {
-        this.resourceLocation = resourceLocation;
-        this.translationKey = "node_spell.node.category." + resourceLocation.getPath();
-
-        this.priority = priority;
-        this.packedColor = packedColor;
-
-        float[] components = new float[4];
-        ColorUtil.unpackColor(packedColor, components);
-        this.r = components[1];
-        this.g = components[2];
-        this.b = components[3];
+        this(resourceLocation, resourceLocation.toLanguageKey("node.category"), priority, packedColor);
     }
 
-    public NodeCategory(ResourceLocation resourceLocation, String translationKey,int priority, int packedColor) {
+    public NodeCategory(ResourceLocation resourceLocation, String translationKey, int priority, int packedColor) {
         this.resourceLocation = resourceLocation;
         this.translationKey = translationKey;
 

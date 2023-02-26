@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.comparison;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.spell.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -15,10 +15,10 @@ public class NotEqualsNode extends Node {
     public final Socket sResult;
 
     public NotEqualsNode() {
-        super("Not Equal", NodeCategories.COMPARISON, ModConstants.resLoc("not_equal"));
-        this.sA = addInputSocket(Datatype.ANY, "a");
-        this.sB = addInputSocket(Datatype.ANY, "b");
-        this.sResult = addOutputSocket(Datatype.BOOL, "Result");
+        super(NodeCategories.COMPARISON, ModConstants.resLoc("not_equal"));
+        this.sA = addInputSocket(Datatype.ANY, "socket.node_spell.a");
+        this.sB = addInputSocket(Datatype.ANY, "socket.node_spell.b");
+        this.sResult = addOutputSocket(Datatype.BOOL, "socket.node_spell.result");
     }
 
     @Override
