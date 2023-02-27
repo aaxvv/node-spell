@@ -44,11 +44,15 @@
   "node.node_spell.min": "Min",
   "node.node_spell.max": "Max",
 
+  "node.node_spell.vec_construct": "Vec. Constr.",
+  "node.node_spell.vec_destruct": "Vec. Destr.",
   "node.node_spell.vec_add": "Vec. Add",
   "node.node_spell.vec_subtract": "Vec. Sub.",
   "node.node_spell.vec_length": "Vec. Length",
   "node.node_spell.vec_dot": "Vec. Dot",
   "node.node_spell.vec_cross": "Vec. Cross",
+  "node.node_spell.vec_nearest_axis": "Nearest Axis",
+  "node.node_spell.vec_normalize": "Normalize",
 
   "node.node_spell.and": "And",
   "node.node_spell.or": "Or",
@@ -72,6 +76,7 @@
   "node.node_spell.entity_max_health": "Entity Max HP",
   "node.node_spell.entity_look_direction": "Look Dir.",
   "node.node_spell.entity_velocity": "Entity Vel.",
+  "node.node_spell.entity_is_sneaking": "Is Sneaking",
 
   "node.node_spell.block_from_item": "Item -> Block",
 
@@ -82,6 +87,7 @@
   "node.node_spell.string_starts_with": "Starts with",
   "node.node_spell.string_ends_with": "Ends with",
   "node.node_spell.string_index_of": "Index of",
+  "node.node_spell.to_string": "To String",
 
   "node.node_spell.print": "Print",
   "node.node_spell.place_block": "Place Block",
@@ -92,6 +98,9 @@
   "socket.node_spell.a": "a",
   "socket.node_spell.b": "b",
   "socket.node_spell.c": "c",
+  "socket.node_spell.x": "x",
+  "socket.node_spell.y": "y",
+  "socket.node_spell.z": "z",
   "socket.node_spell.true": "True",
   "socket.node_spell.false": "False",
   "socket.node_spell.base": "Base",
@@ -116,5 +125,6 @@
   "socket.node_spell.vector": "Vec.",
   "socket.node_spell.axis": "Axis",
   "socket.node_spell.length": "Len.",
-  "socket.node_spell.string": "Str."
+  "socket.node_spell.string": "Str.",
+  "socket.node_spell.sneaking": "Sneaking"
 }

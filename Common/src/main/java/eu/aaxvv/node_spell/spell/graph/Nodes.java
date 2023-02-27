@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.helper.EntityVelocityHelper;
+import eu.aaxvv.node_spell.helper.EntityHelper;
 import eu.aaxvv.node_spell.spell.graph.nodes.block.BlockFromItemNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.PlaceBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.BasicNumberCompNode;
@@ -22,10 +22,13 @@ import eu.aaxvv.node_spell.spell.graph.nodes.flow.ForLoopNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.input.CasterNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.BasicStringOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.BasicVectorOpNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorConstructNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorDestructNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorDotNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
+import eu.aaxvv.node_spell.util.VectorUtil;
 import net.minecraft.core.Registry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -56,6 +59,8 @@ public class Nodes {
     public static final Node MAX = new BasicNumberOpNode(ModConstants.resLoc("max"), Math::max);
     // map
 
+    public static final Node VEC_CONSTRUCT = new VectorConstructNode();
+    public static final Node VEC_DESTRUCT = new VectorDestructNode();
     public static final Node VEC_ADD = new BasicVectorOpNode(ModConstants.resLoc("vec_add"), Vec3::add);
     public static final Node VEC_SUB = new BasicVectorOpNode(ModConstants.resLoc("vec_subtract"), Vec3::subtract);
 //    public static final Node VEC_LENGTH = new BasicVecToNumberNode(ModConstants.resLoc("vec_length"), Vec3::length);
@@ -67,14 +72,20 @@ public static final Node VEC_LENGTH = new GenericConversionNode
         .build();
     public static final Node VEC_DOT = new VectorDotNode();
     public static final Node VEC_CROSS = new BasicVectorOpNode(ModConstants.resLoc("vec_cross"), Vec3::cross);
+    public static final Node VEC_NEAREST_AXIS = new GenericConversionNode
+            .Builder<Vec3, Vec3>(NodeCategories.VECTOR, "vec_nearest_axis")
+            .types(Datatype.VECTOR, Datatype.VECTOR)
+            .socketNames("vector", "vector")
+            .function(VectorUtil::nearestAxis)
+            .build();
+    public static final Node VEC_NORMALIZE = new GenericConversionNode
+            .Builder<Vec3, Vec3>(NodeCategories.VECTOR, "vec_normalize")
+            .types(Datatype.VECTOR, Datatype.VECTOR)
+            .socketNames("vector", "vector")
+            .function(v -> v.scale(1/v.length()))
+            .build();
 
-//    public static final Node VEC_NEAREST_AXIS = new GenericConversionNode
-//            .Builder<Vec3, Vec3>(NodeCategories.VECTOR, ModConstants.resLoc("vec_nearest_axis"))
-//            .types(Datatype.VECTOR, Datatype.VECTOR)
-//            .socketNames("vector", "axis")
-//            .function()
-//            .build();
-    // scale
+    // scale, normalize, project, rotate around
 
     // ===== LOGIC =====
     public static final Node AND = new BasicBoolOpNode(ModConstants.resLoc("and"), (a, b) -> a && b);
@@ -108,28 +119,32 @@ public static final Node VEC_LENGTH = new GenericConversionNode
             .socketNames("entity", "hp")
             .function(e -> e instanceof LivingEntity living ? (double)living.getHealth() : 0.0)
             .build();
-
     public static final Node ENTITY_MAX_HEALTH = new GenericConversionNode
             .Builder<Entity, Double>(NodeCategories.ENTITY, "entity_max_health")
             .types(Datatype.ENTITY, Datatype.NUMBER)
             .socketNames("entity", "max")
             .function(e -> e instanceof LivingEntity living ? (double)living.getMaxHealth() : 0.0)
             .build();
-
     public static final Node ENTITY_VELOCITY = new GenericConversionNode
             .Builder<Entity, Vec3>(NodeCategories.ENTITY, "entity_velocity")
             .types(Datatype.ENTITY, Datatype.VECTOR)
             .socketNames("entity", "velocity")
-            .function(EntityVelocityHelper::getEntityVelocity)
+            .function(EntityHelper::getEntityVelocity)
             .build();
-
     public static final Node ENTITY_LOOK_DIRECTION = new GenericConversionNode
             .Builder<Entity, Vec3>(NodeCategories.ENTITY, "entity_look_direction")
             .types(Datatype.ENTITY, Datatype.VECTOR)
             .socketNames("entity", "direction")
             .function(Entity::getLookAngle)
             .build();
-    // look direction, velocity, target entity / block, health / max health,
+    public static final Node ENTITY_IS_SNEAKING= new GenericConversionNode
+            .Builder<Entity, Boolean>(NodeCategories.ENTITY, "entity_is_sneaking")
+            .types(Datatype.ENTITY, Datatype.BOOL)
+            .socketNames("entity", "sneaking")
+            .function(EntityHelper::isSneaking)
+            .build();
+
+    // target entity / position,
     // item: next in hot bar, hand (other for caster), from entity
 
     public static final Node ITEM_IN_HAND = new ItemInHandNode();
@@ -155,9 +170,9 @@ public static final Node VEC_LENGTH = new GenericConversionNode
     public static final Node STRING_ENDS_WITH = new BasicStringOpNode<>(ModConstants.resLoc("string_ends_with"), Datatype.BOOL, Value::createBool, String::endsWith);
     public static final Node STRING_INDEX_OF = new BasicStringOpNode<>(ModConstants.resLoc("string_index_of"), Datatype.NUMBER, Value::createNumber, (a, b) -> (double)a.indexOf(b));
 
-    public static final Node TO_STRING = new GenericConversionNode.Builder<Value, String>(NodeCategories.STRING, "to_String")
+    public static final Node TO_STRING = new GenericConversionNode.Builder<Value, String>(NodeCategories.STRING, "to_string")
             .types(Datatype.ANY, Datatype.STRING)
-            .socketNames("empty", "string")
+            .socketNames("value", "string")
             .function(Value::toString)
             .build();
     // substring, char at,
@@ -192,11 +207,15 @@ public static final Node VEC_LENGTH = new GenericConversionNode
         register(MIN);
         register(MAX);
 
+        register(VEC_CONSTRUCT);
+        register(VEC_DESTRUCT);
         register(VEC_ADD);
         register(VEC_SUB);
         register(VEC_LENGTH);
         register(VEC_DOT);
         register(VEC_CROSS);
+        register(VEC_NEAREST_AXIS);
+        register(VEC_NORMALIZE);
 
         register(AND);
         register(OR);
@@ -220,6 +239,7 @@ public static final Node VEC_LENGTH = new GenericConversionNode
         register(ENTITY_MAX_HEALTH);
         register(ENTITY_VELOCITY);
         register(ENTITY_LOOK_DIRECTION);
+        register(ENTITY_IS_SNEAKING);
 
         register(BLOCK_FROM_ITEM);
 

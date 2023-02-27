@@ -6,7 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.phys.Vec3;
 
-public class EntityVelocityHelper {
+public class EntityHelper {
     public static Vec3 getEntityVelocity(Entity entity) {
         if (entity instanceof ServerPlayer player) {
             return NodeSpellCommon.playerMotionRecorder.getMotion(player);
@@ -15,6 +15,14 @@ public class EntityVelocityHelper {
             return arrow.getDeltaMovement();
         } else {
             return entity.getDeltaMovement();
+        }
+    }
+
+    public static boolean isSneaking(Entity entity) {
+        if (entity instanceof ServerPlayer player) {
+            return player.isShiftKeyDown();
+        } else {
+            return false;
         }
     }
 }
