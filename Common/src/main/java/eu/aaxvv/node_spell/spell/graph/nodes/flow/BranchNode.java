@@ -41,9 +41,4 @@ public class BranchNode extends FlowNode {
             return this.fFalseOut;
         }
     }
-
-    @Override
-    public int getWidth() {
-        return (int)(super.getWidth() * 1.5);
-    }
 }

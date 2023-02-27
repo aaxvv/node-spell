@@ -5,7 +5,6 @@ import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
-import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -60,7 +59,7 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
     public void startDragEdge(SocketInstance instance, int x, int y) {
         // if socket is empty or is output -> start new edge
         // if it is input and not empty -> move existing edge
-        if (instance.getBase().getDirection() == Socket.Direction.OUT || instance.getConnections().size() == 0) {
+        if (!instance.acceptsSingleConnection() || instance.getConnections().size() == 0) {
             // start new connection
             this.draggedEdge = Edge.createIncomplete(instance);
             this.isDraggingStart = false;
@@ -193,5 +192,21 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
 
     public void clearGraph() {
         this.graph.clear();
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

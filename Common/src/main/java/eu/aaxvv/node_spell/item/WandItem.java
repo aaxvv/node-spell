@@ -37,6 +37,9 @@ public class WandItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lines, TooltipFlag flag) {
         super.appendHoverText(stack, level, lines, flag);
         String spellName = stack.getOrCreateTag().getString("Spell");
+        if (spellName.isEmpty()) {
+            spellName = "-";
+        }
         lines.add(Component.translatable("gui.node_spell.wand_spell_tooltip", spellName));
     }
 
@@ -94,8 +97,9 @@ public class WandItem extends Item {
     private SpellBookResult findPlayerSpellBook(Player player) {
         ItemStack found = null;
 
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() == ModItems.SPELL_BOOK) {
+        for(int i = 0; i < player.getInventory().getContainerSize(); ++i) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.is(ModItems.SPELL_BOOK)) {
                 if (found != null) {
                     return new SpellBookResult(found, true);
                 }
@@ -114,7 +118,11 @@ public class WandItem extends Item {
         }
 
         CompoundTag bookSpellListTag = spellBook.getOrCreateTagElement("Spells");
-        return Spell.fromNbt(bookSpellListTag.getCompound(spellName));
+        if (bookSpellListTag.contains(spellName)) {
+            return Spell.fromNbt(bookSpellListTag.getCompound(spellName));
+        } else {
+            return null;
+        }
     }
 
     private record SpellBookResult(ItemStack bookStack, boolean duplicate){}

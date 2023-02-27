@@ -53,7 +53,16 @@ public class Socket {
 
     public enum Direction {
         IN,
-        OUT
+        OUT;
+
+        public boolean isIn() {
+            return this == IN;
+        }
+
+        public boolean isOut() {
+            return this == OUT;
+        }
+
     }
 
     public int getSerializationHash() {

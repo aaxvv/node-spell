@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.spell.graph.runtime;
 
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
+import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class SocketInstance {
     }
 
     public void addConnection(Edge edge) {
-        if (this.base.getDirection() == Socket.Direction.IN) {
+        if (this.acceptsSingleConnection()) {
             if (this.connections.size() > 0) {
                 this.connections.get(0).remove();
             }
@@ -43,8 +44,12 @@ public class SocketInstance {
         } else {
             this.connections.add(edge);
         }
-
     }
+
+    public boolean acceptsSingleConnection() {
+        return this.getBase().getDataType() == Datatype.FLOW ? this.getBase().getDirection().isOut() : this.getBase().getDirection().isIn();
+    }
+
     public void removeConnection(Edge edge) {
         if (this.connections.remove(edge)) {
             edge.remove();
@@ -67,14 +72,13 @@ public class SocketInstance {
     }
 
     public Value getComputedValue(SpellContext ctx) {
-        if (this.base.getDirection() == Socket.Direction.IN) {
+        if (this.base.getDirection().isIn()) {
             if (this.connections.isEmpty()) {
                 return this.base.getDataType().defaultValue.get();
             }
 
             return getSingleConnection().getOpposite(this).getComputedValue(ctx);
         } else {
-            //TODO: guard against running a node with side-effects multiple times
             if (!this.parentInstance.getBaseNode().hasSideEffects()) {
                 this.parentInstance.run(ctx);
             }

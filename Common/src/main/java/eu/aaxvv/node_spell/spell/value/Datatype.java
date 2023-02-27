@@ -2,7 +2,6 @@ package eu.aaxvv.node_spell.spell.value;
 
 
 import eu.aaxvv.node_spell.util.ColorUtil;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -15,11 +14,11 @@ import java.util.function.Supplier;
  * Bool - Red
  * Number - Turquoise
  * String - Magenta
- * Vector - Yellow
+ * Vector - Orange
  * Entity - Blue
  * Block - Green
  * Item - Purple
- * List - Orange
+ * List - Light Green
  * Flow - Dark Grey
  * ANY - Light Grey
  */
@@ -27,11 +26,11 @@ public enum Datatype {
     BOOL(0xFFCC3333, () -> Value.createBool(false)),
     NUMBER(0xFF3399CC, () -> Value.createNumber(0.0)),
     STRING(0xFFCC33A0, () -> Value.createString("")),
-    VECTOR(0xFFCCC633, () -> Value.createVector(Vec3.ZERO)),
+    VECTOR(0xFFCC8828, () -> Value.createVector(Vec3.ZERO)),
     ENTITY(0xFF3333CC, () -> Value.createEntity(null)),
     BLOCK(0xFF33CC33, () -> Value.createBlock(Blocks.AIR)),
     ITEM(0xFF8535CC, () -> Value.createItem(ItemStack.EMPTY)),
-    LIST(0xFFCC8828, () -> Value.createList(Collections.emptyList())),
+    LIST(0xFF66CC66, () -> Value.createList(Collections.emptyList())),
     FLOW(0xFF444444, () -> null),
     ANY(0xFF999999, () -> null);
 

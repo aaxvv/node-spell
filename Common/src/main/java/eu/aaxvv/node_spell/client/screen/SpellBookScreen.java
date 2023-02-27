@@ -174,11 +174,19 @@ public class SpellBookScreen extends Screen {
         public Object draggedObject;
         public Vector2i grabOffset;
         public Widget<?> focusedWidget;
+        public boolean panButtonHeld;
 
         public void mouseDown(int mouseX, int mouseY, int button) {
             Widget<?> prevWidget = this.focusedWidget;
 
-            if (dragState != DragState.NOT_DRAGGING) {
+//            if (dragState != DragState.NOT_DRAGGING) {
+//                return;
+//            }
+
+            if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+                this.panButtonHeld = true;
+                SpellBookScreen.this.canvas.startWindowPan();
+                this.startPoint = new Vector2i(mouseX, mouseY);
                 return;
             }
 
@@ -199,9 +207,9 @@ public class SpellBookScreen extends Screen {
             boolean focusedWidgetClicked = false;
 
             if (clicked.isEmpty()) {
-                this.dragState = DragState.PANNING_CANVAS;
-                this.startPoint = new Vector2i(mouseX, mouseY);
-                SpellBookScreen.this.canvas.startWindowPan();
+//                this.dragState = DragState.PANNING_CANVAS;
+//                this.startPoint = new Vector2i(mouseX, mouseY);
+//                SpellBookScreen.this.canvas.startWindowPan();
             } else {
                 if (clicked.get() instanceof SocketInstance socket) {
                     this.dragState = DragState.DRAGGING_EDGE;
@@ -229,6 +237,8 @@ public class SpellBookScreen extends Screen {
                         SpellBookScreen.this.spell.getGraph().addInstance(copy);
                         copy.setPosition(node.getX(), node.getY());
                         this.draggedObject = copy;
+                    } else if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)) {
+                        SpellBookScreen.this.canvas.deleteNode(node);
                     } else {
                         this.draggedObject = node;
                         SpellBookScreen.this.spell.getGraph().moveInstanceToTop(node);
@@ -244,19 +254,29 @@ public class SpellBookScreen extends Screen {
             }
         }
 
-        public void mouseMove(int x, int y) {
-            if (this.dragState == DragState.PANNING_CANVAS) {
-                int dx = x - this.startPoint.x;
-                int dy = y - this.startPoint.y;
+        public void mouseMove(int mouseX, int mouseY) {
+//            if (this.dragState == DragState.PANNING_CANVAS) {
+            if (this.panButtonHeld) {
+                int dx = mouseX - this.startPoint.x;
+                int dy = mouseY - this.startPoint.y;
                 SpellBookScreen.this.canvas.setWindowPanOffset(dx, dy);
-            } else if (this.dragState == DragState.DRAGGING_NODE) {
-                SpellBookScreen.this.canvas.setNodePositionLocal((NodeInstance)this.draggedObject, x + this.grabOffset.x ,y + this.grabOffset.y);
+            }
+
+            if (this.dragState == DragState.DRAGGING_NODE) {
+                SpellBookScreen.this.canvas.setNodePositionLocal((NodeInstance)this.draggedObject, mouseX + this.grabOffset.x ,mouseY + this.grabOffset.y);
             } else if (this.dragState == DragState.DRAGGING_EDGE) {
-                SpellBookScreen.this.canvas.setDraggedEdgePos(x, y);
+                SpellBookScreen.this.canvas.setDraggedEdgePos(mouseX, mouseY);
+                NodeCanvasWidget canvas = SpellBookScreen.this.canvas;
             }
         }
 
         public void mouseUp(int mouseX, int mouseY, int button) {
+            if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+                this.panButtonHeld = false;
+                this.startPoint = null;
+                return;
+            }
+
             // drop nodes, connect edges
             if (this.dragState == DragState.DRAGGING_EDGE) {
                 SpellBookScreen.this.canvas.stopDragEdge(mouseX, mouseY);
@@ -270,7 +290,6 @@ public class SpellBookScreen extends Screen {
 
             this.dragState = DragState.NOT_DRAGGING;
             this.draggedObject = null;
-            this.startPoint = null;
         }
 
         public boolean keyPressed(int key, int scanCode, int modifiers) {

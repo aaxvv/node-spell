@@ -60,7 +60,8 @@ public class PlaceBlockNode extends SimpleFlowNode {
         }
 
         if (!ctx.getLevel().getBlockState(blockPos).canBeReplaced()) {
-            throw new SpellExecutionException("Target position is occupied");
+            return;
+//            throw new SpellExecutionException("Target position is occupied");
         }
 
         int distance = ctx.getCaster().blockPosition().distManhattan(new Vec3i(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
