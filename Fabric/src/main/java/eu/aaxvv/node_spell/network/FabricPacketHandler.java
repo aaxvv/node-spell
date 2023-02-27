@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.network;
 
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookSpellC2SPacket;
+import eu.aaxvv.node_spell.network.packet.UpdateWandActiveSpellC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,6 +20,7 @@ import java.util.function.Function;
 public class FabricPacketHandler {
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(UpdateSpellBookSpellC2SPacket.ID, makeServerBoundHandler(UpdateSpellBookSpellC2SPacket::decode, UpdateSpellBookSpellC2SPacket::handle));
+        ServerPlayNetworking.registerGlobalReceiver(UpdateWandActiveSpellC2SPacket.ID, makeServerBoundHandler(UpdateWandActiveSpellC2SPacket::decode, UpdateWandActiveSpellC2SPacket::handle));
     }
 
     public static void initClient() {
