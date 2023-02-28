@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.client.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import eu.aaxvv.node_spell.client.screen.SpellBookScreen;
+import eu.aaxvv.node_spell.client.screen.SpellEditScreen;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
@@ -32,7 +32,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
     private final int width;
     private final int height;
     private int expandedCategory;
-    private final SpellBookScreen parent;
+    private final SpellEditScreen parent;
 
     /**
      * Because we want this to be dynamically sized, but bottom aligned, the y coordinate here is actually the bottom edge, not the top
@@ -40,7 +40,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
      * @param y bottom edge
      * @param width width
      */
-    public NodePickerWidget(SpellBookScreen parent, int x, int y, int width) {
+    public NodePickerWidget(SpellEditScreen parent, int x, int y, int width) {
         this.parent = parent;
         this.x = x;
         this.width = width;
@@ -189,7 +189,7 @@ public class NodePickerWidget implements Renderable, GuiEventListener, Narratabl
 
             NodeInstance inst = hitNode.createInstance();
 
-            this.parent.getInteractionHandler().dragState = SpellBookScreen.DragState.DRAGGING_NODE;
+            this.parent.getInteractionHandler().dragState = SpellEditScreen.DragState.DRAGGING_NODE;
             this.parent.getInteractionHandler().draggedObject = inst;
             Vector2i grabOffset = new Vector2i(-hitNode.getWidth() / 2, -hitNode.getExpectedHeight() / 2);
             this.parent.getInteractionHandler().grabOffset = grabOffset;
