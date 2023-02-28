@@ -73,18 +73,28 @@ public class GuiContext {
         }
     }
 
-    public boolean onMouseMoved(double dX, double dY) {
-        double screenX = Minecraft.getInstance().mouseHandler.xpos() * (double)Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double)Minecraft.getInstance().getWindow().getScreenWidth();
-        double screenY = Minecraft.getInstance().mouseHandler.ypos() * (double)Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double)Minecraft.getInstance().getWindow().getScreenHeight();
-
-        if (this.focused != null && this.focused.onMouseMoved(screenX, screenY, dX, dY)) {
+    public boolean onMouseScrolled(double screenX, double screenY, double delta) {
+        if (this.focused != null && this.focused.onMouseScrolled(screenX, screenY, delta)) {
             return true;
         }
 
         if (this.root != null) {
-            return this.root.onMouseMoved(screenX, screenY, dX, dY);
+            return this.root.onMouseScrolled(screenX, screenY, delta);
         } else {
             return false;
+        }
+    }
+
+    public void onMouseMoved(double dX, double dY) {
+        double screenX = Minecraft.getInstance().mouseHandler.xpos() * (double)Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double)Minecraft.getInstance().getWindow().getScreenWidth();
+        double screenY = Minecraft.getInstance().mouseHandler.ypos() * (double)Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double)Minecraft.getInstance().getWindow().getScreenHeight();
+
+        if (this.focused != null && this.focused.onMouseMoved(screenX, screenY, dX, dY)) {
+            return;
+        }
+
+        if (this.root != null) {
+            this.root.onMouseMoved(screenX, screenY, dX, dY);
         }
     }
 

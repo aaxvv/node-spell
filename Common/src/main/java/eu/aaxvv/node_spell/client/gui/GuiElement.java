@@ -125,6 +125,7 @@ public class GuiElement {
 
     public void setParent(GuiElement parent) {
         this.parent = parent;
+        invalidate();
     }
 
     public boolean isFocused() {
@@ -133,6 +134,19 @@ public class GuiElement {
 
     public void requestFocus() {
         this.context.setFocused(this);;
+    }
+
+    public void releaseFocus() {
+        if (this.context.getFocused() == this) {
+            this.context.setFocused(null);
+        }
+    }
+
+    public boolean intersects(GuiElement other) {
+        return other.cachedGlobalX < this.cachedGlobalX + this.width
+                && other.cachedGlobalX + other.width >= this.cachedGlobalX
+                && other.cachedGlobalY < this.cachedGlobalY + this.height
+                && other.cachedGlobalY + other.height >= this.cachedGlobalY;
     }
 
     // event handlers
@@ -150,6 +164,16 @@ public class GuiElement {
     public boolean onMouseUp(double screenX, double screenY, int button) {
         for (GuiElement child : getChildren()) {
             if (child.containsPointGlobal(screenX, screenY) && child.onMouseUp(screenX, screenY, button)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean onMouseScrolled(double screenX, double screenY, double amount) {
+        for (GuiElement child : getChildren()) {
+            if (child.containsPointGlobal(screenX, screenY) && child.onMouseScrolled(screenX, screenY, amount)) {
                 return true;
             }
         }

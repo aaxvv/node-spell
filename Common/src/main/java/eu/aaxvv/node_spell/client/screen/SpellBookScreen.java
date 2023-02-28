@@ -2,9 +2,7 @@ package eu.aaxvv.node_spell.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.client.gui.GuiTextureButton;
-import eu.aaxvv.node_spell.client.gui.GuiElement;
-import eu.aaxvv.node_spell.client.gui.TextureRegion;
+import eu.aaxvv.node_spell.client.gui.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -29,36 +27,6 @@ public class SpellBookScreen extends BaseScreen {
         GuiElement root = new GuiElement(SAFE_AREA_WIDTH, SAFE_AREA_HEIGHT);
         this.guiContext.setRoot(root);
 
-//        GuiTextureButton editButton = new GuiTextureButton(16, 16);
-//        editButton.setLocalPosition(1, SAFE_AREA_HEIGHT - 16);
-//        editButton.setTexture(new TextureRegion(BACKGROUND_LOCATION, 2, 188, 15, 15));
-//        editButton.setClickCallback(() -> System.out.println("Edit button clicked"));
-//        root.addChild(editButton);
-//
-//        GuiTextureButton createButton = new GuiTextureButton(16, 16);
-//        createButton.setLocalPosition(1 + 18, SAFE_AREA_HEIGHT - 16);
-//        createButton.setTexture(new TextureRegion(BACKGROUND_LOCATION, 20, 188, 15, 15));
-//        createButton.setClickCallback(() -> System.out.println("Create button clicked"));
-//        root.addChild(createButton);
-//
-//        GuiTextureButton deleteButton = new GuiTextureButton(16, 16);
-//        deleteButton.setLocalPosition(1 + 18*2, SAFE_AREA_HEIGHT - 16);
-//        deleteButton.setTexture(new TextureRegion(BACKGROUND_LOCATION, 38, 188, 15, 15));
-//        deleteButton.setClickCallback(() -> System.out.println("Delete button clicked"));
-//        root.addChild(deleteButton);
-//
-//        GuiTextureButton importButton = new GuiTextureButton(16, 16);
-//        importButton.setLocalPosition(1 + 18*3, SAFE_AREA_HEIGHT - 16);
-//        importButton.setTexture(new TextureRegion(BACKGROUND_LOCATION, 56, 188, 15, 15));
-//        importButton.setClickCallback(() -> System.out.println("Import button clicked"));
-//        root.addChild(importButton);
-//
-//        GuiTextureButton exportButton = new GuiTextureButton(16, 16);
-//        exportButton.setLocalPosition(1 + 18*4, SAFE_AREA_HEIGHT - 16);
-//        exportButton.setTexture(new TextureRegion(BACKGROUND_LOCATION, 74, 188, 15, 15));
-//        exportButton.setClickCallback(() -> System.out.println("Export button clicked"));
-//        root.addChild(exportButton);
-
         makeAndAddButton(0, Component.translatable("gui.node_spell.spell_list.edit"))
                 .setClickCallback(() -> System.out.println("Edit button clicked"));
 
@@ -77,6 +45,8 @@ public class SpellBookScreen extends BaseScreen {
         makeAndAddButton(5, Component.translatable("gui.node_spell.spell_list.export"))
                 .setClickCallback(() -> System.out.println("Export button clicked"));
 
+        GuiScrollContainer scrollContainer = new GuiScrollContainer(SAFE_AREA_WIDTH, SAFE_AREA_HEIGHT - 18);
+        root.addChild(scrollContainer);
     }
 
     private GuiTextureButton makeAndAddButton(int screenXIndex, Component tooltip) {

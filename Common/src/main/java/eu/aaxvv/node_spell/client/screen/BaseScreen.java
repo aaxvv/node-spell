@@ -74,21 +74,21 @@ public class BaseScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double screenX, double screenY, int buttons, double dX, double dY) {
-        return super.mouseDragged(screenX, screenY, buttons, dX, dY);
+        return guiContext.onMouseDragged(screenX, screenY, buttons, dX, dY);
     }
 
     @Override
     public boolean mouseScrolled(double screenX, double screenY, double amount) {
-        return super.mouseScrolled(screenX, screenY, amount);
+        return guiContext.onMouseScrolled(screenX, screenY, amount);
     }
 
     @Override
     public void mouseMoved(double dX, double dY) {
-        super.mouseMoved(dX, dY);
+        guiContext.onMouseMoved(dX, dY);
     }
 
     @Override
     public boolean charTyped(char character, int modifiers) {
-        return super.charTyped(character, modifiers);
+        return guiContext.onCharTyped(character, modifiers);
     }
 }
