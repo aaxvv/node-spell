@@ -11,6 +11,12 @@
   "gui.node_spell.wand_spell_tooltip": "Current Spell: %s",
   "gui.node_spell.delete_tooltip_1": "Drag Node here to delete",
   "gui.node_spell.delete_tooltip_2": "Shift click to delete all",
+  "gui.node_spell.spell_list.edit": "Edit selected spell",
+  "gui.node_spell.spell_list.create": "Create new spell",
+  "gui.node_spell.spell_list.delete": "Delete selected spells",
+  "gui.node_spell.spell_list.rename": "Rename selected spell",
+  "gui.node_spell.spell_list.import": "Import spells from paper",
+  "gui.node_spell.spell_list.export": "Export selected spells to paper",
 
 
   "node.category.node_spell.input": "INPUT",

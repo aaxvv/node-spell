@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.item;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.screen.SpellBookScreen;
+import eu.aaxvv.node_spell.client.screen.SpellEditScreen;
 import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +43,8 @@ public class SpellBookItem extends Item {
         Spell editedSpell = Spell.fromNbt((CompoundTag) spellTag);
         editedSpell.setName("Test Spell");
 
-        Minecraft.getInstance().setScreen(new SpellBookScreen(editedSpell, player, bookStack, hand));
+//        Minecraft.getInstance().setScreen(new SpellEditScreen(editedSpell, player, bookStack, hand));
+        Minecraft.getInstance().setScreen(new SpellBookScreen(player, bookStack));
         return InteractionResultHolder.success(player.getItemInHand(hand));
     }
 }
