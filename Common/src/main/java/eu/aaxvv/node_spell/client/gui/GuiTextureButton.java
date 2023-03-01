@@ -25,12 +25,18 @@ public class GuiTextureButton extends GuiElement {
         this.texture = texture;
     }
 
+    public TextureRegion getTexture() {
+        return texture;
+    }
+
     @Override
     public void render(PoseStack pose, int mouseX, int mouseY, float tickDelta) {
         boolean hovered = this.containsPointGlobal(mouseX, mouseY);
 
         if (this.texture != null) {
             this.texture.blit(pose, this.getGlobalX(), this.getGlobalY());
+        } else {
+            RenderUtil.drawGuiElementDebugRect(pose, this, 0xFFFF00FF);
         }
 
         if (hovered) {

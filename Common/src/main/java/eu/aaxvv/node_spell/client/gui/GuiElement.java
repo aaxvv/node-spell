@@ -3,7 +3,9 @@ package eu.aaxvv.node_spell.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import org.joml.Vector2i;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Custom Gui abstraction because working with the minecraft "drawableChild" stuff
@@ -19,7 +21,7 @@ public class GuiElement {
     private int cachedGlobalY;
 
     private GuiElement parent;
-    private List<GuiElement> children;
+    private final List<GuiElement> children;
     private GuiContext context;
 
     public GuiElement(int width, int height) {
@@ -66,10 +68,18 @@ public class GuiElement {
 
     public void setWidth(int width) {
         this.width = width;
+        invalidate();
     }
 
     public void setHeight(int height) {
         this.height = height;
+        invalidate();
+    }
+
+    public void setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        invalidate();
     }
 
     public GuiContext getContext() {
@@ -104,7 +114,7 @@ public class GuiElement {
         return x >= this.x && x < this.x + this.width && y >= this.y && y < this.y + this.height;
     }
 
-    public Collection<GuiElement> getChildren() {
+    public List<GuiElement> getChildren() {
         return Collections.unmodifiableList(this.children);
     }
 
@@ -147,6 +157,10 @@ public class GuiElement {
                 && other.cachedGlobalX + other.width >= this.cachedGlobalX
                 && other.cachedGlobalY < this.cachedGlobalY + this.height
                 && other.cachedGlobalY + other.height >= this.cachedGlobalY;
+    }
+
+    public int getIndexInParent() {
+        return this.parent.getChildren().indexOf(this);
     }
 
     // event handlers

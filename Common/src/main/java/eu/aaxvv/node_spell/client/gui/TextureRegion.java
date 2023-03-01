@@ -19,4 +19,13 @@ public record TextureRegion(ResourceLocation texture, int x, int y, int w, int h
         GuiComponent.blit(pose, x, y, this.x, this.y, this.w, this.h, this.texW, this.texH);
         RenderSystem.disableBlend();
     }
+
+    public void blitOffset(PoseStack pose, int x, int y, int xOffset, int yOffset) {
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, this.texture);
+        GuiComponent.blit(pose, x, y, this.x + xOffset, this.y + yOffset, this.w, this.h, this.texW, this.texH);
+        RenderSystem.disableBlend();
+    }
 }

@@ -23,17 +23,20 @@ public class BaseScreen extends Screen {
         this.x = (this.width / 2) - (this.getRootWidth() / 2);
         this.y = (this.height / 2) - (this.getRootHeight() / 2);
 
-        if (this.guiContext.getRoot() != null) {
-            this.guiContext.getRoot().setLocalPosition(this.x, this.y);
-        }
+        this.getGuiRoot().setLocalPosition(this.x, this.y);
+        this.guiContext.getPopupPane().setSize(this.width, this.height);
+    }
+
+    public GuiElement getGuiRoot() {
+        return this.guiContext.getRootPane();
     }
 
     public int getRootWidth() {
-        return this.guiContext.getRoot() == null ? 0 : this.guiContext.getRoot().getWidth();
+        return this.guiContext.getRootPane() == null ? 0 : this.guiContext.getRootPane().getWidth();
     }
 
     public int getRootHeight() {
-        return this.guiContext.getRoot() == null ? 0 : this.guiContext.getRoot().getHeight();
+        return this.guiContext.getRootPane() == null ? 0 : this.guiContext.getRootPane().getHeight();
     }
 
     public int getX() {
@@ -46,7 +49,7 @@ public class BaseScreen extends Screen {
 
     @Override
     public void render(@NotNull PoseStack pose, int mouseX, int mouseY, float tickDelta) {
-        GuiElement rootElement = this.guiContext.getRoot();
+        GuiElement rootElement = this.guiContext.getRootPane();
         if (rootElement != null) {
             rootElement.render(pose, mouseX, mouseY, tickDelta);
         }

@@ -9,12 +9,17 @@ import java.util.Deque;
 
 public class GuiContext {
     private GuiElement focused;
-    private GuiElement root;
+    private final GuiElement rootPane;
+    private final GuiPopupPane popupPane;
     private final Screen parentScreen;
     private final Deque<RenderCallback> postRenderTasks;
 
     public GuiContext(Screen parentScreen) {
         this.parentScreen = parentScreen;
+        this.rootPane = new GuiElement(0, 0);
+        this.rootPane.setContext(this);
+        this.popupPane = new GuiPopupPane(0, 0);
+        this.popupPane.setContext(this);
         this.postRenderTasks = new ArrayDeque<>();
     }
 
@@ -26,13 +31,12 @@ public class GuiContext {
         this.focused = focused;
     }
 
-    public GuiElement getRoot() {
-        return root;
+    public GuiElement getRootPane() {
+        return rootPane;
     }
 
-    public void setRoot(GuiElement root) {
-        this.root = root;
-        this.root.setContext(this);
+    public GuiElement getPopupPane() {
+        return popupPane;
     }
 
     public Screen getParentScreen() {
@@ -54,11 +58,7 @@ public class GuiContext {
             return true;
         }
 
-        if (this.root != null) {
-            return this.root.onMouseDown(screenX, screenY, button);
-        } else {
-            return false;
-        }
+        return this.rootPane.onMouseDown(screenX, screenY, button);
     }
 
     public boolean onMouseUp(double screenX, double screenY, int button) {
@@ -66,11 +66,7 @@ public class GuiContext {
             return true;
         }
 
-        if (this.root != null) {
-            return this.root.onMouseUp(screenX, screenY, button);
-        } else {
-            return false;
-        }
+        return this.rootPane.onMouseUp(screenX, screenY, button);
     }
 
     public boolean onMouseScrolled(double screenX, double screenY, double delta) {
@@ -78,11 +74,7 @@ public class GuiContext {
             return true;
         }
 
-        if (this.root != null) {
-            return this.root.onMouseScrolled(screenX, screenY, delta);
-        } else {
-            return false;
-        }
+        return this.rootPane.onMouseScrolled(screenX, screenY, delta);
     }
 
     public void onMouseMoved(double dX, double dY) {
@@ -93,9 +85,7 @@ public class GuiContext {
             return;
         }
 
-        if (this.root != null) {
-            this.root.onMouseMoved(screenX, screenY, dX, dY);
-        }
+        this.rootPane.onMouseMoved(screenX, screenY, dX, dY);
     }
 
     public boolean onMouseDragged(double screenX, double screenY, int buttons, double dX, double dY) {
@@ -103,11 +93,7 @@ public class GuiContext {
             return true;
         }
 
-        if (this.root != null) {
-            return this.root.onMouseDragged(screenX, screenY, buttons, dX, dY);
-        } else {
-            return false;
-        }
+        return this.rootPane.onMouseDragged(screenX, screenY, buttons, dX, dY);
     }
 
     public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
@@ -115,11 +101,7 @@ public class GuiContext {
             return true;
         }
 
-        if (this.root != null) {
-            return this.root.onKeyPressed(keyCode, scanCode, modifiers);
-        } else {
-            return false;
-        }
+        return this.rootPane.onKeyPressed(keyCode, scanCode, modifiers);
     }
 
     public boolean onCharTyped(char character, int modifiers) {
@@ -127,11 +109,7 @@ public class GuiContext {
             return true;
         }
 
-        if (this.root != null) {
-            return this.root.onCharTyped(character, modifiers);
-        } else {
-            return false;
-        }
+        return this.rootPane.onCharTyped(character, modifiers);
     }
 
     @FunctionalInterface

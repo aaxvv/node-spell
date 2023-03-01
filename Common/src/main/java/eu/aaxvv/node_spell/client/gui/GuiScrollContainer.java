@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 
-import java.util.Collection;
+import java.util.List;
 
 public class GuiScrollContainer extends GuiElement {
     // Appearance
@@ -71,6 +71,7 @@ public class GuiScrollContainer extends GuiElement {
             child.render(pose, mouseX, mouseY, tickDelta);
         }
 
+        // scrollbar
         RenderUtil.drawRect(pose, this.getGlobalX() + this.getWidth() - this.scrollBarWidth, this.getGlobalY(), scrollBarWidth, this.getHeight(), scrollTrackColor);
         RenderUtil.drawRect(pose, this.getGlobalX() + this.getWidth() - this.scrollBarWidth, this.getGlobalY() + scrollBarPos, scrollBarWidth, scrollBarHeight, scrollBarColor);
         RenderSystem.disableScissor();
@@ -90,7 +91,7 @@ public class GuiScrollContainer extends GuiElement {
     }
 
     @Override
-    public Collection<GuiElement> getChildren() {
+    public List<GuiElement> getChildren() {
         return this.contentPane.getChildren();
     }
 
@@ -110,7 +111,7 @@ public class GuiScrollContainer extends GuiElement {
     }
 
     private void scrollTo(int scrollPosition) {
-        if (scrollPosition < 0) {
+        if (scrollPosition < 0 || this.contentPane.getHeight() <= this.scrollBarHeight) {
             this.scrollPosition = 0;
         } else if (scrollPosition > this.contentPane.getHeight() - this.getHeight()) {
             this.scrollPosition = this.contentPane.getHeight() - this.getHeight();
