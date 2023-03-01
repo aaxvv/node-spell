@@ -7,8 +7,6 @@ import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.widget.NodeCanvasWidget;
 import eu.aaxvv.node_spell.client.widget.NodePickerWidget;
-import eu.aaxvv.node_spell.network.packet.UpdateSpellBookSpellC2SPacket;
-import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
@@ -16,13 +14,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
@@ -43,21 +36,18 @@ public class SpellEditScreen extends Screen {
     private int y;
 
     private final Spell spell;
-    private final Player player;
-    private final ItemStack bookStack;
-    private final InteractionHand hand;
+    private final Screen parentScreen;
 
     private NodeCanvasWidget canvas;
     private NodePickerWidget picker;
     private final InteractionHandler dragHandler;
 
-    public SpellEditScreen(Spell spell, Player player, ItemStack stack, InteractionHand hand) {
+    public SpellEditScreen(SpellBookScreen parentScreen, Spell spell) {
         super(Component.literal(spell.getName()));
-        this.player = player;
-        this.bookStack = stack;
-        this.hand = hand;
+
         this.dragHandler = new InteractionHandler();
         this.spell = spell;
+        this.parentScreen = parentScreen;
     }
 
     @Override
@@ -73,21 +63,8 @@ public class SpellEditScreen extends Screen {
 
     @Override
     public void onClose() {
-        // save new nbt
-        this.updateLocalCopy();
-        int slot = this.hand == InteractionHand.MAIN_HAND ? this.player.getInventory().selected : Inventory.SLOT_OFFHAND;
-        CompoundTag spellTag = new CompoundTag();
         this.spell.getGraph().findEntrypoint();
-        this.spell.serialize(spellTag);
-        ClientPlatformHelper.INSTANCE.sendToServer(new UpdateSpellBookSpellC2SPacket(slot, this.spell.getName(), spellTag));
-        super.onClose();
-    }
-
-    private void updateLocalCopy() {
-        CompoundTag spellListTag = this.bookStack.getOrCreateTagElement("Spells");
-        CompoundTag spellTag = new CompoundTag();
-        this.spell.serialize(spellTag);
-        spellListTag.put(this.spell.getName(), spellTag);
+        Minecraft.getInstance().setScreen(this.parentScreen);
     }
 
     @Override

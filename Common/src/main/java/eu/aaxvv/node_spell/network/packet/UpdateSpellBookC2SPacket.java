@@ -13,18 +13,17 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public record UpdateSpellBookSpellC2SPacket(int slot, String spellName, CompoundTag spellNbt) implements CustomPacket {
+public record UpdateSpellBookC2SPacket(int slot, CompoundTag bookNbt) implements CustomPacket {
     public static final ResourceLocation ID = ModConstants.resLoc("book");
 
     @Override
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(slot);
-        buf.writeUtf(spellName);
-        buf.writeNbt(spellNbt);
+        buf.writeNbt(bookNbt);
     }
 
-    public static UpdateSpellBookSpellC2SPacket decode(FriendlyByteBuf buf) {
-        return new UpdateSpellBookSpellC2SPacket(buf.readInt(), buf.readUtf(), buf.readNbt());
+    public static UpdateSpellBookC2SPacket decode(FriendlyByteBuf buf) {
+        return new UpdateSpellBookC2SPacket(buf.readInt(), buf.readNbt());
     }
 
     @Override
@@ -32,22 +31,16 @@ public record UpdateSpellBookSpellC2SPacket(int slot, String spellName, Compound
         return ID;
     }
 
-    public static void handle(UpdateSpellBookSpellC2SPacket packet, MinecraftServer server, ServerPlayer player) {
+    public static void handle(UpdateSpellBookC2SPacket packet, MinecraftServer server, ServerPlayer player) {
         int slot = packet.slot();
-        String spellName = packet.spellName();
-        CompoundTag spellNbt = packet.spellNbt();
+        CompoundTag bookNbt = packet.bookNbt();
 
         server.execute(() -> {
             if (Inventory.isHotbarSlot(slot) || slot == Inventory.SLOT_OFFHAND) {
                 ItemStack bookStack = player.getInventory().getItem(slot);
                 if (bookStack.is(ModItems.SPELL_BOOK)) {
-                    // TODO: testing
-                    ListTag activeSpellList = new ListTag();
-                    activeSpellList.add(StringTag.valueOf("Test Spell"));
-                    bookStack.getOrCreateTag().put("ActiveSpells", activeSpellList);
-
-                    bookStack.getOrCreateTagElement("Spells").put(spellName, spellNbt);
-                    NodeSpellCommon.playerSpellCache.invalidate(player.getUUID(), spellName);
+                    bookStack.setTag(bookNbt);
+                    NodeSpellCommon.playerSpellCache.invalidate(player.getUUID());
                 }
             }
         });

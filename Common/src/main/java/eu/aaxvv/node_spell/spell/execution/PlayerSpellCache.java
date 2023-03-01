@@ -26,12 +26,12 @@ public class PlayerSpellCache {
         map.put(spellName, spell);
     }
 
-    public void invalidate(UUID playerUuid, String spellName) {
+    public void invalidate(UUID playerUuid) {
         Map<String, Spell> map = cache.get(playerUuid);
         if (map == null) {
             return;
         }
 
-        map.remove(spellName);
+        map.clear();
     }
 }

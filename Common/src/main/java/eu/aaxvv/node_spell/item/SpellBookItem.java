@@ -29,22 +29,13 @@ public class SpellBookItem extends Item {
 
         CompoundTag spellListTag = bookStack.getOrCreateTagElement("Spells");
 
-        // TODO: for testing
-        if (spellListTag.isEmpty()) {
-            spellListTag.put("Test Spell", new CompoundTag());
-        }
-
         Tag spellTag = spellListTag.get(spellListTag.getAllKeys().iterator().next());
         if (!(spellTag instanceof CompoundTag)) {
             ModConstants.LOG.error("Expected spell compound but found list.");
             return InteractionResultHolder.fail(bookStack);
         }
 
-        Spell editedSpell = Spell.fromNbt((CompoundTag) spellTag);
-        editedSpell.setName("Test Spell");
-
-//        Minecraft.getInstance().setScreen(new SpellEditScreen(editedSpell, player, bookStack, hand));
-        Minecraft.getInstance().setScreen(new SpellBookScreen(player, bookStack));
+        Minecraft.getInstance().setScreen(new SpellBookScreen(player, bookStack, hand));
         return InteractionResultHolder.success(player.getItemInHand(hand));
     }
 }

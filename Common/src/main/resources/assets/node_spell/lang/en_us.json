@@ -15,8 +15,11 @@
   "gui.node_spell.spell_list.create": "Create new spell",
   "gui.node_spell.spell_list.delete": "Delete selected spells",
   "gui.node_spell.spell_list.rename": "Rename selected spell",
+  "gui.node_spell.spell_list.duplicate": "Duplicate selected spell",
   "gui.node_spell.spell_list.import": "Import spells from paper",
   "gui.node_spell.spell_list.export": "Export selected spells to paper",
+  "gui.node_spell.spell_list.select_one_spell_error": "Please select only one spell",
+  "gui.node_spell.spell_list.favorite_limit_error": "The maximum number of favorite spells is %d",
 
 
   "node.category.node_spell.input": "INPUT",
