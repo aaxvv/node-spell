@@ -167,7 +167,7 @@ public class GuiScrollContainer extends GuiElement {
         return true;
     }
 
-    private void invalidateLayout() {
+    public void invalidateLayout() {
         this.contentPane.setWidth(getContentPaneWidth());
         int contentPaneHeight = this.innerPadding;
 

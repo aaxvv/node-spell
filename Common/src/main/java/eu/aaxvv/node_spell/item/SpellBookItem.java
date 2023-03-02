@@ -1,12 +1,7 @@
 package eu.aaxvv.node_spell.item;
 
-import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.screen.SpellBookScreen;
-import eu.aaxvv.node_spell.client.screen.SpellEditScreen;
-import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -25,14 +20,6 @@ public class SpellBookItem extends Item {
         ItemStack bookStack = player.getItemInHand(hand);
         if (!level.isClientSide) {
             return InteractionResultHolder.consume(bookStack);
-        }
-
-        CompoundTag spellListTag = bookStack.getOrCreateTagElement("Spells");
-
-        Tag spellTag = spellListTag.get(spellListTag.getAllKeys().iterator().next());
-        if (!(spellTag instanceof CompoundTag)) {
-            ModConstants.LOG.error("Expected spell compound but found list.");
-            return InteractionResultHolder.fail(bookStack);
         }
 
         Minecraft.getInstance().setScreen(new SpellBookScreen(player, bookStack, hand));

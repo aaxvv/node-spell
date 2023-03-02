@@ -9,6 +9,9 @@ import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -17,6 +20,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Comparator;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class SpellBookScreen extends BaseScreen {
     private static final ResourceLocation BACKGROUND_LOCATION = ModConstants.resLoc("textures/gui/spell_book_bg.png");
     private static final TextureRegion BACKGROUND = new TextureRegion(BACKGROUND_LOCATION, 20, 1, 164, 180);
@@ -24,6 +31,7 @@ public class SpellBookScreen extends BaseScreen {
     private static final int SAFE_AREA_Y_OFFSET = 11;
     private static final int SAFE_AREA_WIDTH = 135;
     private static final int SAFE_AREA_HEIGHT = 158;
+    private static final int MAX_FAVORITE_SPELLS = 8;
 
     private final ItemStack bookStack;
     private final Player player;
@@ -33,12 +41,16 @@ public class SpellBookScreen extends BaseScreen {
     private final GuiTransientText errorText;
     private final MultiSelectionModel selectionModel;
 
+    private GuiSpellListItem renaming;
+    private final TextEditController textEditController;
+
     public SpellBookScreen(Player player, ItemStack bookStack, InteractionHand hand) {
         super(Component.literal("Spell Book"));
         this.player = player;
         this.bookStack = bookStack;
         this.hand = hand;
         this.selectionModel = new MultiSelectionModel();
+        this.textEditController = new TextEditController();
 
         this.guiContext.getRootPane().setSize(SAFE_AREA_WIDTH, SAFE_AREA_HEIGHT);
 
@@ -52,10 +64,10 @@ public class SpellBookScreen extends BaseScreen {
                 .setClickCallback(this::onRemoveSpell);
 
         makeAndAddButton(3, Component.translatable("gui.node_spell.spell_list.rename"))
-                .setClickCallback(() -> System.out.println("Rename button clicked"));
+                .setClickCallback(this::onRenameSpell);
 
         makeAndAddButton(4, Component.translatable("gui.node_spell.spell_list.duplicate"))
-                .setClickCallback(() -> System.out.println("Duplicate button clicked"));
+                .setClickCallback(this::onDuplicateSpell);
 
         makeAndAddButton(5, Component.translatable("gui.node_spell.spell_list.import"))
                 .setClickCallback(() -> System.out.println("Import button clicked"));
@@ -98,22 +110,119 @@ public class SpellBookScreen extends BaseScreen {
             if (item instanceof GuiSpellListItem listItem) {
                 this.bookStack.getOrCreateTagElement("Spells").remove(listItem.getSpellName());
                 this.spellList.removeChild(listItem);
+
+                ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
+                activeSpellsList.removeIf(tag -> tag.getAsString().equals(listItem.getSpellName()));
             }
         });
         this.selectionModel.deselectAll();
     }
 
     private void onAddSpell() {
-        String name = "New Spell";
-        // TODO: sort list, pick unique name on creation
+        String name = getNewSpellName("New Spell");
         addSpellItem(name);
         this.bookStack.getOrCreateTagElement("Spells").put(name, new CompoundTag());
     }
 
+    private void onRenameSpell() {
+        if (this.selectionModel.getSelectionCount() != 1) {
+            this.errorText.show(Component.translatable("gui.node_spell.spell_list.select_one_spell_error").withStyle(ChatFormatting.RED), 60);
+            return;
+        }
+
+        if (renaming != null) {
+            return;
+        }
+
+        GuiSpellListItem selected = (GuiSpellListItem) this.selectionModel.getSelectedItems().iterator().next();
+
+        this.renaming = selected;
+        selected.setDisplayNameOverrideSupplier(this.textEditController::getDisplayString);
+        textEditController.setDisplayWidth(selected.getWidth() - 6 - GuiSpellListItem.FAVORITE_SIZE);
+        textEditController.setRollbackValueProvider(selected::getSpellName);
+        textEditController.startEditing(selected.getSpellName());
+        textEditController.setDoneCallback(newName -> {
+            selected.setDisplayNameOverrideSupplier(null);
+            if (newName == null || newName.isEmpty()) {
+                this.renaming = null;
+                return false;
+            }
+
+            Set<String> currentNames = this.spellList.getChildren().stream().map(child -> ((GuiSpellListItem) child).getSpellName()).collect(Collectors.toSet());
+            if (currentNames.contains(newName)) {
+                return false;
+            }
+
+            CompoundTag spellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(selected.getSpellName());
+            this.bookStack.getOrCreateTagElement("Spells").remove(selected.getSpellName());
+
+            ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
+            if (activeSpellsList.removeIf(tag -> tag.getAsString().equals(selected.getSpellName()))) {
+                activeSpellsList.add(StringTag.valueOf(newName));
+            }
+
+            selected.setSpellName(newName);
+            this.bookStack.getOrCreateTagElement("Spells").put(newName, spellTag);
+            this.renaming = null;
+            return true;
+        });
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.renaming != null) {
+            this.textEditController.onKeyPressed(keyCode, scanCode, modifiers);
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char character, int modifiers) {
+        if (this.renaming != null) {
+            this.textEditController.onCharTyped(character, modifiers);
+            return true;
+        }
+        return super.charTyped(character, modifiers);
+    }
+
+    private void onDuplicateSpell() {
+        if (this.selectionModel.getSelectionCount() != 1) {
+            this.errorText.show(Component.translatable("gui.node_spell.spell_list.select_one_spell_error").withStyle(ChatFormatting.RED), 60);
+            return;
+        }
+
+        GuiSpellListItem selected = (GuiSpellListItem) this.selectionModel.getSelectedItems().iterator().next();
+
+        CompoundTag newSpellTag;
+        if (selected.getCachedSpell() != null) {
+            newSpellTag = new CompoundTag();
+            selected.getCachedSpell().serialize(newSpellTag);
+        } else {
+            newSpellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(selected.getSpellName()).copy();
+        }
+
+        String name = getNewSpellName(selected.getSpellName());
+        addSpellItem(name);
+        this.bookStack.getOrCreateTagElement("Spells").put(name, newSpellTag);
+    }
+
     private void onFavoriteSpell(GuiSpellListItem item) {
-        // TODO: only allow limited number of favorites, add a warning test above the UI?
-        this.errorText.show(Component.translatable("gui.node_spell.spell_list.favorite_limit_error", 8).withStyle(ChatFormatting.RED), 60);
-        item.setFavorited(!item.isFavorited());
+        ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
+        if (item.isFavorite()) {
+            item.setFavorite(false);
+            activeSpellsList.removeIf(tag -> tag.getAsString().equals(item.getSpellName()));
+        } else {
+            if (activeSpellsList.size() >= MAX_FAVORITE_SPELLS) {
+                this.errorText.show(Component.translatable("gui.node_spell.spell_list.favorite_limit_error", 8).withStyle(ChatFormatting.RED), 60);
+                return;
+            }
+
+            item.setFavorite(true);
+            activeSpellsList.add(StringTag.valueOf(item.getSpellName()));
+        }
+
+        this.bookStack.getOrCreateTag().put("ActiveSpells", activeSpellsList);
     }
 
     @Override
@@ -156,20 +265,43 @@ public class SpellBookScreen extends BaseScreen {
 
     private void addSpellsFromBook() {
         CompoundTag spellsTag = this.bookStack.getOrCreateTagElement("Spells");
+        Set<String> activeSpells = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING).stream().map(Tag::getAsString).collect(Collectors.toSet());
 
         for (String spellName : spellsTag.getAllKeys().stream().sorted().toList()) {
-            addSpellItem(spellName);
+            GuiSpellListItem item = addSpellItem(spellName);
+            if (activeSpells.contains(item.getSpellName())) {
+                item.setFavorite(true);
+            }
         }
     }
 
-    private void addSpellItem(String spellName) {
+    private GuiSpellListItem addSpellItem(String spellName) {
         GuiSpellListItem spellItem = new GuiSpellListItem(spellName);
         this.spellList.addChild(spellItem);
+        this.spellList.getChildren().sort(Comparator.comparing(child -> ((GuiSpellListItem)child).getSpellName()));
+        this.spellList.invalidateLayout();
         spellItem.setClickCallback(() -> this.selectSpell(spellItem));
         spellItem.setFavoriteCallback(() -> this.onFavoriteSpell(spellItem));
+        return spellItem;
+    }
+
+    private String getNewSpellName(String baseName) {
+        Set<String> currentNames = this.spellList.getChildren().stream().map(child -> ((GuiSpellListItem) child).getSpellName()).collect(Collectors.toSet());
+        int number = 0;
+        String newName = baseName;
+
+        while (currentNames.contains(newName)) {
+            number++;
+            newName = baseName + " " + number;
+        }
+
+        return newName;
     }
 
     private void selectSpell(GuiSpellListItem item) {
+        if (item != renaming) {
+            renaming = null;
+        }
         this.selectionModel.clickItem(item);
         updateSelectionState();
     }

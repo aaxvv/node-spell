@@ -8,9 +8,15 @@ public class GuiTextureButton extends GuiElement {
     private Component tooltip;
     private Runnable clickCallback;
     private TextureRegion texture;
+    private int xTextureOffset;
+    private int yTextureOffset;
+    private boolean drawHoverOverlay;
 
     public GuiTextureButton(int width, int height) {
         super(width, height);
+        this.xTextureOffset = 0;
+        this.yTextureOffset = 0;
+        this.drawHoverOverlay = true;
     }
 
     public void setTooltip(Component tooltip) {
@@ -29,17 +35,26 @@ public class GuiTextureButton extends GuiElement {
         return texture;
     }
 
+    public void setTextureOffset(int xOffset, int yOffset) {
+        this.xTextureOffset = xOffset;
+        this.yTextureOffset = yOffset;
+    }
+
+    public void setDrawHoverOverlay(boolean drawHoverOverlay) {
+        this.drawHoverOverlay = drawHoverOverlay;
+    }
+
     @Override
     public void render(PoseStack pose, int mouseX, int mouseY, float tickDelta) {
         boolean hovered = this.containsPointGlobal(mouseX, mouseY);
 
         if (this.texture != null) {
-            this.texture.blit(pose, this.getGlobalX(), this.getGlobalY());
+            this.texture.blitOffset(pose, this.getGlobalX(), this.getGlobalY(), this.xTextureOffset, this.yTextureOffset);
         } else {
             RenderUtil.drawGuiElementDebugRect(pose, this, 0xFFFF00FF);
         }
 
-        if (hovered) {
+        if (hovered && this.drawHoverOverlay) {
             RenderUtil.drawRect(pose, this.getGlobalX(), this.getGlobalY(), this.getWidth(), this.getHeight(), 0x33000000);
         }
 

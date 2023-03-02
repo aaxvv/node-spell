@@ -115,7 +115,7 @@ public class GuiElement {
     }
 
     public List<GuiElement> getChildren() {
-        return Collections.unmodifiableList(this.children);
+        return this.children;
     }
 
     public GuiElement addChild(GuiElement child) {
