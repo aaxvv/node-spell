@@ -1,18 +1,21 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.screen;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.item.ModItems;
 import eu.aaxvv.node_spell.network.packet.UpdateWandActiveSpellC2SPacket;
 import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
 import eu.aaxvv.node_spell.util.ColorUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
@@ -22,8 +25,9 @@ public class SpellSelectionOverlay extends GuiComponent {
     private static final int SLICE_COUNT = 8;
     private static final double SLICE_ANGLE = (2 * Math.PI) / SLICE_COUNT;
     private static final int CENTER_OFFSET = 10;
-    private static final int MENU_RADIUS = 150;
-    private static final int TEXT_RADIUS = 100;
+    private static final int MENU_RADIUS = 105;
+//    private static final int TEXT_RADIUS = 20;
+    private static final int TEXT_MAX_WIDTH = 80;
 
     private static final int SLICE_COLOR = 0xC0101010;
     private static final int ACTIVE_SLICE_COLOR = 0xC0505050;
@@ -31,18 +35,21 @@ public class SpellSelectionOverlay extends GuiComponent {
     private boolean active;
     private int activeSlice;
     private int wandSlot;
-    private String[] activeSpellNames;
-    private ErrorType error;
+
+    private final String[] activeSpellNames;
 
     public SpellSelectionOverlay() {
         this.active = false;
         this.activeSlice = -1;
-        this.error = ErrorType.NONE;
         this.activeSpellNames = new String[SLICE_COUNT];
     }
 
     public void activate() {
-        setSpellNamesFromBook();
+        boolean success = setSpellNamesFromBook();
+        if (!success) {
+            return;
+        }
+
         this.active = true;
         Minecraft.getInstance().mouseHandler.releaseMouse();
 
@@ -58,7 +65,7 @@ public class SpellSelectionOverlay extends GuiComponent {
         this.active = false;
         Minecraft.getInstance().mouseHandler.grabMouse();
 
-        if (this.error == ErrorType.NONE && this.activeSlice != -1 && this.wandSlot != -1) {
+        if (this.activeSlice != -1 && this.wandSlot != -1) {
             String spellName = this.activeSpellNames[this.activeSlice];
             if (spellName == null) {
                 spellName = "";
@@ -82,10 +89,8 @@ public class SpellSelectionOverlay extends GuiComponent {
         double mouseX = Minecraft.getInstance().mouseHandler.xpos();
         double mouseY = Minecraft.getInstance().mouseHandler.ypos();
 
-        if (this.error == ErrorType.NONE) {
-            drawSlices(pose, mouseX, mouseY);
-            drawText(pose);
-        }
+        drawSlices(pose, mouseX, mouseY);
+        drawText(pose);
     }
 
     private void drawSlices(PoseStack pose, double mouseX, double mouseY) {
@@ -147,20 +152,34 @@ public class SpellSelectionOverlay extends GuiComponent {
         Vector2f center = new Vector2f(window.getGuiScaledWidth() / 2f, window.getGuiScaledHeight() / 2f);
         Font font = Minecraft.getInstance().font;
 
+        pose.pushPose();
         for (int i = 0; i < SLICE_COUNT; i++) {
             double startAngle = SLICE_ANGLE * i + (SLICE_ANGLE * 0.5);
-
-            float dX = (float) Math.sin(startAngle);
-            float dY = (float) -Math.cos(startAngle);
 
             String text = this.activeSpellNames[i];
             if (text == null) {
                 continue;
             }
 
-            int width = font.width(text);
-            font.draw(pose, text, (center.x + dX*TEXT_RADIUS) - (width / 2f), center.y + dY*TEXT_RADIUS, 0xFFFFFFFF);
+            pose.setIdentity();
+            // translate to middle of wheel
+            pose.last().pose().translate(center.x, center.y, 0);
+
+            int fullWidth = font.width(text);
+            int width = Math.min(fullWidth, TEXT_MAX_WIDTH);
+
+            // rotate to angle and translate out to middle of ring
+            if (startAngle > Math.PI) {
+                pose.last().pose().rotate((float)(startAngle - ((3 * Math.PI) / 2)), 0, 0, 1);
+                pose.last().pose().translate(-(MENU_RADIUS / 2f), -4.5f, 0);
+            } else {
+                pose.last().pose().rotate((float)(startAngle - (Math.PI / 2)), 0, 0, 1);
+                pose.last().pose().translate((MENU_RADIUS / 2f), -4.5f, 0);
+            }
+
+            RenderUtil.drawTextTruncated(pose, font, text, -(width / 2), 0, TEXT_MAX_WIDTH, 0xFFFFFFFF);
         }
+        pose.popPose();
     }
 
     private boolean shouldClose() {
@@ -172,10 +191,10 @@ public class SpellSelectionOverlay extends GuiComponent {
         return player == null || player.getMainHandItem().getItem() != ModItems.WAND;
     }
 
-    private void setSpellNamesFromBook() {
+    private boolean setSpellNamesFromBook() {
         Player player = Minecraft.getInstance().player;
         if (player == null) {
-            return;
+            return false;
         }
 
         ItemStack found = null;
@@ -184,8 +203,8 @@ public class SpellSelectionOverlay extends GuiComponent {
             ItemStack stack = player.getInventory().getItem(i);
             if (stack.is(ModItems.SPELL_BOOK)) {
                 if (found != null) {
-                    this.error = ErrorType.MULTIPLE_BOOKS;
-                    return;
+                    player.displayClientMessage(Component.translatable("gui.node_spell.multiple_spell_books_found").withStyle(ChatFormatting.RED), true);
+                    return false;
                 }
 
                 found = stack;
@@ -193,19 +212,15 @@ public class SpellSelectionOverlay extends GuiComponent {
         }
 
         if (found == null) {
-            this.error = ErrorType.NO_BOOK;
-            return;
+            player.displayClientMessage(Component.translatable("gui.node_spell.spell_book_not_found").withStyle(ChatFormatting.RED), true);
+
+            return false;
         }
 
         ListTag activeSpellsList = found.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
         for (int i = 0; i < activeSpellsList.size(); i++) {
             this.activeSpellNames[i] = activeSpellsList.get(i).getAsString();
         }
-    }
-
-    private enum ErrorType {
-        NONE,
-        NO_BOOK,
-        MULTIPLE_BOOKS
+        return true;
     }
 }

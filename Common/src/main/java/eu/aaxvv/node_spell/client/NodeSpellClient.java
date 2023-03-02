@@ -1,6 +1,6 @@
 package eu.aaxvv.node_spell.client;
 
-import eu.aaxvv.node_spell.client.gui.SpellSelectionOverlay;
+import eu.aaxvv.node_spell.client.screen.SpellSelectionOverlay;
 
 public class NodeSpellClient {
     private static SpellSelectionOverlay spellSelectionOverlay;
