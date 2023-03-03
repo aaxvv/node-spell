@@ -36,7 +36,8 @@ public class Edge {
             return this.startSocket.getBase().getDataType();
         }
 
-        if (this.startSocket.getBase().getDirection() == Socket.Direction.IN) {
+        // prefer the non-ANY socket if available
+        if (this.startSocket.getBase().getDataType() == Datatype.ANY) {
             return this.endSocket.getBase().getDataType();
         } else {
             return this.startSocket.getBase().getDataType();
