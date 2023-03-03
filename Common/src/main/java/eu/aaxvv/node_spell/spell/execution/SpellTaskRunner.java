@@ -1,10 +1,9 @@
 package eu.aaxvv.node_spell.spell.execution;
 
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
@@ -46,9 +45,10 @@ public class SpellTaskRunner {
                 runner.tick();
 
             } catch (SpellExecutionException ex) {
-                if (runner.ctx.getCaster() instanceof Player player) {
-                    player.displayClientMessage(Component.literal(ex.getMessage()).withStyle(ChatFormatting.RED), true);
-                }
+                runner.ctx.getCaster().asPlayer().ifPresent(player -> {
+                    player.displayClientMessage(Component.literal(ex.getShortDescription()).withStyle(ChatFormatting.RED), true);
+                });
+                ModConstants.LOG.error("Failed to execute spell.", ex);
                 runner.stop();
             }
         }

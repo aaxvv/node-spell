@@ -7,7 +7,9 @@ import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,6 +25,7 @@ public class NodeSpellMod implements ModInitializer {
         ModItems.register((resLoc, item) -> Registry.register(BuiltInRegistries.ITEM, resLoc, item));
 
         ServerTickEvents.START_WORLD_TICK.register(NodeSpellCommon::onLevelTick);
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> NodeSpellCommon.spellPersistentStorage.init(server));
     }
 
     private void createRegistries() {

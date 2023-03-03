@@ -1,10 +1,15 @@
 package eu.aaxvv.node_spell.helper;
 
 import eu.aaxvv.node_spell.NodeSpellCommon;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public class EntityHelper {
     public static Vec3 getEntityVelocity(Entity entity) {
@@ -23,6 +28,14 @@ public class EntityHelper {
             return player.isShiftKeyDown();
         } else {
             return false;
+        }
+    }
+
+    public static Optional<Entity> getFromUuid(Level level, UUID uuid) {
+        if (level instanceof ServerLevel serverLevel) {
+            return Optional.ofNullable(serverLevel.getEntity(uuid));
+        } else {
+            return Optional.empty();
         }
     }
 }

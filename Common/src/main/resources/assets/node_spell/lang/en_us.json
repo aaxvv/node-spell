@@ -8,6 +8,7 @@
   "gui.node_spell.spell_book_not_found": "No spell book in inventory",
   "gui.node_spell.multiple_spell_books_found": "Multiple spell books in inventory",
   "gui.node_spell.spell_not_active": "Selected spell is not active",
+  "gui.node_spell.spell_no_entrypoint": "Selected spell has no entrypoint node",
   "gui.node_spell.wand_spell_tooltip": "Current Spell: %s",
   "gui.node_spell.delete_tooltip_1": "Drag Node here to delete",
   "gui.node_spell.delete_tooltip_2": "Shift click to delete all",
@@ -100,6 +101,11 @@
 
   "node.node_spell.print": "Print",
   "node.node_spell.place_block": "Place Block",
+
+  "node.node_spell.get_variable": "Get Variable",
+  "node.node_spell.set_variable": "Set Variable",
+  "node.node_spell.get_spell_storage": "Get Storage",
+  "node.node_spell.set_spell_storage": "Set Storage",
 
   "socket.node_spell.empty": "",
   "socket.node_spell.result": "Result",

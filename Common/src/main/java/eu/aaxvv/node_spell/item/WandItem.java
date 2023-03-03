@@ -60,12 +60,12 @@ public class WandItem extends Item {
         SpellBookResult spellBook = findPlayerSpellBook(player);
 
         if (spellBook.bookStack == null) {
-            ((ServerPlayer)player).displayClientMessage(Component.translatable("gui.node_spell.spell_book_not_found").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(Component.translatable("gui.node_spell.spell_book_not_found").withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);
         }
 
         if (spellBook.duplicate) {
-            ((ServerPlayer)player).displayClientMessage(Component.translatable("gui.node_spell.multiple_spell_books_found").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(Component.translatable("gui.node_spell.multiple_spell_books_found").withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);
         }
 
@@ -81,17 +81,13 @@ public class WandItem extends Item {
         }
 
         if (spellToCast == null) {
-            ((ServerPlayer)player).displayClientMessage(Component.translatable("gui.node_spell.spell_not_active").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(Component.translatable("gui.node_spell.spell_not_active").withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);
         }
 
-        NodeSpellCommon.spellTaskRunner.startSpell(player.getUUID(), spellToCast, new SpellContext(player, level));
+        NodeSpellCommon.spellTaskRunner.startSpell(player.getUUID(), spellToCast, new SpellContext((ServerPlayer) player, level, spellToCast.getName()));
 
-//        if (!success) {
-//            return InteractionResultHolder.fail(stack);
-//        } else {
             return InteractionResultHolder.consume(stack);
-//        }
     }
 
     private SpellBookResult findPlayerSpellBook(Player player) {

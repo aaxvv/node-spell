@@ -25,9 +25,9 @@ public class DebugPrintNode extends SimpleFlowNode {
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
-        if (ctx.getCaster() instanceof ServerPlayer player) {
-           Value value = instance.getSocketValue(sVal, ctx);
-           player.displayClientMessage(Component.literal(String.valueOf(value)), true);
-        }
+        ctx.getCaster().asPlayer().ifPresent(player -> {
+            Value value = instance.getSocketValue(sVal, ctx);
+            player.displayClientMessage(Component.literal(value.toString(ctx)), true);
+        });
     }
 }

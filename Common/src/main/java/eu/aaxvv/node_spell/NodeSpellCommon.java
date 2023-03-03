@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell;
 
 import eu.aaxvv.node_spell.spell.execution.PlayerMotionRecorder;
 import eu.aaxvv.node_spell.spell.execution.PlayerSpellCache;
+import eu.aaxvv.node_spell.spell.execution.SpellPersistentStorage;
 import eu.aaxvv.node_spell.spell.execution.SpellTaskRunner;
 import net.minecraft.server.level.ServerLevel;
 
@@ -13,6 +14,7 @@ public class NodeSpellCommon {
     public static PlayerSpellCache playerSpellCache;
     public static SpellTaskRunner spellTaskRunner;
     public static PlayerMotionRecorder playerMotionRecorder;
+    public static SpellPersistentStorage spellPersistentStorage;
 
     // The loader specific projects are able to import and use any code from the common project. This allows you to
     // write the majority of your code here and load it from your loader specific projects. This example has some
@@ -21,6 +23,7 @@ public class NodeSpellCommon {
         playerSpellCache = new PlayerSpellCache();
         spellTaskRunner = new SpellTaskRunner();
         playerMotionRecorder = new PlayerMotionRecorder();
+        spellPersistentStorage = new SpellPersistentStorage();
 //        Nodes.registerNodes();
 //        NodeCategories.registerCategories();
 

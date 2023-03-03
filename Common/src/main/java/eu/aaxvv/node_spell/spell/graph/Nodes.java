@@ -20,6 +20,10 @@ import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.ForLoopNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.input.CasterNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.memory.GetSpellStorage;
+import eu.aaxvv.node_spell.spell.graph.nodes.memory.GetVariableNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetSpellStorage;
+import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetVariableNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.BasicStringOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.BasicVectorOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorConstructNode;
@@ -183,7 +187,11 @@ public static final Node VEC_LENGTH = new GenericConversionNode
     // place block, break block, apply impulse,
 
     // ===== MEMORY =====
-    // variable, set variable, spell storage, set spell storage
+    public static final Node GET_VARIABLE = new GetVariableNode();
+    public static final Node SET_VARIABLE = new SetVariableNode();
+    public static final Node GET_SPELL_STORAGE = new GetSpellStorage();
+    public static final Node SET_SPELL_STORAGE = new SetSpellStorage();
+    // player storage too? for passing data between spells?
 
     public static void initRegistry(Supplier<Registry<Node>> nodeRegistry) {
         REGISTRY_SUPPLIER = nodeRegistry;
@@ -254,6 +262,11 @@ public static final Node VEC_LENGTH = new GenericConversionNode
 
         register(PRINT);
         register(PLACE_BLOCK);
+
+        register(GET_VARIABLE);
+        register(SET_VARIABLE);
+        register(GET_SPELL_STORAGE);
+        register(SET_SPELL_STORAGE);
     }
 
     private static void register(Node node) {

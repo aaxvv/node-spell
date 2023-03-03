@@ -22,7 +22,6 @@ public class EntityPositionNode extends Node {
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
-        Entity entity = instance.getSocketValue(sEntity, ctx).entityValue();
-        instance.setSocketValue(sPosition, Value.createVector(entity.position()));
+        instance.setSocketValue(sPosition, Value.createVector(ctx.getCaster().position));
     }
 }

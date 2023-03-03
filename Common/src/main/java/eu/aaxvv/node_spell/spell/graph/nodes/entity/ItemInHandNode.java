@@ -9,10 +9,13 @@ import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.Optional;
 
 public class ItemInHandNode extends Node {
     public final Socket sEntity;
@@ -26,14 +29,14 @@ public class ItemInHandNode extends Node {
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
-        Entity entity = instance.getSocketValue(sEntity, ctx).entityValue();
-        if (!(entity instanceof Player player)) {
+        Optional<ServerPlayer> player = ctx.getCaster().asPlayer();
+        if (player.isEmpty()) {
             instance.setSocketValue(sItem, Value.createItem(ItemStack.EMPTY));
             return;
         }
 
-        ItemStack mainHandStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        ItemStack offHandStack = player.getItemInHand(InteractionHand.OFF_HAND);
+        ItemStack mainHandStack = player.get().getItemInHand(InteractionHand.MAIN_HAND);
+        ItemStack offHandStack = player.get().getItemInHand(InteractionHand.OFF_HAND);
 
         if (mainHandStack.is(ModItems.WAND)) {
             instance.setSocketValue(sItem, Value.createItem(offHandStack));

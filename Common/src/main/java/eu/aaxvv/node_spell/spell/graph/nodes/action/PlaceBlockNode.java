@@ -10,6 +10,7 @@ import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -30,11 +31,7 @@ public class PlaceBlockNode extends SimpleFlowNode {
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
-        if (!(ctx.getCaster() instanceof Player player)) {
-            return;
-        }
-
-        Inventory inventory = player.getInventory();
+        Container inventory = ctx.getCaster().container;
         Block block = instance.getSocketValue(this.sBlock, ctx).blockValue();
         Item blockItem = block.asItem();
 
@@ -43,14 +40,14 @@ public class PlaceBlockNode extends SimpleFlowNode {
             return;
         }
 
-//        int slot = inventory.findSlotMatchingItem(new ItemStack(blockItem));
         ItemStack usedStack = getUsedItem(inventory, blockItem);
 
         if (usedStack.isEmpty()) {
             throw new SpellExecutionException("Missing item");
         }
 
-        if (!player.getAbilities().instabuild) {
+        boolean isCreative = ctx.getCaster().asPlayer().map(p -> p.getAbilities().instabuild).orElse(false);
+        if (!isCreative) {
             usedStack.shrink(1);
         }
         Vec3 pos = instance.getSocketValue(this.sPos, ctx).vectorValue();;
@@ -61,10 +58,9 @@ public class PlaceBlockNode extends SimpleFlowNode {
 
         if (!ctx.getLevel().getBlockState(blockPos).canBeReplaced()) {
             return;
-//            throw new SpellExecutionException("Target position is occupied");
         }
 
-        int distance = ctx.getCaster().blockPosition().distManhattan(new Vec3i(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
+        int distance = ctx.getCaster().blockPos.distManhattan(new Vec3i(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
         if (distance > ModConstants.SPELL_INTERACTION_RANGE) {
             throw new SpellExecutionException("Target position is out of range");
         }
@@ -72,9 +68,9 @@ public class PlaceBlockNode extends SimpleFlowNode {
         ctx.getLevel().setBlock(blockPos, block.defaultBlockState(), Block.UPDATE_ALL);
     }
 
-    public ItemStack getUsedItem(Inventory inventory, Item item) {
-        for(int i = 0; i < inventory.getContainerSize(); ++i) {
-            ItemStack stack = inventory.getItem(i);
+    public ItemStack getUsedItem(Container container, Item item) {
+        for(int i = 0; i < container.getContainerSize(); ++i) {
+            ItemStack stack = container.getItem(i);
             if (stack.is(item)) {
                 return stack;
             }
