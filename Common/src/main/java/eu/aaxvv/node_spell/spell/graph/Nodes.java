@@ -174,11 +174,7 @@ public static final Node VEC_LENGTH = new GenericConversionNode
     public static final Node STRING_ENDS_WITH = new BasicStringOpNode<>(ModConstants.resLoc("string_ends_with"), Datatype.BOOL, Value::createBool, String::endsWith);
     public static final Node STRING_INDEX_OF = new BasicStringOpNode<>(ModConstants.resLoc("string_index_of"), Datatype.NUMBER, Value::createNumber, (a, b) -> (double)a.indexOf(b));
 
-    public static final Node TO_STRING = new GenericConversionNode.Builder<Value, String>(NodeCategories.STRING, "to_string")
-            .types(Datatype.ANY, Datatype.STRING)
-            .socketNames("value", "string")
-            .function(Value::toString)
-            .build();
+    public static final Node TO_STRING = new ToStringNode();
     // substring, char at,
 
     // ===== ACTION =====

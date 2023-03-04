@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.NodeSpellCommon;
 import eu.aaxvv.node_spell.client.gui.*;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
 import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
@@ -86,8 +87,7 @@ public class SpellBookScreen extends BaseScreen {
     }
 
     private void onEditSpell() {
-        if (this.selectionModel.getSelectionCount() != 1) {
-            this.errorText.show(Component.translatable("gui.node_spell.spell_list.select_one_spell_error").withStyle(ChatFormatting.RED), 60);
+        if (!ensureOneSelected()) {
             return;
         }
 
@@ -121,12 +121,11 @@ public class SpellBookScreen extends BaseScreen {
     private void onAddSpell() {
         String name = getNewSpellName("New Spell");
         addSpellItem(name);
-        this.bookStack.getOrCreateTagElement("Spells").put(name, new CompoundTag());
+        this.bookStack.getOrCreateTagElement("Spells").put(name, Spell.createEmptyNbt(name));
     }
 
     private void onRenameSpell() {
-        if (this.selectionModel.getSelectionCount() != 1) {
-            this.errorText.show(Component.translatable("gui.node_spell.spell_list.select_one_spell_error").withStyle(ChatFormatting.RED), 60);
+        if (!ensureOneSelected()) {
             return;
         }
 
@@ -153,7 +152,7 @@ public class SpellBookScreen extends BaseScreen {
                 return false;
             }
 
-            CompoundTag spellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(selected.getSpellName());
+            CompoundTag oldSpellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(selected.getSpellName());
             this.bookStack.getOrCreateTagElement("Spells").remove(selected.getSpellName());
 
             ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
@@ -162,8 +161,10 @@ public class SpellBookScreen extends BaseScreen {
             }
 
             selected.setSpellName(newName);
-            this.bookStack.getOrCreateTagElement("Spells").put(newName, spellTag);
+            this.bookStack.getOrCreateTagElement("Spells").put(newName, oldSpellTag);
+            oldSpellTag.putString("Name", newName);
             this.renaming = null;
+            this.spellList.getChildren().sort(Comparator.comparing(child -> ((GuiSpellListItem)child).getSpellName()));
             return true;
         });
     }
@@ -187,8 +188,7 @@ public class SpellBookScreen extends BaseScreen {
     }
 
     private void onDuplicateSpell() {
-        if (this.selectionModel.getSelectionCount() != 1) {
-            this.errorText.show(Component.translatable("gui.node_spell.spell_list.select_one_spell_error").withStyle(ChatFormatting.RED), 60);
+        if (!ensureOneSelected()) {
             return;
         }
 
@@ -311,5 +311,17 @@ public class SpellBookScreen extends BaseScreen {
             GuiSpellListItem item = ((GuiSpellListItem) child);
             item.setSelected(this.selectionModel.isSelected(item));
         }
+    }
+
+    private boolean ensureOneSelected() {
+        if (this.selectionModel.getSelectionCount() == 0) {
+            this.errorText.show(Component.translatable("gui.node_spell.spell_list.no_selection_error").withStyle(ChatFormatting.RED), 60);
+            return false;
+        } else if (this.selectionModel.getSelectionCount() > 1) {
+            this.errorText.show(Component.translatable("gui.node_spell.spell_list.multiple_selection_error").withStyle(ChatFormatting.RED), 60);
+            return false;
+        }
+
+        return true;
     }
 }

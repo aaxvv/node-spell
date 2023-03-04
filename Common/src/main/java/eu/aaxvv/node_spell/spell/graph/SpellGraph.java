@@ -125,7 +125,7 @@ public class SpellGraph {
 
         if (nbt.contains("Entrypoint")) {
             int entryPointIndex = nbt.getInt("Entrypoint");
-            if (entryPointIndex > 0 && entryPointIndex < this.nodeInstances.size()) {
+            if (entryPointIndex >= 0 && entryPointIndex < this.nodeInstances.size()) {
                 this.entrypoint = this.nodeInstances.get(nbt.getInt("Entrypoint"));
             }
         }

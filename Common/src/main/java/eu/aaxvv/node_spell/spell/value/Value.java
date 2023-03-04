@@ -177,7 +177,7 @@ public class Value {
             case STRING -> this.stringValue();
             case VECTOR -> "(" + format.format(this.vectorValue().x) + ", " + format.format(this.vectorValue().y) + ", " + format.format(this.vectorValue().z) + ")";
             case ENTITY -> EntityHelper.getFromUuid(ctx.getLevel(), this.entityValue()).map(Entity::getDisplayName).map(Component::getString).orElseGet(() -> this.entityValue().toString());
-            case BLOCK -> this.blockValue().getName().toString();
+            case BLOCK -> this.blockValue().getName().getString();
             case ITEM -> this.itemValue().toString();
             case LIST -> "[" + String.join(", ", this.listValue().stream().map(Value::toString).toList()) + "]";
             case FLOW -> "<FLOW>";

@@ -21,6 +21,8 @@ import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
+import java.util.Arrays;
+
 public class SpellSelectionOverlay extends GuiComponent {
     private static final int SLICE_COUNT = 8;
     private static final double SLICE_ANGLE = (2 * Math.PI) / SLICE_COUNT;
@@ -218,6 +220,7 @@ public class SpellSelectionOverlay extends GuiComponent {
         }
 
         ListTag activeSpellsList = found.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
+        Arrays.fill(this.activeSpellNames, null);
         for (int i = 0; i < activeSpellsList.size(); i++) {
             this.activeSpellNames[i] = activeSpellsList.get(i).getAsString();
         }
