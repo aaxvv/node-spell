@@ -94,6 +94,14 @@ public class SocketInstance {
         return this.getParentInstance().getSocketY(this.base.getPositionOnNode());
     }
 
+    public int getLocalX() {
+        return this.getParentInstance().getLocalSocketX(this.base.getDirection());
+    }
+
+    public int getLocalY() {
+        return this.getParentInstance().getLocalSocketY(this.base.getPositionOnNode());
+    }
+
     public boolean containsPoint(int x, int y) {
         return x >= this.getX() && x < this.getX() + 5 && y >= this.getY() && y < this.getY() + 5;
     }

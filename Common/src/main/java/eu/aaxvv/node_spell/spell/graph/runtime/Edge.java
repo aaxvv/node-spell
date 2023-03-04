@@ -86,4 +86,36 @@ public class Edge {
             return end.getBase().getDataType().isAssignableFrom(start.getBase().getDataType());
         }
     }
+
+    public int getWidth() {
+        return Math.abs(this.startSocket.getX() - this.endSocket.getX());
+    }
+
+    public int getHeight() {
+        return Math.abs(this.startSocket.getY() - this.endSocket.getY());
+    }
+
+    public int getX() {
+        return Math.min(this.startSocket.getX(), this.endSocket.getX());
+    }
+
+    public int getY() {
+        return Math.min(this.startSocket.getY(), this.endSocket.getY());
+    }
+
+    public int getLeftY() {
+        if (this.startSocket.getX() < this.endSocket.getX()) {
+            return this.startSocket.getY();
+        } else {
+            return this.endSocket.getY();
+        }
+    }
+
+    public int getRightY() {
+        if (this.startSocket.getX() < this.endSocket.getX()) {
+            return this.endSocket.getY();
+        } else {
+            return this.startSocket.getY();
+        }
+    }
 }

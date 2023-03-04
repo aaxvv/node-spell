@@ -102,7 +102,13 @@ public class SpellBookScreen extends BaseScreen {
             selected.setCachedSpell(spell);
         }
 
-        Minecraft.getInstance().setScreen(new SpellEditScreen(this, spell));
+        //TODO: testing
+        if (GuiHelper.isShiftDown()) {
+            Minecraft.getInstance().setScreen(new NewSpellEditScreen(this, spell));
+
+        } else {
+            Minecraft.getInstance().setScreen(new SpellEditScreen(this, spell));
+        }
     }
 
     private void onRemoveSpell() {

@@ -178,6 +178,14 @@ public class NodeInstance {
         return socketStartY + (index * NodeConstants.SOCKET_STEP_Y);
     }
 
+    public int getLocalSocketX(Socket.Direction direction) {
+        return direction == Socket.Direction.IN ? - 2 : this.base.getWidth() - 3;
+    }
+
+    public int getLocalSocketY(int index) {
+        return NodeConstants.SOCKET_START_Y + (index * NodeConstants.SOCKET_STEP_Y);
+    }
+
     public boolean containsPoint(int x, int y) {
         return x >= this.x && x < this.x + this.base.getWidth() && y >= this.y && y < this.y + this.base.getExpectedHeight();
     }

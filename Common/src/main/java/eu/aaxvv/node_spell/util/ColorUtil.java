@@ -16,4 +16,10 @@ public class ColorUtil {
         out[2] = (float)(packedColor >> 8 & 255) / 255.0F;
         out[3] = (float)(packedColor & 255) / 255.0F;
     }
+
+    public static float[] unpackAndCreateColor(int packedColor) {
+        float[] components = new float[4];
+        unpackColor(packedColor, components);
+        return components;
+    }
 }
