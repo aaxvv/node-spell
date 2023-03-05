@@ -15,11 +15,13 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 
 public class GuiNodeView extends GuiElement {
     private final NodeGraphView graph;
     private final NodeInstance instance;
     private boolean selected;
+    private Vector2i dragOffset;
 
     public GuiNodeView(NodeInstance instance, NodeGraphView graph) {
         super(instance.getBaseNode().getWidth(), instance.getBaseNode().getExpectedHeight());

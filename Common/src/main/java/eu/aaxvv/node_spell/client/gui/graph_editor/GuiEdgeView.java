@@ -34,15 +34,18 @@ public class GuiEdgeView extends GuiElement {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-        int leftY = this.instance.getLeftY() + this.getParent().getGlobalY();
-        int rightY = this.instance.getRightY() + this.getParent().getGlobalY();
+        int leftX = this.getGlobalX() + 3;
+        int width = this.getWidth();
 
-        int middleX = this.getGlobalX() + (int) Math.ceil(this.getWidth() / 2.0f);
+        int leftY = this.instance.getLeftY() + this.getParent().getGlobalY() + 2;
+        int rightY = this.instance.getRightY() + this.getParent().getGlobalY() + 2;
+
+        int middleX = leftX + (int) Math.ceil(width / 2.0f);
         Datatype dt = this.getInstance().getDatatype();
 
-        RenderUtil.putQuad(mat, bb, this.getGlobalX(), leftY, this.getWidth() / 2 + 1, 1, dt.r, dt.g, dt.b);
-        RenderUtil.putQuad(mat, bb, middleX, this.getGlobalY(), 1, this.getHeight(), dt.r, dt.g, dt.b);
-        RenderUtil.putQuad(mat, bb, middleX, rightY, this.getWidth() / 2, 1, dt.r, dt.g, dt.b);
+        RenderUtil.putQuad(mat, bb, leftX, leftY, width / 2 + 1, 1, dt.r, dt.g, dt.b);
+        RenderUtil.putQuad(mat, bb, middleX, this.getGlobalY() + 2, 1, this.getHeight() + 1, dt.r, dt.g, dt.b);
+        RenderUtil.putQuad(mat, bb, middleX, rightY, width / 2, 1, dt.r, dt.g, dt.b);
 
         BufferUploader.drawWithShader(bb.end());
         RenderSystem.enableTexture();

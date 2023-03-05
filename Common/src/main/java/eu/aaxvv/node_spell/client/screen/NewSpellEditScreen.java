@@ -8,8 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 public class NewSpellEditScreen extends BaseScreen {
-    private static final int NODE_PICKER_WIDTH = 64;
-
     private final SpellBookScreen parentScreen;
     private final Spell spell;
 
@@ -22,12 +20,13 @@ public class NewSpellEditScreen extends BaseScreen {
         this.parentScreen = parentScreen;
         this.spell = spell;
 
-        this.nodePicker = new GuiNodePicker(NODE_PICKER_WIDTH, this.getRootHeight());
+        this.nodePicker = new GuiNodePicker(this.getRootWidth(), 0);
+        this.nodePicker.setLocalPosition(0, this.getRootHeight());
         this.getGuiRoot().addChild(this.nodePicker);
 
         this.nodeGraph = new GuiGraphEditor(this.spell.getGraph());
-        this.canvasContainer = new GuiPanContainer(this.getRootWidth() - NODE_PICKER_WIDTH, this.getRootHeight(), this.nodeGraph);
-        this.canvasContainer.setLocalPosition(NODE_PICKER_WIDTH, 0);
+        this.canvasContainer = new GuiPanContainer(this.getRootWidth(), this.getRootHeight(), this.nodeGraph);
+        this.canvasContainer.setLocalPosition(0, 0);
         this.getGuiRoot().addChild(this.canvasContainer);
     }
 
@@ -35,9 +34,10 @@ public class NewSpellEditScreen extends BaseScreen {
     protected void init() {
         this.getGuiRoot().setSize(this.width, this.height);
         super.init();
-        this.nodePicker.setHeight(this.getRootHeight());
-        this.canvasContainer.setHeight(this.getRootHeight());
-        this.canvasContainer.setWidth(this.getRootWidth() - NODE_PICKER_WIDTH);
+        this.nodePicker.setWidth(this.getRootWidth());
+        this.nodePicker.setLocalPosition(0, this.getRootHeight() - this.nodePicker.getHeight());
+        this.canvasContainer.setHeight(this.getRootHeight() - this.nodePicker.getHeight());
+        this.canvasContainer.setWidth(this.getRootWidth());
     }
 
     @Override

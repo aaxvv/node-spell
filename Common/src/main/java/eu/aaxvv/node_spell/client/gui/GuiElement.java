@@ -12,10 +12,10 @@ import java.util.List;
  * is just not viable for a complex node GUI.
  */
 public class GuiElement {
-    private int x;
-    private int y;
-    private int height;
-    private int width;
+    protected int x;
+    protected int y;
+    protected int height;
+    protected int width;
 
     private int cachedGlobalX;
     private int cachedGlobalY;
@@ -67,19 +67,29 @@ public class GuiElement {
     }
 
     public void setWidth(int width) {
+        int oldValue = this.width;
         this.width = width;
-        invalidate();
+        if (oldValue != width) {
+            invalidate();
+        }
     }
 
     public void setHeight(int height) {
+        int oldValue = this.height;
         this.height = height;
-        invalidate();
+        if (oldValue != height) {
+            invalidate();
+        }
     }
 
     public void setSize(int width, int height) {
+        int oldWidth = this.width;
+        int oldHeight = this.height;
         this.width = width;
         this.height = height;
-        invalidate();
+        if (oldWidth != width || oldHeight != height) {
+            invalidate();
+        }
     }
 
     public GuiContext getContext() {
