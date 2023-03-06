@@ -12,49 +12,28 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.*;
 
 import java.util.function.Supplier;
 
 @Mod(ModConstants.MOD_ID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class NodeSpellMod {
-    
-    public NodeSpellMod() {
-        registerEvents();
-    }
-
-    private void registerEvents() {
-
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modBus.addListener(this::createRegistries);
-        modBus.addListener(this::register);
-        modBus.addListener(this::commonSetup);
-
-        MinecraftForge.EVENT_BUS.addListener(this::onLevelTick);
-        MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
-    }
-
-    private void commonSetup(FMLCommonSetupEvent event) {
+    @SubscribeEvent
+    public static void commonSetup(FMLCommonSetupEvent event) {
         NodeSpellCommon.init();
         ForgePacketHandler.init();
+
+        MinecraftForge.EVENT_BUS.addListener(NodeSpellMod::onLevelTick);
+        MinecraftForge.EVENT_BUS.addListener(NodeSpellMod::onServerStarted);
     }
 
-    private void onLevelTick(TickEvent.LevelTickEvent event) {
-        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
-            NodeSpellCommon.onLevelTick((ServerLevel) event.level);
-        }
-    }
-
-    private void onServerStarted(ServerStartedEvent event) {
-        NodeSpellCommon.spellPersistentStorage.init(event.getServer());
-    }
-
-    private void register(RegisterEvent event) {
+    @SubscribeEvent
+    public static void register(RegisterEvent event) {
         ModItems.register((res, val) -> event.register(ForgeRegistries.Keys.ITEMS, res, () -> val));
 
         ResourceKey<?> registryKey = event.getRegistryKey();
@@ -65,7 +44,8 @@ public class NodeSpellMod {
         }
     }
 
-    private void createRegistries(NewRegistryEvent event) {
+    @SubscribeEvent
+    public static void createRegistries(NewRegistryEvent event) {
         RegistryBuilder<Node> nodeRegistryBuilder = new RegistryBuilder<Node>().setName(ModConstants.resLoc("nodes"));//.disableSaving().disableSync();
 
         Supplier<IForgeRegistry<Node>> nodeRegistry = event.create(nodeRegistryBuilder);
@@ -77,5 +57,15 @@ public class NodeSpellMod {
         Supplier<IForgeRegistry<NodeCategory>> nodeCategoryRegistry = event.create(nodeCategoryRegistryBuilder);
         NodeCategories.initRegistry(new ForgeRegistryWrapper<>(nodeCategoryRegistry));
 
+    }
+
+    private static void onLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.START) {
+            NodeSpellCommon.onLevelTick((ServerLevel) event.level);
+        }
+    }
+
+    private static void onServerStarted(ServerStartedEvent event) {
+        NodeSpellCommon.spellPersistentStorage.init(event.getServer());
     }
 }

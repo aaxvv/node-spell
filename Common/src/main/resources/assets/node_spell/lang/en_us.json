@@ -89,8 +89,10 @@
   "node.node_spell.entity_look_direction": "Look Dir.",
   "node.node_spell.entity_velocity": "Entity Vel.",
   "node.node_spell.entity_is_sneaking": "Is Sneaking",
+  "node.node_spell.entity_eye_pos": "Eye Pos.",
 
   "node.node_spell.block_from_item": "Item -> Block",
+  "node.node_spell.ray_cast_block": "Raycast Block",
 
   "node.node_spell.item_count": "Item Count",
 
@@ -140,9 +142,12 @@
   "socket.node_spell.min": "Min",
   "socket.node_spell.velocity": "Vel.",
   "socket.node_spell.direction": "Dir.",
+  "socket.node_spell.origin": "Origin",
   "socket.node_spell.vector": "Vec.",
   "socket.node_spell.axis": "Axis",
   "socket.node_spell.length": "Len.",
   "socket.node_spell.string": "Str.",
-  "socket.node_spell.sneaking": "Sneaking"
+  "socket.node_spell.sneaking": "Sneaking",
+  "socket.node_spell.side": "Side",
+  "socket.node_spell.hit": "Hit"
 }

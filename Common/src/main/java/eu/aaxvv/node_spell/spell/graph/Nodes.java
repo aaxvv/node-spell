@@ -6,7 +6,7 @@ import eu.aaxvv.node_spell.platform.registry.PlatformRegistryWrapper;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.PlaceBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.block.BlockFromItemNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.action.PlaceBlockNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.block.RaycastBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.BasicNumberCompNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.EqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.NotEqualsNode;
@@ -154,6 +154,12 @@ public static final Node VEC_LENGTH = new GenericConversionNode
             "sneaking",
             EntityHelper::isSneaking
     );
+    public static final Node ENTITY_EYE_POSITION = new GenericEntityPropertyNode<>(
+            "entity_eye_pos",
+            Datatype.VECTOR,
+            "position",
+            Entity::getEyePosition
+    );
 
     // target entity / position,
     // item: next in hot bar, hand (other for caster), from entity
@@ -163,6 +169,7 @@ public static final Node VEC_LENGTH = new GenericConversionNode
     // ===== BLOCK =====
     // block: at position, from item, is in tag, redstone activated, name, waterlogged / flammable?
     public static final Node BLOCK_FROM_ITEM = new BlockFromItemNode();
+    public static final Node RAY_CAST_BLOCK = new RaycastBlockNode();
     // break, get at position, get id, is liquid, is solid, is flammable
 
     // ===== ITEM =====
@@ -251,8 +258,10 @@ public static final Node VEC_LENGTH = new GenericConversionNode
         register(ENTITY_VELOCITY);
         register(ENTITY_LOOK_DIRECTION);
         register(ENTITY_IS_SNEAKING);
+        register(ENTITY_EYE_POSITION);
 
         register(BLOCK_FROM_ITEM);
+        register(RAY_CAST_BLOCK);
 
         register(ITEM_COUNT);
 

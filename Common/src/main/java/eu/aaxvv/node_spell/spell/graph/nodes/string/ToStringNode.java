@@ -14,7 +14,7 @@ public class ToStringNode extends Node {
     public final Socket sOut;
     public ToStringNode() {
         super(NodeCategories.STRING, ModConstants.resLoc("to_string"));
-        this.sIn = addInputSocket(Datatype.STRING, "socket.node_spell.value");
+        this.sIn = addInputSocket(Datatype.ANY, "socket.node_spell.value");
         this.sOut = addOutputSocket(Datatype.STRING, "socket.node_spell.string");
     }
 
