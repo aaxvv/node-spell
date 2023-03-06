@@ -1,8 +1,10 @@
 package eu.aaxvv.node_spell.client.gui;
 
-public class GuiPopupPane extends GuiElement {
-    public GuiPopupPane(int width, int height) {
-        super(width, height);
+import eu.aaxvv.node_spell.client.gui.base.UnboundedGuiElement;
+
+public class GuiPopupPane extends UnboundedGuiElement {
+    public GuiPopupPane() {
+        super();
     }
 
     public void openPopup(GuiElement popup) {

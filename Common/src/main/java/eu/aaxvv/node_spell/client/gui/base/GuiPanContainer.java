@@ -76,37 +76,48 @@ public class GuiPanContainer extends GuiElement {
     }
 
     @Override
-    public boolean onMouseDragged(double screenX, double screenY, int buttons, double dX, double dY) {
-        if (this.panning) {
+    public boolean onMouseDragged(double screenX, double screenY, int button, double dX, double dY) {
+        if (super.onMouseDragged(screenX, screenY, button, dX, dY)) {
+            return true;
+        }
+
+        if (this.panning && button == PAN_BUTTON) {
             //move
             int dx = (int)(screenX - this.panStartMousePos.x);
             int dy = (int)(screenY - this.panStartMousePos.y);
             this.contentPane.setLocalPosition(this.panStartContentOffset.x + dx, this.panStartContentOffset.y + dy);
-            return true;
-        } else {
-            return super.onMouseDragged(screenX, screenY, buttons, dX, dY);
         }
+
+        return false;
     }
 
     @Override
     public boolean onMouseDown(double screenX, double screenY, int button) {
+        if (super.onMouseDown(screenX, screenY, button)) {
+            return true;
+        }
+
         if (!this.panning && button == PAN_BUTTON) {
             startPanning(screenX, screenY);
             return true;
         }
 
-        return super.onMouseDown(screenX, screenY, button);
+        return false;
     }
 
     @Override
     public boolean onMouseUp(double screenX, double screenY, int button) {
+        if (super.onMouseUp(screenX, screenY, button)) {
+            return true;
+        }
+
         if (this.panning && button == PAN_BUTTON) {
             this.panning = false;
             this.releaseFocus();
             return true;
         }
 
-        return super.onMouseUp(screenX, screenY, button);
+        return false;
     }
 
     public void startPanning(double screenX, double screenY) {

@@ -4,16 +4,17 @@ import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
+import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
+import org.apache.logging.log4j.util.TriConsumer;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class NodeGraphView {
     private final SpellGraph graph;
     private final GuiElement edgeParent;
     private final GuiElement nodeParent;
+    private TriConsumer<GuiNodeView, Double, Double> nodeClickedCallback;
 
     private Map<NodeInstance, GuiNodeView> instances;
     private Map<Edge, GuiEdgeView> edges;
@@ -57,10 +58,12 @@ public class NodeGraphView {
         GuiNodeView view = new GuiNodeView(node, this);
         this.instances.put(node, view);
         this.nodeParent.addChild(view);
+        view.setClickedCallback((x, y) -> this.nodeClicked(view, x, y));
         return view;
     }
 
     public void removeNode(GuiNodeView node) {
+        this.getConnectedEdges(node).forEach(this::removeEdge);
         this.graph.removeInstance(node.getInstance());
         this.instances.remove(node.getInstance());
         this.nodeParent.removeChild(node);
@@ -89,6 +92,38 @@ public class NodeGraphView {
     }
 
     public void invalidateConnected(GuiNodeView node) {
-        //TODO
+        for (SocketInstance socket : node.getInstance().getSocketInstances()) {
+            for (Edge edge : socket.getConnections()) {
+                GuiEdgeView view = this.edges.get(edge);
+                if (view != null) {
+                    view.invalidate();
+                }
+            }
+        }
+    }
+
+    public List<GuiEdgeView> getConnectedEdges(GuiNodeView node) {
+        List<GuiEdgeView> edges = new ArrayList<>();
+
+        for (SocketInstance socket : node.getInstance().getSocketInstances()) {
+            for (Edge edge : socket.getConnections()) {
+                GuiEdgeView view = this.edges.get(edge);
+                if (view != null) {
+                    edges.add(view);
+                }
+            }
+        }
+
+        return edges;
+    }
+
+    public void setNodeClickedCallback(TriConsumer<GuiNodeView, Double, Double> nodeClickedCallback) {
+        this.nodeClickedCallback = nodeClickedCallback;
+    }
+
+    private void nodeClicked(GuiNodeView node, double screenX, double screenY) {
+        if (this.nodeClickedCallback != null)  {
+            this.nodeClickedCallback.accept(node, screenX, screenY);
+        }
     }
 }

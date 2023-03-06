@@ -16,12 +16,16 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.function.BiConsumer;
 
 public class GuiNodeView extends GuiElement {
     private final NodeGraphView graph;
     private final NodeInstance instance;
     private boolean selected;
     private Vector2i dragOffset;
+    private BiConsumer<Double, Double> clickedCallback;
 
     public GuiNodeView(NodeInstance instance, NodeGraphView graph) {
         super(instance.getBaseNode().getWidth(), instance.getBaseNode().getExpectedHeight());
@@ -43,7 +47,11 @@ public class GuiNodeView extends GuiElement {
 
         int nodeWidth = instance.getBaseNode().getWidth();
         int nodeHeight = instance.getBaseNode().getExpectedHeight();
-        RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, 0, 0, 0);
+        if (this.selected) {
+            RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, 0.5f, 0.5f, 0.5f);
+        } else {
+            RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, 0, 0, 0);
+        }
         NodeCategory category = instance.getBaseNode().getCategory();
         RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + 1, nodeWidth - 2, NodeConstants.HEADER_HEIGHT, category.r, category.g, category.b);
         RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + NodeConstants.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - NodeConstants.HEADER_HEIGHT - 2, 0.9f, 0.9f, 0.9f);
@@ -101,6 +109,40 @@ public class GuiNodeView extends GuiElement {
         }
     }
 
+    @Override
+    public boolean onMouseDown(double screenX, double screenY, int button) {
+        if(super.onMouseDown(screenX, screenY, button)) {
+            return true;
+        }
+
+        if (this.clickedCallback != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            this.clickedCallback.accept(screenX, screenY);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void setClickedCallback(BiConsumer<Double, Double> clickedCallback) {
+        this.clickedCallback = clickedCallback;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setDragOffset(Vector2i dragOffset) {
+        this.dragOffset = dragOffset;
+    }
+
+    public Vector2i getDragOffset() {
+        return dragOffset;
+    }
+
     public NodeInstance getInstance() {
         return instance;
     }
@@ -118,6 +160,7 @@ public class GuiNodeView extends GuiElement {
     @Override
     public void setLocalPosition(int x, int y) {
         this.instance.setPosition(x, y);
+        invalidate();
     }
 
     @Override

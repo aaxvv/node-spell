@@ -1,8 +1,10 @@
 package eu.aaxvv.node_spell.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import eu.aaxvv.node_spell.client.gui.base.UnboundedGuiElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -14,13 +16,19 @@ public class GuiContext {
     private final Screen parentScreen;
     private final Deque<RenderCallback> postRenderTasks;
 
+    private boolean mouseLeftDown;
+    private boolean mouseRightDown;
+
     public GuiContext(Screen parentScreen) {
         this.parentScreen = parentScreen;
-        this.rootPane = new GuiElement(0, 0);
+        this.rootPane = new UnboundedGuiElement();
         this.rootPane.setContext(this);
-        this.popupPane = new GuiPopupPane(0, 0);
+        this.popupPane = new GuiPopupPane();
         this.popupPane.setContext(this);
         this.postRenderTasks = new ArrayDeque<>();
+
+        this.mouseLeftDown = false;
+        this.mouseRightDown = false;
     }
 
     public GuiElement getFocused() {
@@ -54,6 +62,12 @@ public class GuiContext {
     }
 
     public boolean onMouseDown(double screenX, double screenY, int button) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            this.mouseLeftDown = true;
+        } else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+            this.mouseRightDown = true;
+        }
+
         if (this.focused != null && this.focused.onMouseDown(screenX, screenY, button)) {
             return true;
         }
@@ -62,6 +76,12 @@ public class GuiContext {
     }
 
     public boolean onMouseUp(double screenX, double screenY, int button) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            this.mouseLeftDown = false;
+        } else if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+            this.mouseRightDown = false;
+        }
+
         if (this.focused != null && this.focused.onMouseUp(screenX, screenY, button)) {
             return true;
         }
@@ -81,6 +101,15 @@ public class GuiContext {
         double screenX = Minecraft.getInstance().mouseHandler.xpos() * (double)Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double)Minecraft.getInstance().getWindow().getScreenWidth();
         double screenY = Minecraft.getInstance().mouseHandler.ypos() * (double)Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double)Minecraft.getInstance().getWindow().getScreenHeight();
 
+        // since the vanilla input system doesn't support dragging with two buttons at once, we need to handle it ourselves
+        if (this.mouseLeftDown) {
+            onMouseDraggedInternal(screenX, screenY, GLFW.GLFW_MOUSE_BUTTON_LEFT, dX, dY);
+        }
+
+        if (this.mouseRightDown) {
+            onMouseDraggedInternal(screenX, screenY, GLFW.GLFW_MOUSE_BUTTON_RIGHT, dX, dY);
+        }
+
         if (this.focused != null && this.focused.onMouseMoved(screenX, screenY, dX, dY)) {
             return;
         }
@@ -88,12 +117,16 @@ public class GuiContext {
         this.rootPane.onMouseMoved(screenX, screenY, dX, dY);
     }
 
-    public boolean onMouseDragged(double screenX, double screenY, int buttons, double dX, double dY) {
-        if (this.focused != null && this.focused.onMouseDragged(screenX, screenY, buttons, dX, dY)) {
+    public boolean onMouseDragged(double screenX, double screenY, int button, double dX, double dY) {
+        return false;
+    }
+
+    private boolean onMouseDraggedInternal(double screenX, double screenY, int button, double dX, double dY) {
+        if (this.focused != null && this.focused.onMouseDragged(screenX, screenY, button, dX, dY)) {
             return true;
         }
 
-        return this.rootPane.onMouseDragged(screenX, screenY, buttons, dX, dY);
+        return this.rootPane.onMouseDragged(screenX, screenY, button, dX, dY);
     }
 
     public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {

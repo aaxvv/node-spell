@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -98,6 +97,7 @@ public class GuiElement {
 
     public void setContext(GuiContext context) {
         this.context = context;
+        this.children.forEach(child -> child.setContext(this.context));
     }
 
     public Vector2i toLocal(int globalX, int globalY) {
@@ -130,7 +130,7 @@ public class GuiElement {
 
     public GuiElement addChild(GuiElement child) {
         this.children.add(child);
-        child.context = this.context;
+        child.setContext(this.context);
         child.setParent(this);
         return child;
     }
@@ -167,6 +167,20 @@ public class GuiElement {
                 && other.cachedGlobalX + other.width >= this.cachedGlobalX
                 && other.cachedGlobalY < this.cachedGlobalY + this.height
                 && other.cachedGlobalY + other.height >= this.cachedGlobalY;
+    }
+
+    public boolean intersectsRect(int x, int y, int w, int h) {
+        return x < this.cachedGlobalX + this.width
+                && x + w >= this.cachedGlobalX
+                && y < this.cachedGlobalY + this.height
+                && y + h >= this.cachedGlobalY;
+    }
+
+    public boolean intersectsRectLocal(int x, int y, int w, int h) {
+        return x < this.getLocalX() + this.getWidth()
+                && x + w >= this.getLocalX()
+                && y < this.getLocalY() + this.getHeight()
+                && y + h >= this.getLocalY();
     }
 
     public int getIndexInParent() {
@@ -215,7 +229,13 @@ public class GuiElement {
         return false;
     }
 
-    public boolean onMouseDragged(double screenX, double screenY, int buttons, double dX, double dY) {
+    public boolean onMouseDragged(double screenX, double screenY, int button, double dX, double dY) {
+        for (GuiElement child : getChildren()) {
+            if (child.containsPointGlobal(screenX, screenY) && child.onMouseDragged(screenX, screenY, button, dX, dY)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
