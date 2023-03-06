@@ -49,6 +49,7 @@ public class WandItem extends Item {
         CompoundTag tag = stack.getOrCreateTag();
 
         if (!tag.contains("Spell")) {
+            player.displayClientMessage(Component.translatable("gui.node_spell.no_spell_selected").withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);
         }
         // player.startUsingItem(hand);

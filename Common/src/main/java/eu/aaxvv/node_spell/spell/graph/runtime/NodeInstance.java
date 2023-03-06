@@ -43,7 +43,7 @@ public class NodeInstance {
 
     public static NodeInstance fromNbt(CompoundTag instanceNbt) {
         ResourceLocation baseNodeResLoc = ResourceLocation.tryParse(instanceNbt.getString("Base"));
-        Node baseNode = Nodes.REGISTRY_SUPPLIER.get().get(baseNodeResLoc);
+        Node baseNode = Nodes.REGISTRY.get(baseNodeResLoc);
         if (baseNode == null) {
             return null;
         }

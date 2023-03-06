@@ -40,11 +40,11 @@ public class NodeCategoryLookup {
     }
 
     private void setup() {
-        for (var entry : NodeCategories.REGISTRY_SUPPLIER.get().entrySet()) {
+        for (var entry : NodeCategories.REGISTRY.entrySet()) {
             nodesByCategory.put(entry.getValue(), new ArrayList<>());
         }
 
-        for (var entry : Nodes.REGISTRY_SUPPLIER.get().entrySet()) {
+        for (var entry : Nodes.REGISTRY.entrySet()) {
             NodeCategory category = entry.getValue().getCategory();
             nodesByCategory.get(category).add(entry.getValue());
         }
@@ -54,7 +54,7 @@ public class NodeCategoryLookup {
         }
 
 
-        List<NodeCategory> categoriesOrdered = NodeCategories.REGISTRY_SUPPLIER.get().entrySet().stream()
+        List<NodeCategory> categoriesOrdered = NodeCategories.REGISTRY.entrySet().stream()
                 .map(Map.Entry::getValue)
                 .sorted(Comparator.comparing(NodeCategory::getPriority))
                 .toList();

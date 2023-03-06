@@ -7,6 +7,7 @@
 
   "gui.node_spell.spell_book_not_found": "No spell book in inventory",
   "gui.node_spell.multiple_spell_books_found": "Multiple spell books in inventory",
+  "gui.node_spell.no_spell_selected": "No spell selected",
   "gui.node_spell.spell_not_active": "Selected spell is not active",
   "gui.node_spell.spell_no_entrypoint": "Selected spell has no entrypoint node",
   "gui.node_spell.wand_spell_tooltip": "Current Spell: %s",
@@ -122,6 +123,7 @@
   "socket.node_spell.base": "Base",
   "socket.node_spell.exponent": "Exp.",
   "socket.node_spell.pos": "Pos.",
+  "socket.node_spell.position": "Pos.",
   "socket.node_spell.block": "Block",
   "socket.node_spell.item": "Item",
   "socket.node_spell.entity": "Entity",

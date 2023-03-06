@@ -8,7 +8,7 @@ import net.minecraft.core.Registry;
 import java.util.function.Supplier;
 
 public class NodeCategories {
-    public static Supplier<Registry<NodeCategory>> REGISTRY_SUPPLIER;
+    public static PlatformRegistryWrapper<NodeCategory> REGISTRY;
 
     public static final NodeCategory INPUT = new NodeCategory(ModConstants.resLoc("input"), 0, Datatype.BLOCK.packedColor);
     public static final NodeCategory FLOW = new NodeCategory(ModConstants.resLoc("flow"), 100, Datatype.ANY.packedColor);
@@ -27,8 +27,8 @@ public class NodeCategories {
     public static final NodeCategory ITEM = new NodeCategory(ModConstants.resLoc("item"), 1300, Datatype.VECTOR.packedColor);
     public static final NodeCategory CUSTOM = new NodeCategory(ModConstants.resLoc("custom"), 1400, Datatype.FLOW.packedColor);
 
-    public static void initRegistry(Supplier<Registry<NodeCategory>> nodeRegistry) {
-        REGISTRY_SUPPLIER = nodeRegistry;
+    public static void initRegistry(PlatformRegistryWrapper<NodeCategory> categoryRegistry) {
+        REGISTRY = categoryRegistry;
     }
 
     public static void registerCategories() {
@@ -52,6 +52,6 @@ public class NodeCategories {
     }
 
     private static void register(NodeCategory category) {
-        Registry.register(REGISTRY_SUPPLIER.get(), category.resourceLocation, category);
+        REGISTRY.register(category.resourceLocation, category);
     }
 }

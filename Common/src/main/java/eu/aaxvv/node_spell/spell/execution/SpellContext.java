@@ -1,15 +1,13 @@
 package eu.aaxvv.node_spell.spell.execution;
 
+import eu.aaxvv.node_spell.helper.EntityHelper;
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +42,10 @@ public class SpellContext {
             throw new SpellExecutionException("Tried to access value of variable '" + name + "' before it was set.");
         }
         return this.locals.get(name);
+    }
+
+    public Entity getEntityOrThrow(UUID uuid) {
+        return EntityHelper.getFromUuid(this.level, uuid).orElseThrow(() -> new SpellExecutionException("Cannot find entity"));
     }
 
     public CasterWrapper getCaster() {

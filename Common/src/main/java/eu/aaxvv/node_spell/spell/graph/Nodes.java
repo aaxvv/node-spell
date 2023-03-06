@@ -2,29 +2,34 @@ package eu.aaxvv.node_spell.spell.graph;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.helper.EntityHelper;
+import eu.aaxvv.node_spell.platform.registry.PlatformRegistryWrapper;
+import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.action.PlaceBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.block.BlockFromItemNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.PlaceBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.BasicNumberCompNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.EqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.NotEqualsNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.entity.ItemInHandNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericConversionNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.logic.BasicBoolOpNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.math.*;
-import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.BoolConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.NumberConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.StringConstantNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.entity.EntityPositionNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.entity.GenericEntityPropertyNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.entity.ItemInHandNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.ForLoopNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericConversionNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.input.CasterNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.logic.BasicBoolOpNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberOpNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberTriOpNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberUnaryOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.GetSpellStorage;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.GetVariableNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetSpellStorage;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetVariableNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.BasicStringOpNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.string.ToStringNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.BasicVectorOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorConstructNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorDestructNode;
@@ -33,16 +38,13 @@ import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 import eu.aaxvv.node_spell.util.VectorUtil;
-import net.minecraft.core.Registry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.function.Supplier;
-
 public class Nodes {
-    public static Supplier<Registry<Node>> REGISTRY_SUPPLIER;
+    public static PlatformRegistryWrapper<Node> REGISTRY;
 
     // ===== INPUT =====
     public static final Node NUMBER_CONSTANT = new NumberConstantNode();
@@ -89,7 +91,7 @@ public static final Node VEC_LENGTH = new GenericConversionNode
             .function(v -> v.scale(1/v.length()))
             .build();
 
-    // scale, normalize, project, rotate around
+    // scale, project, rotate around
 
     // ===== LOGIC =====
     public static final Node AND = new BasicBoolOpNode(ModConstants.resLoc("and"), (a, b) -> a && b);
@@ -116,37 +118,42 @@ public static final Node VEC_LENGTH = new GenericConversionNode
     public static final Node FOR_RANGE = new ForLoopNode();
 
     // ===== ENTITY =====
-    public static final Node ENTITY_POSITION = new EntityPositionNode();
-    public static final Node ENTITY_HEALTH = new GenericConversionNode
-            .Builder<Entity, Double>(NodeCategories.ENTITY, "entity_health")
-            .types(Datatype.ENTITY, Datatype.NUMBER)
-            .socketNames("entity", "hp")
-            .function(e -> e instanceof LivingEntity living ? (double)living.getHealth() : 0.0)
-            .build();
-    public static final Node ENTITY_MAX_HEALTH = new GenericConversionNode
-            .Builder<Entity, Double>(NodeCategories.ENTITY, "entity_max_health")
-            .types(Datatype.ENTITY, Datatype.NUMBER)
-            .socketNames("entity", "max")
-            .function(e -> e instanceof LivingEntity living ? (double)living.getMaxHealth() : 0.0)
-            .build();
-    public static final Node ENTITY_VELOCITY = new GenericConversionNode
-            .Builder<Entity, Vec3>(NodeCategories.ENTITY, "entity_velocity")
-            .types(Datatype.ENTITY, Datatype.VECTOR)
-            .socketNames("entity", "velocity")
-            .function(EntityHelper::getEntityVelocity)
-            .build();
-    public static final Node ENTITY_LOOK_DIRECTION = new GenericConversionNode
-            .Builder<Entity, Vec3>(NodeCategories.ENTITY, "entity_look_direction")
-            .types(Datatype.ENTITY, Datatype.VECTOR)
-            .socketNames("entity", "direction")
-            .function(Entity::getLookAngle)
-            .build();
-    public static final Node ENTITY_IS_SNEAKING= new GenericConversionNode
-            .Builder<Entity, Boolean>(NodeCategories.ENTITY, "entity_is_sneaking")
-            .types(Datatype.ENTITY, Datatype.BOOL)
-            .socketNames("entity", "sneaking")
-            .function(EntityHelper::isSneaking)
-            .build();
+    public static final Node ENTITY_POSITION = new GenericEntityPropertyNode<>(
+            "entity_pos",
+            Datatype.VECTOR,
+            "position",
+            Entity::position
+    );
+    public static final Node ENTITY_HEALTH = new GenericEntityPropertyNode<>(
+            "entity_health",
+            Datatype.NUMBER,
+            "entity_health",
+            e -> e instanceof LivingEntity living ? (double)living.getHealth() : 0.0
+    );
+    public static final Node ENTITY_MAX_HEALTH = new GenericEntityPropertyNode<>(
+            "entity_max_health",
+            Datatype.NUMBER,
+            "max",
+            e -> e instanceof LivingEntity living ? (double)living.getMaxHealth() : 0.0
+    );
+    public static final Node ENTITY_VELOCITY = new GenericEntityPropertyNode<>(
+            "entity_velocity",
+            Datatype.VECTOR,
+            "velocity",
+            EntityHelper::getEntityVelocity
+    );
+    public static final Node ENTITY_LOOK_DIRECTION = new GenericEntityPropertyNode<>(
+            "entity_look_direction",
+            Datatype.VECTOR,
+            "direction",
+            Entity::getLookAngle
+    );
+    public static final Node ENTITY_IS_SNEAKING = new GenericEntityPropertyNode<>(
+            "entity_is_sneaking",
+            Datatype.BOOL,
+            "sneaking",
+            EntityHelper::isSneaking
+    );
 
     // target entity / position,
     // item: next in hot bar, hand (other for caster), from entity
@@ -189,8 +196,8 @@ public static final Node VEC_LENGTH = new GenericConversionNode
     public static final Node SET_SPELL_STORAGE = new SetSpellStorage();
     // player storage too? for passing data between spells?
 
-    public static void initRegistry(Supplier<Registry<Node>> nodeRegistry) {
-        REGISTRY_SUPPLIER = nodeRegistry;
+    public static void initRegistry(PlatformRegistryWrapper<Node> nodeRegistry) {
+        REGISTRY = nodeRegistry;
     }
 
     public static void registerNodes() {
@@ -266,6 +273,6 @@ public static final Node VEC_LENGTH = new GenericConversionNode
     }
 
     private static void register(Node node) {
-        Registry.register(REGISTRY_SUPPLIER.get(), node.getResourceLocation(), node);
+        REGISTRY.register(node.getResourceLocation(), node);
     }
 }
