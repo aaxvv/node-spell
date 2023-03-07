@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.client.gui.base;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.util.ColorUtil;
@@ -17,8 +18,8 @@ import java.util.List;
 public class GuiPanContainer extends GuiElement {
     public static final int PAN_BUTTON = GLFW.GLFW_MOUSE_BUTTON_RIGHT;
     private static final int GRID_SPACING = 16;
-    private static final float[] BG_COLOR = ColorUtil.unpackAndCreateColor(0xFFD6BE96);
-    private static final float[] GRID_COLOR = ColorUtil.unpackAndCreateColor(0xFFE7D5B4);
+    private static final float[] BG_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.PAPER_BG);
+    private static final float[] GRID_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.PAPER_GRID);
 
     private final GuiElement contentPane;
 

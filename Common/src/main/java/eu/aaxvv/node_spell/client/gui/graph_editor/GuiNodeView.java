@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.client.gui.graph_editor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
@@ -10,6 +11,7 @@ import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
+import eu.aaxvv.node_spell.util.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
@@ -22,6 +24,9 @@ import java.util.function.BiConsumer;
 
 public class GuiNodeView extends GuiElement {
     private static final int SOCKET_HIT_RADIUS = 3;
+    private static final float[] BORDER_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.BLACK);
+    private static final float[] SELECTED_BORDER_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.DARKER_GREY);
+    private static final float[] BACKGROUND_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.WHITE);
 
     private final NodeInstance instance;
     private boolean selected;
@@ -51,15 +56,15 @@ public class GuiNodeView extends GuiElement {
 
         // border
         if (this.selected) {
-            RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, 0.5f, 0.5f, 0.5f);
+            RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, SELECTED_BORDER_COLOR[1], SELECTED_BORDER_COLOR[2], SELECTED_BORDER_COLOR[3]);
         } else {
-            RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, 0, 0, 0);
+            RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3]);
         }
 
         // header and background
         NodeCategory category = instance.getBaseNode().getCategory();
         RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + 1, nodeWidth - 2, NodeConstants.HEADER_HEIGHT, category.r, category.g, category.b);
-        RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + NodeConstants.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - NodeConstants.HEADER_HEIGHT - 2, 0.9f, 0.9f, 0.9f);
+        RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + NodeConstants.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - NodeConstants.HEADER_HEIGHT - 2, BACKGROUND_COLOR[1], BACKGROUND_COLOR[2], BACKGROUND_COLOR[3]);
 
         // sockets
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
@@ -91,7 +96,7 @@ public class GuiNodeView extends GuiElement {
             RenderUtil.putQuad(mat, bb, socketX - 2, socketY - 1, 5, 3, dt.r, dt.g, dt.b);
 
             if (socket.getConnections().isEmpty() && socket.getBase().getDirection() == Socket.Direction.IN) {
-                RenderUtil.putQuad(mat, bb, socketX, socketY, 1, 1, 0, 0, 0);
+                RenderUtil.putQuad(mat, bb, socketX, socketY, 1, 1, BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3]);
             }
         } else {
             RenderUtil.putQuad(mat, bb, socketX - 2, socketY - 2, 4, 1, dt.r, dt.g, dt.b);

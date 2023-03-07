@@ -14,9 +14,9 @@ import java.util.List;
 
 public class GuiNodePicker extends GuiElement {
     private static final int CATEGORY_ITEM_HEIGHT = 11;
-    private static final int CATEGORY_BACKGROUND_COLOR = 0xFFD6BE96;
-    private static final int PICKER_BACKGROUND_COLOR = 0xFFE6CEA6;
-    private static final int SEPARATOR_COLOR = 0xFF99876C;
+    private static final int CATEGORY_BACKGROUND_COLOR = ModConstants.Colors.PAPER_GRID;
+    private static final int PICKER_BACKGROUND_COLOR = ModConstants.Colors.PAPER_BG;
+    private static final int SEPARATOR_COLOR = ModConstants.Colors.PAPER_BORDER;
 
     private final GuiFlowContainer flowContainer;
     private final NodeCategoryLookup nodeCategoryLookup;
