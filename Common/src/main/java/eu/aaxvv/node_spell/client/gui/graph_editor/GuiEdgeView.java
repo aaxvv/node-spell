@@ -10,17 +10,11 @@ import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
 
 public class GuiEdgeView extends GuiElement {
-    private final NodeGraphView graph;
     private final Edge instance;
-    private final GuiNodeView startNode;
-    private final GuiNodeView endNode;
 
-    public GuiEdgeView(Edge instance, NodeGraphView graph) {
-        super(instance.getWidth(), instance.getHeight());
+    public GuiEdgeView(Edge instance) {
+        super(0, 0);
         this.instance = instance;
-        this.graph = graph;
-        this.startNode = graph.getNodeFor(instance.getStart().getParentInstance());
-        this.endNode = graph.getNodeFor(instance.getEnd().getParentInstance());
         this.invalidate();
     }
 
@@ -34,17 +28,17 @@ public class GuiEdgeView extends GuiElement {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-        int leftX = this.getGlobalX() + 3;
+        int leftX = this.getGlobalX() + 1;
         int width = this.getWidth();
 
-        int leftY = this.instance.getLeftY() + this.getParent().getGlobalY() + 2;
-        int rightY = this.instance.getRightY() + this.getParent().getGlobalY() + 2;
+        int leftY = this.getLeftY() + this.getParent().getGlobalY();
+        int rightY = this.getRightY() + this.getParent().getGlobalY();
 
         int middleX = leftX + (int) Math.ceil(width / 2.0f);
-        Datatype dt = this.getInstance().getDatatype();
+        Datatype dt = this.getDatatype();
 
         RenderUtil.putQuad(mat, bb, leftX, leftY, width / 2 + 1, 1, dt.r, dt.g, dt.b);
-        RenderUtil.putQuad(mat, bb, middleX, this.getGlobalY() + 2, 1, this.getHeight() + 1, dt.r, dt.g, dt.b);
+        RenderUtil.putQuad(mat, bb, middleX, this.getGlobalY(), 1, this.getHeight() + 1, dt.r, dt.g, dt.b);
         RenderUtil.putQuad(mat, bb, middleX, rightY, width / 2, 1, dt.r, dt.g, dt.b);
 
         BufferUploader.drawWithShader(bb.end());
@@ -56,6 +50,10 @@ public class GuiEdgeView extends GuiElement {
 
     public Edge getInstance() {
         return instance;
+    }
+
+    protected Datatype getDatatype() {
+        return this.instance.getDatatype();
     }
 
     @Override
@@ -77,6 +75,14 @@ public class GuiEdgeView extends GuiElement {
     public int getHeight() {
         return instance.getHeight();
     }
+
+    protected int getLeftY() {
+        return this.instance.getLeftY();
+    }
+    protected int getRightY() {
+        return this.instance.getRightY();
+    }
+
 
     @Override
     public void setWidth(int width) {

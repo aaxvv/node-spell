@@ -168,8 +168,8 @@ public class NodeInstance {
     }
 
     public int getSocketX(Socket.Direction direction) {
-        int inputX = x - 2;
-        int outputX = x + this.base.getWidth() - 3;
+        int inputX = x;
+        int outputX = x + this.base.getWidth() - 1;
         return direction == Socket.Direction.IN ? inputX : outputX;
     }
 
@@ -179,7 +179,7 @@ public class NodeInstance {
     }
 
     public int getLocalSocketX(Socket.Direction direction) {
-        return direction == Socket.Direction.IN ? - 2 : this.base.getWidth() - 3;
+        return direction == Socket.Direction.IN ? 0 : this.base.getWidth() - 1;
     }
 
     public int getLocalSocketY(int index) {

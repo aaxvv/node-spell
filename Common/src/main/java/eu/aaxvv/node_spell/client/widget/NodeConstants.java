@@ -3,7 +3,7 @@ package eu.aaxvv.node_spell.client.widget;
 public class NodeConstants {
     public static final int DEFAULT_NODE_WIDTH = 72;
     public static final int HEADER_HEIGHT = 10;
-    public static final int SOCKET_START_Y = 15;
+    public static final int SOCKET_START_Y = 17;
     public static final int SOCKET_STEP_Y = 12;
     public static final int TITLE_TEXT_COLOR = 0xFF000000;
     public static final int SOCKET_TEXT_COLOR = 0xFF000000;

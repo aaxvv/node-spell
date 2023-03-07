@@ -75,7 +75,7 @@ public class NodeGraphView {
     }
 
     public GuiEdgeView addEdge(Edge edge) {
-        GuiEdgeView view = new GuiEdgeView(edge, this);
+        GuiEdgeView view = new GuiEdgeView(edge);
         this.edges.put(edge, view);
         this.edgeParent.addChild(view);
         return view;

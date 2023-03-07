@@ -20,7 +20,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
     private final Set<GuiNodeView> selectedNodes;
     private Vector2i selectionStart;
     private Vector2i selectionEnd;
-    private boolean dragStartedOnNode;
+    private CurrentAction currentAction;
 
     public GuiGraphEditor(SpellGraph graph) {
         super();
@@ -31,7 +31,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.addChild(nodeLayer);
         this.graphView = new NodeGraphView(graph, this.edgeLayer, this.nodeLayer);
         this.graphView.setNodeClickedCallback(this::nodeClicked);
-        this.dragStartedOnNode = false;
+        this.currentAction = CurrentAction.NONE;
     }
 
     private void nodeClicked(GuiNodeView node, double screenX, double screenY) {
@@ -41,7 +41,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         }
 
         updateSelectionState();
-        this.dragStartedOnNode = true;
+        this.currentAction = CurrentAction.DRAGGING_NODES;
 
         Vector2i dragStartPos = this.toLocal((int) screenX, (int) screenY);
         for (GuiNodeView selectedNode : this.selectedNodes) {
@@ -58,7 +58,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             // left click on empty space
             this.selectedNodes.clear();
-            this.dragStartedOnNode = false;
+            this.currentAction = CurrentAction.DRAGGING_SELECTION;
             updateSelectionState();
             requestFocus();
             return true;
@@ -74,9 +74,9 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         }
 
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            if (this.dragStartedOnNode) {
+            if (this.currentAction == CurrentAction.DRAGGING_NODES) {
                 dragSelectedNodes(screenX, screenY);
-            } else {
+            } else if (this.currentAction == CurrentAction.DRAGGING_SELECTION) {
                 boxSelect(screenX, screenY);
             }
             return false;
@@ -112,7 +112,6 @@ public class GuiGraphEditor extends UnboundedGuiElement {
 
         this.selectedNodes.clear();
         for (GuiNodeView node : this.graphView.getNodes()) {
-            // TODO: something is wrong with intersectsRectLocal
             if (node.intersectsRectLocal(x, y, w, h)) {
                 this.selectedNodes.add(node);
             }
@@ -129,6 +128,8 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             this.selectionStart = null;
             this.selectionEnd = null;
+            this.currentAction = CurrentAction.NONE;
+            releaseFocus();
             return true;
         }
 
@@ -166,5 +167,12 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         for (GuiNodeView node : this.graphView.getNodes()) {
             node.setSelected(this.selectedNodes.contains(node));
         }
+    }
+
+    private enum CurrentAction {
+        NONE,
+        DRAGGING_NODES,
+        DRAGGING_SELECTION,
+        DRAGGING_EDGE
     }
 }

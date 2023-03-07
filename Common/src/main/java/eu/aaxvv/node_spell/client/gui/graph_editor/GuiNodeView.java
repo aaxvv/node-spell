@@ -21,6 +21,8 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.BiConsumer;
 
 public class GuiNodeView extends GuiElement {
+    private static final int SOCKET_HIT_RADIUS = 3;
+
     private final NodeGraphView graph;
     private final NodeInstance instance;
     private boolean selected;
@@ -47,32 +49,22 @@ public class GuiNodeView extends GuiElement {
 
         int nodeWidth = instance.getBaseNode().getWidth();
         int nodeHeight = instance.getBaseNode().getExpectedHeight();
+
+        // border
         if (this.selected) {
             RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, 0.5f, 0.5f, 0.5f);
         } else {
             RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, 0, 0, 0);
         }
+
+        // header and background
         NodeCategory category = instance.getBaseNode().getCategory();
         RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + 1, nodeWidth - 2, NodeConstants.HEADER_HEIGHT, category.r, category.g, category.b);
         RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + NodeConstants.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - NodeConstants.HEADER_HEIGHT - 2, 0.9f, 0.9f, 0.9f);
 
+        // sockets
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
-            Datatype dt = socketInstance.getBase().getDataType();
-            int socketX = this.getGlobalX() + socketInstance.getLocalX();
-            int socketY = this.getGlobalY() + socketInstance.getLocalY();
-
-            if (dt != Datatype.FLOW) {
-                RenderUtil.putQuad(mat, bb, socketX + 1, socketY, 3, 5, dt.r, dt.g, dt.b);
-                RenderUtil.putQuad(mat, bb, socketX, socketY + 1, 5, 3, dt.r, dt.g, dt.b);
-                if (socketInstance.getConnections().isEmpty() && socketInstance.getBase().getDirection() == Socket.Direction.IN) {
-                    RenderUtil.putQuad(mat, bb, socketX + 2, socketY + 2, 1, 1, 0, 0, 0);
-                }
-            } else {
-                RenderUtil.putQuad(mat, bb, socketX, socketY, 4, 1, dt.r, dt.g, dt.b);
-                RenderUtil.putQuad(mat, bb, socketX + 1, socketY + 1, 4, 3, dt.r, dt.g, dt.b);
-                RenderUtil.putQuad(mat, bb, socketX, socketY + 4, 4, 1, dt.r, dt.g, dt.b);
-            }
-
+            renderSocket(mat, bb, socketInstance);
         }
 
         BufferUploader.drawWithShader(bb.end());
@@ -90,6 +82,25 @@ public class GuiNodeView extends GuiElement {
         super.render(pose, mouseX, mouseY, tickDelta);
     }
 
+    private void renderSocket(Matrix4f mat, BufferBuilder bb, SocketInstance socket) {
+        Datatype dt = socket.getBase().getDataType();
+        int socketX = this.getGlobalX() + socket.getLocalX();
+        int socketY = this.getGlobalY() + socket.getLocalY();
+
+        if (dt != Datatype.FLOW) {
+            RenderUtil.putQuad(mat, bb, socketX - 1, socketY - 2, 3, 5, dt.r, dt.g, dt.b);
+            RenderUtil.putQuad(mat, bb, socketX - 2, socketY - 1, 5, 3, dt.r, dt.g, dt.b);
+
+            if (socket.getConnections().isEmpty() && socket.getBase().getDirection() == Socket.Direction.IN) {
+                RenderUtil.putQuad(mat, bb, socketX, socketY, 1, 1, 0, 0, 0);
+            }
+        } else {
+            RenderUtil.putQuad(mat, bb, socketX - 2, socketY - 2, 4, 1, dt.r, dt.g, dt.b);
+            RenderUtil.putQuad(mat, bb, socketX - 1, socketY - 1, 4, 3, dt.r, dt.g, dt.b);
+            RenderUtil.putQuad(mat, bb, socketX - 2, socketY + 2, 4, 1, dt.r, dt.g, dt.b);
+        }
+    }
+
     private void renderNodeText(PoseStack pose, NodeInstance instance) {
         Font font = Minecraft.getInstance().font;
 
@@ -102,9 +113,9 @@ public class GuiNodeView extends GuiElement {
 
             if (socketInstance.getBase().getDirection() == Socket.Direction.OUT) {
                 int length = font.width(name);
-                font.draw(pose, name, socketX - length - 2, socketY - 1, NodeConstants.SOCKET_TEXT_COLOR);
+                font.draw(pose, name, socketX - length - 3, socketY - 3, NodeConstants.SOCKET_TEXT_COLOR);
             } else {
-                font.draw(pose, name, socketX + 7, socketY - 1, NodeConstants.SOCKET_TEXT_COLOR);
+                font.draw(pose, name, socketX + 5, socketY - 3, NodeConstants.SOCKET_TEXT_COLOR);
             }
         }
     }
@@ -121,6 +132,27 @@ public class GuiNodeView extends GuiElement {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean containsPointGlobal(double x, double y) {
+        return x >= this.getGlobalX() - SOCKET_HIT_RADIUS && x < this.getGlobalX() + this.width + SOCKET_HIT_RADIUS && y >= this.getGlobalY() && y < this.getGlobalY() + this.height;
+    }
+
+    private SocketInstance getHitSocket(double screenX, double screenY) {
+        int x = (int) screenX;
+        int y = (int) screenY;
+
+        for (SocketInstance socket : this.getInstance().getSocketInstances()) {
+            int socketX = this.getGlobalX() + socket.getLocalX();
+            int socketY = this.getGlobalY() + socket.getLocalY();
+
+            if (x >= socketX - SOCKET_HIT_RADIUS && x <= socketX + SOCKET_HIT_RADIUS && y >= socketY - SOCKET_HIT_RADIUS && y <= socketY + SOCKET_HIT_RADIUS) {
+                return socket;
+            }
+        }
+
+        return null;
     }
 
     public void setClickedCallback(BiConsumer<Double, Double> clickedCallback) {
