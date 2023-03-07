@@ -15,7 +15,6 @@ public class GuiEdgeView extends GuiElement {
     public GuiEdgeView(Edge instance) {
         super(0, 0);
         this.instance = instance;
-        this.invalidate();
     }
 
     @Override

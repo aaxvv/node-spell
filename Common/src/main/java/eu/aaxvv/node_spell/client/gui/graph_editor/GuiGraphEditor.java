@@ -5,6 +5,7 @@ import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.gui.base.UnboundedGuiElement;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
+import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
@@ -29,8 +30,12 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.addChild(edgeLayer);
         this.nodeLayer = new UnboundedGuiElement();
         this.addChild(nodeLayer);
+
         this.graphView = new NodeGraphView(graph, this.edgeLayer, this.nodeLayer);
         this.graphView.setNodeClickedCallback(this::nodeClicked);
+        this.graphView.setSocketClickedCallback(this::socketClicked);
+        this.graphView.setSocketReleasedCallback(this::socketReleased);
+
         this.currentAction = CurrentAction.NONE;
     }
 
@@ -47,7 +52,23 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         for (GuiNodeView selectedNode : this.selectedNodes) {
             selectedNode.setDragOffset(new Vector2i(selectedNode.getLocalX(), selectedNode.getLocalY()).sub(dragStartPos).negate());
         }
+        requestFocus();
     }
+
+    private void socketClicked(SocketInstance socket) {
+        this.currentAction = CurrentAction.DRAGGING_EDGE;
+        this.graphView.startDragEdge(socket);
+        requestFocus();
+    }
+    private void socketReleased(SocketInstance socket) {
+        if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
+            this.currentAction = CurrentAction.NONE;
+        }
+
+        this.graphView.stopDragEdge(socket);
+        releaseFocus();
+    }
+
 
     @Override
     public boolean onMouseDown(double screenX, double screenY, int button) {
@@ -78,6 +99,9 @@ public class GuiGraphEditor extends UnboundedGuiElement {
                 dragSelectedNodes(screenX, screenY);
             } else if (this.currentAction == CurrentAction.DRAGGING_SELECTION) {
                 boxSelect(screenX, screenY);
+            } else if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
+                Vector2i dragPos = this.toLocal((int) screenX, (int) screenY);
+                this.graphView.updateDragPos(dragPos.x, dragPos.y);
             }
             return false;
         }
@@ -128,8 +152,11 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             this.selectionStart = null;
             this.selectionEnd = null;
+            if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
+                this.graphView.stopDragEdge(null);
+            }
             this.currentAction = CurrentAction.NONE;
-            releaseFocus();
+//            releaseFocus();
             return true;
         }
 

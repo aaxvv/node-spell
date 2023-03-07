@@ -9,15 +9,20 @@ import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class NodeGraphView {
     private final SpellGraph graph;
     private final GuiElement edgeParent;
     private final GuiElement nodeParent;
     private TriConsumer<GuiNodeView, Double, Double> nodeClickedCallback;
+    private Consumer<SocketInstance> socketClickedCallback;
+    private Consumer<SocketInstance> socketReleasedCallback;
+
 
     private Map<NodeInstance, GuiNodeView> instances;
     private Map<Edge, GuiEdgeView> edges;
+    private GuiDraggingEdgeView draggingEdge;
 
     // store dragging edge here?
 
@@ -25,8 +30,11 @@ public class NodeGraphView {
         this.graph = graph;
         this.edgeParent = edgeParent;
         this.nodeParent = nodeParent;
+
         this.instances = new HashMap<>();
         this.edges = new HashMap<>();
+        this.draggingEdge = null;
+
         createInitialElements();
     }
 
@@ -55,10 +63,11 @@ public class NodeGraphView {
     }
 
     public GuiNodeView addNode(NodeInstance node) {
-        GuiNodeView view = new GuiNodeView(node, this);
+        GuiNodeView view = new GuiNodeView(node);
         this.instances.put(node, view);
         this.nodeParent.addChild(view);
         view.setClickedCallback((x, y) -> this.nodeClicked(view, x, y));
+        view.setSocketInteractCallback(this::socketInteract);
         return view;
     }
 
@@ -78,6 +87,8 @@ public class NodeGraphView {
         GuiEdgeView view = new GuiEdgeView(edge);
         this.edges.put(edge, view);
         this.edgeParent.addChild(view);
+        recomputeConnected(edge.getStart());
+        recomputeConnected(edge.getEnd());
         return view;
     }
 
@@ -98,6 +109,23 @@ public class NodeGraphView {
                 if (view != null) {
                     view.invalidate();
                 }
+            }
+        }
+    }
+
+    public void recomputeConnected(SocketInstance socket) {
+        Iterator<Map.Entry<Edge, GuiEdgeView>> edgeIter = this.edges.entrySet().iterator();
+
+        while (edgeIter.hasNext()) {
+            Map.Entry<Edge, GuiEdgeView> entry = edgeIter.next();
+
+            if (entry.getKey().getStart() != socket && entry.getKey().getEnd() != socket) {
+                continue;
+            }
+
+            if (!this.graph.getEdges().contains(entry.getKey())) {
+                this.edgeParent.removeChild(entry.getValue());
+                edgeIter.remove();
             }
         }
     }
@@ -124,6 +152,64 @@ public class NodeGraphView {
     private void nodeClicked(GuiNodeView node, double screenX, double screenY) {
         if (this.nodeClickedCallback != null)  {
             this.nodeClickedCallback.accept(node, screenX, screenY);
+        }
+    }
+
+    public void setSocketClickedCallback(Consumer<SocketInstance> socketClickedCallback) {
+        this.socketClickedCallback = socketClickedCallback;
+    }
+
+    public void setSocketReleasedCallback(Consumer<SocketInstance> socketReleasedCallback) {
+        this.socketReleasedCallback = socketReleasedCallback;
+    }
+
+    private void socketInteract(SocketInstance socket, boolean mouseDown) {
+        if (mouseDown) {
+            if (this.socketClickedCallback != null) {
+                this.socketClickedCallback.accept(socket);
+            }
+        } else {
+            if (this.socketReleasedCallback != null) {
+                this.socketReleasedCallback.accept(socket);
+            }
+        }
+    }
+
+    public void startDragEdge(SocketInstance socket) {
+        // if socket is empty or is output -> start new edge
+        // if it is input and not empty -> move existing edge
+        if (!socket.acceptsSingleConnection() || socket.getConnections().size() == 0) {
+            // start new connection
+            this.draggingEdge = new GuiDraggingEdgeView(socket);
+        } else {
+            // move existing
+            Edge prevEdge = socket.getSingleConnection();
+            this.removeEdge(this.edges.get(prevEdge));
+            this.draggingEdge = new GuiDraggingEdgeView(prevEdge.getOpposite(socket), prevEdge);
+        }
+
+        this.edgeParent.addChild(this.draggingEdge);
+    }
+
+    public void stopDragEdge(SocketInstance socket) {
+        if (socket != null) {
+            Edge newEdge = this.draggingEdge.complete(socket);
+            if (newEdge != null) {
+                this.addNewEdge(newEdge);
+                // delete previous on socket
+            }
+
+        } else {
+            // TODO: maybe create matching node?
+       }
+
+        this.edgeParent.removeChild(this.draggingEdge);
+        this.draggingEdge = null;
+    }
+
+    public void updateDragPos(int localX, int localY) {
+        if (this.draggingEdge != null) {
+            this.draggingEdge.setLocalEndpoint(localX, localY);
         }
     }
 }

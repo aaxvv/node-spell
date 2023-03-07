@@ -23,15 +23,14 @@ import java.util.function.BiConsumer;
 public class GuiNodeView extends GuiElement {
     private static final int SOCKET_HIT_RADIUS = 3;
 
-    private final NodeGraphView graph;
     private final NodeInstance instance;
     private boolean selected;
     private Vector2i dragOffset;
     private BiConsumer<Double, Double> clickedCallback;
+    private BiConsumer<SocketInstance, Boolean> socketInteractCallback;
 
-    public GuiNodeView(NodeInstance instance, NodeGraphView graph) {
+    public GuiNodeView(NodeInstance instance) {
         super(instance.getBaseNode().getWidth(), instance.getBaseNode().getExpectedHeight());
-        this.graph = graph;
         this.instance = instance;
         this.selected = false;
         this.invalidate();
@@ -126,6 +125,17 @@ public class GuiNodeView extends GuiElement {
             return true;
         }
 
+        SocketInstance hitSocket = this.getHitSocket(screenX, screenY);
+        if (hitSocket != null) {
+            this.socketInteractCallback.accept(hitSocket, true);
+            return true;
+        }
+
+        // need to test the real bounds since we fudged containsPointGlobal in this class to be slightly bigger
+        if (!super.containsPointGlobal(screenX, screenY)) {
+            return false;
+        }
+
         if (this.clickedCallback != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             this.clickedCallback.accept(screenX, screenY);
             return true;
@@ -133,6 +143,22 @@ public class GuiNodeView extends GuiElement {
 
         return false;
     }
+
+    @Override
+    public boolean onMouseUp(double screenX, double screenY, int button) {
+        if (super.onMouseUp(screenX, screenY, button)) {
+            return true;
+        }
+
+        SocketInstance hitSocket = this.getHitSocket(screenX, screenY);
+        if (hitSocket != null) {
+            this.socketInteractCallback.accept(hitSocket, false);
+            return true;
+        }
+
+        return false;
+    }
+
 
     @Override
     public boolean containsPointGlobal(double x, double y) {
@@ -157,6 +183,10 @@ public class GuiNodeView extends GuiElement {
 
     public void setClickedCallback(BiConsumer<Double, Double> clickedCallback) {
         this.clickedCallback = clickedCallback;
+    }
+
+    public void setSocketInteractCallback(BiConsumer<SocketInstance, Boolean> socketInteractCallback) {
+        this.socketInteractCallback = socketInteractCallback;
     }
 
     public void setSelected(boolean selected) {
