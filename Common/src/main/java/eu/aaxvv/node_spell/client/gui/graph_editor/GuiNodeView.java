@@ -131,7 +131,7 @@ public class GuiNodeView extends GuiElement {
         }
 
         SocketInstance hitSocket = this.getHitSocket(screenX, screenY);
-        if (hitSocket != null) {
+        if (hitSocket != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             this.socketInteractCallback.accept(hitSocket, true);
             return true;
         }
@@ -156,7 +156,7 @@ public class GuiNodeView extends GuiElement {
         }
 
         SocketInstance hitSocket = this.getHitSocket(screenX, screenY);
-        if (hitSocket != null) {
+        if (hitSocket != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             this.socketInteractCallback.accept(hitSocket, false);
             return true;
         }

@@ -56,8 +56,7 @@ public class NodeGraphView {
         return this.edges.values();
     }
 
-    public GuiNodeView addNewNode(Node baseNode) {
-        NodeInstance instance = baseNode.createInstance();
+    public GuiNodeView addNewNode(NodeInstance instance) {
         this.graph.addInstance(instance);
         return addNode(instance);
     }
@@ -192,6 +191,10 @@ public class NodeGraphView {
     }
 
     public void stopDragEdge(SocketInstance socket) {
+        if (this.draggingEdge == null) {
+            return;
+        }
+
         if (socket != null) {
             Edge newEdge = this.draggingEdge.complete(socket);
             if (newEdge != null) {

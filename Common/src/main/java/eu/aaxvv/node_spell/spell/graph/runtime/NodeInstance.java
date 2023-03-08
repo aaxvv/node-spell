@@ -218,4 +218,13 @@ public class NodeInstance {
 
         return null;
     }
+
+    public NodeInstance copy() {
+        NodeInstance copy = this.base.createInstance();
+        if (this.getInstanceData() != null) {
+            copy.setInstanceData(this.getInstanceData());
+        }
+        copy.setPosition(this.getX(), this.getY());
+        return copy;
+    }
 }

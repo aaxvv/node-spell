@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.client.gui.graph_editor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.gui.GuiHelper;
 import eu.aaxvv.node_spell.client.gui.base.UnboundedGuiElement;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
@@ -9,7 +10,9 @@ import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GuiGraphEditor extends UnboundedGuiElement {
@@ -45,14 +48,36 @@ public class GuiGraphEditor extends UnboundedGuiElement {
             this.selectedNodes.add(node);
         }
 
-        updateSelectionState();
-        this.currentAction = CurrentAction.DRAGGING_NODES;
+        if (GuiHelper.isShiftDown()) {
+            List<GuiNodeView> newSelection = new ArrayList<>();
+            Vector2i dragStartPos = this.toLocal((int) screenX, (int) screenY);
 
-        Vector2i dragStartPos = this.toLocal((int) screenX, (int) screenY);
-        for (GuiNodeView selectedNode : this.selectedNodes) {
-            selectedNode.setDragOffset(new Vector2i(selectedNode.getLocalX(), selectedNode.getLocalY()).sub(dragStartPos).negate());
+            for (GuiNodeView selected : this.selectedNodes) {
+                GuiNodeView newNode = this.graphView.addNewNode(selected.getInstance().copy());
+                newNode.setDragOffset(new Vector2i(newNode.getLocalX(), newNode.getLocalY()).sub(dragStartPos).negate());
+                newSelection.add(newNode);
+            }
+
+            this.currentAction = CurrentAction.DRAGGING_NODES;
+            this.selectedNodes.clear();
+            this.selectedNodes.addAll(newSelection);
+            requestFocus();
+
+        } else if (GuiHelper.isControlDown()) {
+            this.graphView.removeNode(node);
+            this.selectedNodes.remove(node);
+
+        } else {
+            this.currentAction = CurrentAction.DRAGGING_NODES;
+
+            Vector2i dragStartPos = this.toLocal((int) screenX, (int) screenY);
+            for (GuiNodeView selectedNode : this.selectedNodes) {
+                selectedNode.setDragOffset(new Vector2i(selectedNode.getLocalX(), selectedNode.getLocalY()).sub(dragStartPos).negate());
+            }
+            requestFocus();
         }
-        requestFocus();
+
+        updateSelectionState();
     }
 
     private void socketClicked(SocketInstance socket) {
