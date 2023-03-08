@@ -6,11 +6,14 @@ import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.gui.base.GuiFlowContainer;
 import eu.aaxvv.node_spell.client.gui.base.GuiTextButton;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
+import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GuiNodePicker extends GuiElement {
     private static final int CATEGORY_ITEM_HEIGHT = 11;
@@ -20,6 +23,7 @@ public class GuiNodePicker extends GuiElement {
 
     private final GuiFlowContainer flowContainer;
     private final NodeCategoryLookup nodeCategoryLookup;
+    private Consumer<Node> nodeCreatedCallback;
 
     public GuiNodePicker(int width, int height) {
         super(width, height);
@@ -50,7 +54,19 @@ public class GuiNodePicker extends GuiElement {
     }
 
     private void openCategoryPopup(GuiElement source, NodeCategory category) {
-        ModConstants.LOG.info("Open category '{}'", category.translationKey);
+        GuiNodeListPopup popup = new GuiNodeListPopup(this.nodeCategoryLookup.getNodesForCategory(category));
+        int x = Mth.clamp(source.getGlobalX() + (source.getWidth() / 2) - (popup.getWidth()) / 2, 2, this.width - 2);
+        int y = source.getGlobalY() - popup.getHeight() - 2;
+        popup.setLocalPosition(x, y);
+        this.getContext().getPopupPane().openPopup(popup);
+
+        popup.setNodeClickedCallback(this::createNode);
+    }
+
+    private void createNode(Node node) {
+        if (this.nodeCreatedCallback != null) {
+            this.nodeCreatedCallback.accept(node);
+        }
     }
 
     @Override
@@ -59,5 +75,9 @@ public class GuiNodePicker extends GuiElement {
         this.flowContainer.setWidth(this.getWidth());
         this.setHeight(this.flowContainer.getHeight() + 1);
         super.invalidate();
+    }
+
+    public void setNodeCreatedCallback(Consumer<Node> nodeCreatedCallback) {
+        this.nodeCreatedCallback = nodeCreatedCallback;
     }
 }

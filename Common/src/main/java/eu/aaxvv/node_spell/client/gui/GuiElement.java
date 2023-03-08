@@ -240,10 +240,22 @@ public class GuiElement {
     }
 
     public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        for (GuiElement child : getChildren()) {
+            if (child.onKeyPressed(keyCode, scanCode, modifiers)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     public boolean onCharTyped(char character, int modifiers) {
+        for (GuiElement child : getChildren()) {
+            if (child.onCharTyped(character, modifiers)) {
+                return true;
+            }
+        }
+
         return false;
     }
 }

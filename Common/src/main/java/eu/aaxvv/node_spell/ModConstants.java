@@ -29,14 +29,13 @@ public class ModConstants {
 		public static final int PINK = 0xfff6757a;
 
 		public static final int BLACK = 0xff181425;
-		public static final int DARKER_GREY = 0xff262b44;
 		public static final int DARK_GREY = 0xff3a4466;
+		public static final int MIDDLE_GREY = 0xff5a6988;
 		public static final int LIGHT_GREY = 0xff8b9bb4;
 		public static final int WHITE = 0xffffffff;
 
 		public static final int PAPER_BG = 0xffead4aa;
 		public static final int PAPER_GRID = 0xffE8C091;
 		public static final int PAPER_BORDER = 0xffe4a672;
-//		public static final int PAPER_BORDER = 0xffb86f50;
 	}
 }

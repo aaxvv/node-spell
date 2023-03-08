@@ -18,4 +18,12 @@ public class GuiHelper {
         long windowHandle = Minecraft.getInstance().getWindow().getWindow();
         return InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_RIGHT_CONTROL);
     }
+
+    public static double getMouseScreenX() {
+        return Minecraft.getInstance().mouseHandler.xpos() * (double)Minecraft.getInstance().getWindow().getGuiScaledWidth() / (double)Minecraft.getInstance().getWindow().getScreenWidth();
+    }
+    public static double getMouseScreenY() {
+        return Minecraft.getInstance().mouseHandler.ypos() * (double)Minecraft.getInstance().getWindow().getGuiScaledHeight() / (double)Minecraft.getInstance().getWindow().getScreenHeight();
+    }
+
 }

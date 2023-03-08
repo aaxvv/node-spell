@@ -7,6 +7,7 @@ import eu.aaxvv.node_spell.client.gui.base.UnboundedGuiElement;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
+import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
@@ -40,6 +41,18 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.graphView.setSocketReleasedCallback(this::socketReleased);
 
         this.currentAction = CurrentAction.NONE;
+    }
+
+    public void addNode(Node node, double screenX, double screenY) {
+        GuiNodeView newNode = this.graphView.addNewNode(node.createInstance());
+        Vector2i pos = this.toLocal((int) screenX, (int) screenY);
+        newNode.setLocalPosition(pos.x - (newNode.getWidth() / 2), pos.y - (newNode.getHeight() / 2));
+        newNode.setDragOffset(new Vector2i(newNode.getWidth() / 2, newNode.getHeight() / 2));
+        this.selectedNodes.clear();
+        this.selectedNodes.add(newNode);
+        this.currentAction = CurrentAction.DRAGGING_NODES;
+        updateSelectionState();
+        requestFocus();
     }
 
     private void nodeClicked(GuiNodeView node, double screenX, double screenY) {
@@ -181,7 +194,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
                 this.graphView.stopDragEdge(null);
             }
             this.currentAction = CurrentAction.NONE;
-//            releaseFocus();
+            releaseFocus();
             return true;
         }
 

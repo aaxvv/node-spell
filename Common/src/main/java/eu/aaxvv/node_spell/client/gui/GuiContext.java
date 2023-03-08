@@ -43,7 +43,7 @@ public class GuiContext {
         return rootPane;
     }
 
-    public GuiElement getPopupPane() {
+    public GuiPopupPane getPopupPane() {
         return popupPane;
     }
 
@@ -68,7 +68,11 @@ public class GuiContext {
             this.mouseRightDown = true;
         }
 
-        if (this.focused != null && this.focused.onMouseDown(screenX, screenY, button)) {
+//        if (this.focused != null && this.focused.onMouseDown(screenX, screenY, button)) {
+//            return true;
+//        }
+
+        if (this.popupPane.onMouseDown(screenX, screenY, button)) {
             return true;
         }
 
@@ -86,11 +90,19 @@ public class GuiContext {
             return true;
         }
 
+        if (this.popupPane.onMouseUp(screenX, screenY, button)) {
+            return true;
+        }
+
         return this.rootPane.onMouseUp(screenX, screenY, button);
     }
 
     public boolean onMouseScrolled(double screenX, double screenY, double delta) {
         if (this.focused != null && this.focused.onMouseScrolled(screenX, screenY, delta)) {
+            return true;
+        }
+
+        if (this.popupPane.onMouseScrolled(screenX, screenY, delta)) {
             return true;
         }
 
@@ -114,6 +126,10 @@ public class GuiContext {
             return;
         }
 
+        if (this.popupPane.onMouseMoved(screenX, screenY, dX, dY)) {
+            return;
+        }
+
         this.rootPane.onMouseMoved(screenX, screenY, dX, dY);
     }
 
@@ -126,6 +142,10 @@ public class GuiContext {
             return true;
         }
 
+        if (this.popupPane.onMouseDragged(screenX, screenY, button, dX, dY)) {
+            return true;
+        }
+
         return this.rootPane.onMouseDragged(screenX, screenY, button, dX, dY);
     }
 
@@ -134,11 +154,19 @@ public class GuiContext {
             return true;
         }
 
+        if (this.popupPane.onKeyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+
         return this.rootPane.onKeyPressed(keyCode, scanCode, modifiers);
     }
 
     public boolean onCharTyped(char character, int modifiers) {
         if (this.focused != null && this.focused.onCharTyped(character, modifiers)) {
+            return true;
+        }
+
+        if (this.popupPane.onCharTyped(character, modifiers)) {
             return true;
         }
 

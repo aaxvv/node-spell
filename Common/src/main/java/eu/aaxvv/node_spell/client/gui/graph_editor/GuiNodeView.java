@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
 public class GuiNodeView extends GuiElement {
     private static final int SOCKET_HIT_RADIUS = 3;
     private static final float[] BORDER_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.BLACK);
-    private static final float[] SELECTED_BORDER_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.DARKER_GREY);
+    private static final float[] SELECTED_BORDER_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.MIDDLE_GREY);
     private static final float[] BACKGROUND_COLOR = ColorUtil.unpackAndCreateColor(ModConstants.Colors.WHITE);
 
     private final NodeInstance instance;

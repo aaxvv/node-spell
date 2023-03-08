@@ -12,7 +12,7 @@ public class GuiTextButton extends GuiElement {
     private int backgroundColor;
 
     public GuiTextButton(int width, int height, Component text) {
-        super(width, height);
+        super(Minecraft.getInstance().font.width(text) + 4, height);
         this.text = text;
     }
 

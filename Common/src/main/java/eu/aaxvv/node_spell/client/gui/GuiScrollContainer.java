@@ -98,8 +98,8 @@ public class GuiScrollContainer extends GuiElement {
     @Override
     public void invalidate() {
         super.invalidate();
+        invalidateLayout();
         this.contentPane.invalidate();
-        invalidateScrollbar();
     }
 
     @Override
@@ -200,5 +200,18 @@ public class GuiScrollContainer extends GuiElement {
 
     private int getContentPaneWidth() {
         return this.getWidth() - this.scrollBarWidth;
+    }
+
+    public int getInnerPadding() {
+        return this.innerPadding;
+    }
+
+    public int getScrollBarWidth() {
+        return scrollBarWidth;
+    }
+
+    public int getRequiredHeight() {
+        int childrenHeight = this.getChildren().stream().mapToInt(c -> c.getHeight() + this.itemSeparation).sum() - this.itemSeparation;
+        return (this.innerPadding * 2) + childrenHeight;
     }
 }

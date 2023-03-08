@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.client.screen;
 
+import eu.aaxvv.node_spell.client.gui.GuiHelper;
 import eu.aaxvv.node_spell.client.gui.base.GuiPanContainer;
 import eu.aaxvv.node_spell.client.gui.graph_editor.GuiGraphEditor;
 import eu.aaxvv.node_spell.client.gui.graph_editor.GuiNodePicker;
@@ -28,6 +29,12 @@ public class NewSpellEditScreen extends BaseScreen {
         this.canvasContainer = new GuiPanContainer(this.getRootWidth(), this.getRootHeight(), this.nodeGraph);
         this.canvasContainer.setLocalPosition(0, 0);
         this.getGuiRoot().addChild(this.canvasContainer);
+
+        this.nodePicker.setNodeCreatedCallback(node -> {
+            double x = GuiHelper.getMouseScreenX();
+            double y = GuiHelper.getMouseScreenY();
+            this.nodeGraph.addNode(node, x, y);
+        });
     }
 
     @Override

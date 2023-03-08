@@ -50,9 +50,11 @@ public class BaseScreen extends Screen {
     @Override
     public void render(@NotNull PoseStack pose, int mouseX, int mouseY, float tickDelta) {
         GuiElement rootElement = this.guiContext.getRootPane();
-        if (rootElement != null) {
-            rootElement.render(pose, mouseX, mouseY, tickDelta);
-        }
+        rootElement.render(pose, mouseX, mouseY, tickDelta);
+
+        GuiElement popupPane = this.guiContext.getPopupPane();
+        popupPane.render(pose, mouseX, mouseY, tickDelta);
+
         this.guiContext.runRenderLast(pose, mouseX, mouseY, tickDelta);
     }
 
