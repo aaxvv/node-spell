@@ -3,22 +3,25 @@ package eu.aaxvv.node_spell.client.node_widget;
 import com.ibm.icu.text.DecimalFormat;
 import com.ibm.icu.text.DecimalFormatSymbols;
 import com.mojang.blaze3d.vertex.PoseStack;
+import eu.aaxvv.node_spell.client.gui.TextEditController;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Locale;
 
 public class NumberFieldWidget extends Widget<Double> {
-    private int cursorPos;
-    private String currentStringValue;
-    DecimalFormat format;
+    private final DecimalFormat format;
+    private final TextEditController textEditController;
+
     public NumberFieldWidget(NodeInstance parent, int width) {
         super(parent, width, 13);
-        this.cursorPos = 0;
         this.format = new DecimalFormat("#0.##", DecimalFormatSymbols.getInstance(Locale.US));
-        updateStringRepresentation();
+        this.textEditController = new TextEditController();
+        this.textEditController.setDisplayWidth(this.width - 4);
+        this.textEditController.setRollbackValueProvider(() -> this.format.format(this.instance.getInstanceData()));
+        this.textEditController.rollbackValue();
+        this.textEditController.setDoneCallback(this::editDone);
     }
 
     @Override
@@ -26,11 +29,8 @@ public class NumberFieldWidget extends Widget<Double> {
         GuiComponent.fill(pose, this.getGlobalX(), this.getGlobalY(), this.getGlobalX() + this.getWidth(), this.getGlobalY() + this.getHeight(), 0xFFFFFFFF);
         GuiComponent.fill(pose, this.getGlobalX() + 1, this.getGlobalY() + 1, this.getGlobalX() + this.getWidth() - 1, this.getGlobalY() + this.getHeight() - 1, 0xFF000000);
 
-        String displayString = getStringWithCursor();
-        if (!displayString.isEmpty()) {
-            String text = Minecraft.getInstance().font.plainSubstrByWidth(displayString, this.getWidth() - 4 - 4, this.isFocused());
-            Minecraft.getInstance().font.draw(pose, text, this.getGlobalX() + 2, this.getGlobalY() + 2, 0xFFFFFFFF);
-        }
+        String displayString = this.textEditController.getDisplayString();
+        Minecraft.getInstance().font.draw(pose, displayString, this.getGlobalX() + 2, this.getGlobalY() + 2, 0xFFFFFFFF);
 
         GuiComponent.fill(pose, this.getGlobalX() + this.getWidth() - 5, this.getGlobalY() + 3, this.getGlobalX() + this.getWidth() - 4, this.getGlobalY() + 4, 0xFFFFFFFF);
         GuiComponent.fill(pose, this.getGlobalX() + this.getWidth() - 6, this.getGlobalY() + 4, this.getGlobalX() + this.getWidth() - 3, this.getGlobalY() + 5, 0xFFFFFFFF);
@@ -39,15 +39,17 @@ public class NumberFieldWidget extends Widget<Double> {
         GuiComponent.fill(pose, this.getGlobalX() + this.getWidth() - 5, this.getGlobalY() + this.getHeight() - 3, this.getGlobalX() + this.getWidth() - 4, this.getGlobalY() + this.getHeight() - 4, 0xFFFFFFFF);
     }
 
-    private String getStringWithCursor() {
-        if (!this.focused) {
-            return this.currentStringValue;
+    private boolean editDone(String text) {
+        if (text == null) {
+            return false;
         }
 
-        if (this.cursorPos == 0) {
-            return '_' + this.currentStringValue;
-        } else {
-            return this.currentStringValue.substring(0, this.cursorPos) + "_" + this.currentStringValue.substring(this.cursorPos);
+        try {
+            this.currentValue = Double.parseDouble(this.textEditController.getText());
+            commitValue();
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
         }
     }
 
@@ -57,34 +59,8 @@ public class NumberFieldWidget extends Widget<Double> {
             return false;
         }
 
-        if (keyCode == GLFW.GLFW_KEY_ENTER) {
-            commitFromText();
-            return true;
-        } else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            rollbackValue();
-            this.cursorPos = this.currentStringValue.length();
-            return true;
-        } else if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
-            if (this.cursorPos > 0) {
-                this.currentStringValue = this.currentStringValue.substring(0, this.cursorPos - 1) + this.currentStringValue.substring(this.cursorPos);
-                this.cursorPos -= 1;
-            }
-            return true;
-        } else if (keyCode == GLFW.GLFW_KEY_LEFT) {
-            this.cursorPos = Math.max(this.cursorPos - 1, 0);
-            return true;
-        } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
-            this.cursorPos = Math.min(this.cursorPos + 1, this.currentStringValue.length());
-            return true;
-        } else if (keyCode == GLFW.GLFW_KEY_HOME) {
-            this.cursorPos = 0;
-            return true;
-        } else if (keyCode == GLFW.GLFW_KEY_END) {
-            this.cursorPos = this.currentStringValue.length();
-            return true;
-        }
-
-        return false;
+        this.textEditController.onKeyPressed(keyCode, scanCode, modifiers);
+        return true;
     }
 
     @Override
@@ -93,12 +69,7 @@ public class NumberFieldWidget extends Widget<Double> {
             return false;
         }
 
-        if (this.cursorPos == 0) {
-            this.currentStringValue = character + this.currentStringValue;
-        } else {
-            this.currentStringValue =  this.currentStringValue.substring(0, this.cursorPos) + character + this.currentStringValue.substring(this.cursorPos);
-        }
-        this.cursorPos += 1;
+        this.textEditController.onCharTyped(character, modifiers);
         return true;
     }
 
@@ -113,44 +84,35 @@ public class NumberFieldWidget extends Widget<Double> {
                 this.currentValue -= 1;
             }
             commitValue();
-            updateStringRepresentation();
+            this.textEditController.rollbackValue();
         } else {
-            this.cursorPos = this.currentStringValue.length();
+            this.textEditController.startEditing(valueAsString());
         }
         return true;
     }
 
-    private void commitFromText() {
-        try {
-            this.currentValue = Double.parseDouble(this.currentStringValue);
-        } catch (NumberFormatException ex) {
-            rollbackValue();
-        }
-
-        commitValue();
-    }
-
+    // need to override these, because calling releaseFocus() before textEditController.rollbackValue()
+    // would cause the textEditController to commit its old value due to losing focus
     @Override
     public void commitValue() {
-        this.parent.setInstanceData(this.currentValue);
-        updateStringRepresentation();
+        this.instance.setInstanceData(this.currentValue);
+        this.textEditController.rollbackValue();
         releaseFocus();
     }
 
     @Override
     public void rollbackValue() {
-        this.currentValue = (Double) this.parent.getInstanceData();
-        updateStringRepresentation();
+        this.currentValue = (Double) this.instance.getInstanceData();
+        this.textEditController.rollbackValue();
         releaseFocus();
     }
 
     @Override
     public void onLoseFocus() {
-        commitFromText();
+        this.textEditController.commitValue();
     }
 
-    private void updateStringRepresentation() {
-        DecimalFormat format = new DecimalFormat("#0.##");
-        this.currentStringValue = format.format(this.currentValue);
+    private String valueAsString() {
+        return this.format.format(this.currentValue);
     }
 }

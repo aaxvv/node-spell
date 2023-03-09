@@ -47,6 +47,10 @@ public class TextEditController {
                 this.text = this.text.substring(0, this.cursorPos - 1) + this.text.substring(this.cursorPos);
                 moveCursorBy(-1);
             }
+        } else if (keyCode == GLFW.GLFW_KEY_DELETE) {
+            if (this.cursorPos < this.text.length()) {
+                this.text = this.text.substring(0, this.cursorPos) + this.text.substring(this.cursorPos + 1);
+            }
         } else if (keyCode == GLFW.GLFW_KEY_LEFT) {
             moveCursorBy(-1);
         } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
@@ -59,7 +63,7 @@ public class TextEditController {
         updateDisplayString();
     }
 
-    private void commitValue() {
+    public void commitValue() {
         if (this.doneCallback != null && !this.doneCallback.test(this.text)) {
             rollbackValue();
         }
@@ -68,15 +72,18 @@ public class TextEditController {
         setFocused(false);
     }
 
-    private void rollbackValue() {
+    public void rollbackValue() {
         if (this.rollbackValueProvider != null) {
             this.text = this.rollbackValueProvider.get();
+            this.moveCursorToEnd();
         }
         setFocused(false);
+        updateDisplayString();
         if (this.doneCallback != null) {
             this.doneCallback.test(null);
         }
     }
+
 
     private void updateDisplayString() {
         String stringWithCursor;
@@ -124,6 +131,10 @@ public class TextEditController {
         return this.displayText;
     }
 
+    public String getText() {
+        return text;
+    }
+
     public void startEditing(String text) {
         this.text = text;
         this.setFocused(true);
@@ -157,5 +168,9 @@ public class TextEditController {
 
     public void setDisplayWidth(int displayWidth) {
         this.displayWidth = displayWidth;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
