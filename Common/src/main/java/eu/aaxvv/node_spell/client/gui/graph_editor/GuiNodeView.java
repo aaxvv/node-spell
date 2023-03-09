@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
@@ -31,7 +32,7 @@ public class GuiNodeView extends GuiElement {
     private final NodeInstance instance;
     private boolean selected;
     private Vector2i dragOffset;
-    private BiConsumer<Double, Double> clickedCallback;
+    private TriConsumer<Double, Double, Boolean> nodeInteractCallback;
     private BiConsumer<SocketInstance, Boolean> socketInteractCallback;
 
     public GuiNodeView(NodeInstance instance) {
@@ -141,8 +142,8 @@ public class GuiNodeView extends GuiElement {
             return false;
         }
 
-        if (this.clickedCallback != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            this.clickedCallback.accept(screenX, screenY);
+        if (this.nodeInteractCallback != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            this.nodeInteractCallback.accept(screenX, screenY, true);
             return true;
         }
 
@@ -158,6 +159,11 @@ public class GuiNodeView extends GuiElement {
         SocketInstance hitSocket = this.getHitSocket(screenX, screenY);
         if (hitSocket != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             this.socketInteractCallback.accept(hitSocket, false);
+            return true;
+        }
+
+        if (this.nodeInteractCallback != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            this.nodeInteractCallback.accept(screenX, screenY, false);
             return true;
         }
 
@@ -186,8 +192,8 @@ public class GuiNodeView extends GuiElement {
         return null;
     }
 
-    public void setClickedCallback(BiConsumer<Double, Double> clickedCallback) {
-        this.clickedCallback = clickedCallback;
+    public void setNodeInteractCallback(TriConsumer<Double, Double, Boolean> clickedCallback) {
+        this.nodeInteractCallback = clickedCallback;
     }
 
     public void setSocketInteractCallback(BiConsumer<SocketInstance, Boolean> socketInteractCallback) {

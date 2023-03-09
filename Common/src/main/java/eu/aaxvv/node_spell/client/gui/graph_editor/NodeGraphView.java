@@ -5,7 +5,6 @@ import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
-import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.*;
@@ -16,6 +15,7 @@ public class NodeGraphView {
     private final GuiElement edgeParent;
     private final GuiElement nodeParent;
     private TriConsumer<GuiNodeView, Double, Double> nodeClickedCallback;
+    private TriConsumer<GuiNodeView, Double, Double> nodeReleasedCallback;
     private Consumer<SocketInstance> socketClickedCallback;
     private Consumer<SocketInstance> socketReleasedCallback;
 
@@ -65,7 +65,7 @@ public class NodeGraphView {
         GuiNodeView view = new GuiNodeView(node);
         this.instances.put(node, view);
         this.nodeParent.addChild(view);
-        view.setClickedCallback((x, y) -> this.nodeClicked(view, x, y));
+        view.setNodeInteractCallback((x, y, mouseDown) -> this.nodeInteract(view, x, y, mouseDown));
         view.setSocketInteractCallback(this::socketInteract);
         return view;
     }
@@ -154,6 +154,28 @@ public class NodeGraphView {
         }
     }
 
+    public void setNodeReleasedCallback(TriConsumer<GuiNodeView, Double, Double> nodeReleasedCallback) {
+        this.nodeReleasedCallback = nodeReleasedCallback;
+    }
+
+    private void nodeReleased(GuiNodeView node, double screenX, double screenY) {
+        if (this.nodeReleasedCallback != null)  {
+            this.nodeReleasedCallback.accept(node, screenX, screenY);
+        }
+    }
+
+    private void nodeInteract(GuiNodeView node, double screenX, double screenY, boolean mouseDown) {
+        if (mouseDown) {
+            if (this.nodeClickedCallback != null)  {
+                this.nodeClickedCallback.accept(node, screenX, screenY);
+            }
+        } else {
+            if (this.nodeReleasedCallback != null)  {
+                this.nodeReleasedCallback.accept(node, screenX, screenY);
+            }
+        }
+    }
+
     public void setSocketClickedCallback(Consumer<SocketInstance> socketClickedCallback) {
         this.socketClickedCallback = socketClickedCallback;
     }
@@ -190,7 +212,7 @@ public class NodeGraphView {
         this.edgeParent.addChild(this.draggingEdge);
     }
 
-    public void stopDragEdge(SocketInstance socket) {
+    public void stopDragEdge(NodeInstance node, SocketInstance socket) {
         if (this.draggingEdge == null) {
             return;
         }
@@ -199,7 +221,17 @@ public class NodeGraphView {
             Edge newEdge = this.draggingEdge.complete(socket);
             if (newEdge != null) {
                 this.addNewEdge(newEdge);
-                // delete previous on socket
+            }
+
+        } else if (node != null) {
+            for (SocketInstance possibleSocket : node.getSocketInstances()) {
+                if (Edge.typesCompatible(this.draggingEdge.getExistingSocket(), possibleSocket)) {
+                    Edge newEdge = this.draggingEdge.complete(possibleSocket);
+                    if (newEdge != null) {
+                        this.addNewEdge(newEdge);
+                        break;
+                    }
+                }
             }
 
         } else {

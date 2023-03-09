@@ -37,6 +37,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
 
         this.graphView = new NodeGraphView(graph, this.edgeLayer, this.nodeLayer);
         this.graphView.setNodeClickedCallback(this::nodeClicked);
+        this.graphView.setNodeReleasedCallback(this::nodeReleased);
         this.graphView.setSocketClickedCallback(this::socketClicked);
         this.graphView.setSocketReleasedCallback(this::socketReleased);
 
@@ -93,6 +94,15 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         updateSelectionState();
     }
 
+    private void nodeReleased(GuiNodeView node, double screenX, double screenY) {
+        if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
+            this.graphView.stopDragEdge(node.getInstance(), null);
+            this.currentAction = CurrentAction.NONE;
+        }
+
+        onReleaseLeft(screenX, screenY);
+    }
+
     private void socketClicked(SocketInstance socket) {
         this.currentAction = CurrentAction.DRAGGING_EDGE;
         this.graphView.startDragEdge(socket);
@@ -103,7 +113,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
             this.currentAction = CurrentAction.NONE;
         }
 
-        this.graphView.stopDragEdge(socket);
+        this.graphView.stopDragEdge(socket.getParentInstance(), socket);
         releaseFocus();
     }
 
@@ -188,17 +198,21 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         }
 
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            this.selectionStart = null;
-            this.selectionEnd = null;
-            if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
-                this.graphView.stopDragEdge(null);
-            }
-            this.currentAction = CurrentAction.NONE;
-            releaseFocus();
+            onReleaseLeft(screenX, screenY);
             return true;
         }
 
         return false;
+    }
+
+    private void onReleaseLeft(double screenX, double screenY) {
+        this.selectionStart = null;
+        this.selectionEnd = null;
+        if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
+            this.graphView.stopDragEdge(null, null);
+        }
+        this.currentAction = CurrentAction.NONE;
+        releaseFocus();
     }
 
     @Override
