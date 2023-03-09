@@ -68,8 +68,8 @@ public class TextEditController {
             rollbackValue();
         }
 
-        updateDisplayString();
         setFocused(false);
+        updateDisplayString();
     }
 
     public void rollbackValue() {

@@ -43,6 +43,7 @@
   "node.node_spell.const_num": "Const. Num.",
   "node.node_spell.const_str": "Const. Str.",
   "node.node_spell.const_bool": "Const. Bool",
+  "node.node_spell.const_vec": "Const. Vec.",
   "node.node_spell.caster": "Caster",
 
   "node.node_spell.add": "Add",

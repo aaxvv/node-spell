@@ -278,7 +278,11 @@ public class Value {
                 case BOOL -> Value.createBool(nbt.getBoolean("Val"));
                 case NUMBER -> Value.createNumber(nbt.getDouble("Val"));
                 case STRING -> Value.createString(nbt.getString("Val"));
-                case VECTOR -> null;
+                case VECTOR -> {
+                    ListTag components = nbt.getList("Val", Tag.TAG_DOUBLE);
+                    Vec3 vec = new Vec3(((DoubleTag) components.get(0)).getAsDouble(), ((DoubleTag) components.get(1)).getAsDouble(), ((DoubleTag) components.get(2)).getAsDouble());
+                    yield Value.createVector(vec);
+                }
                 case ENTITY -> {
                     Tag uuidTag = Objects.requireNonNull(nbt.get("Val"));
                     yield Value.createEntity(NbtUtils.loadUUID(uuidTag));

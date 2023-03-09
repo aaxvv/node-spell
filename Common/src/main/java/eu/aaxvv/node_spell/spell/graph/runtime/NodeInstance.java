@@ -18,7 +18,7 @@ import java.util.*;
  * <p>
  * It kind of sucks how editor/client stuff is also stored in here, but I don't care enough to do it better right now.
  */
-public class NodeInstance {
+public class NodeInstance implements InstanceDataContainer {
     /** The node type of this instance */
     private final Node base;
 
@@ -50,10 +50,12 @@ public class NodeInstance {
         return instance;
     }
 
+    @Override
     public Object getInstanceData() {
         return instanceData;
     }
 
+    @Override
     public void setInstanceData(Object data) {
         if (!this.getInstanceData().getClass().isAssignableFrom(data.getClass())) {
             throw new IllegalArgumentException("Node instance data type does not match widget type.");

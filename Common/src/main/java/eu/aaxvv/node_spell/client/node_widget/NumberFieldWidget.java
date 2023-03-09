@@ -4,7 +4,7 @@ import com.ibm.icu.text.DecimalFormat;
 import com.ibm.icu.text.DecimalFormatSymbols;
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.client.gui.TextEditController;
-import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
+import eu.aaxvv.node_spell.spell.graph.runtime.InstanceDataContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 
@@ -12,10 +12,10 @@ import java.util.Locale;
 
 public class NumberFieldWidget extends Widget<Double> {
     private final DecimalFormat format;
-    private final TextEditController textEditController;
+    protected final TextEditController textEditController;
 
-    public NumberFieldWidget(NodeInstance parent, int width) {
-        super(parent, width, 13);
+    public NumberFieldWidget(InstanceDataContainer parent, int width) {
+        super(parent, width, 12);
         this.format = new DecimalFormat("#0.##", DecimalFormatSymbols.getInstance(Locale.US));
         this.textEditController = new TextEditController();
         this.textEditController.setDisplayWidth(this.width - 4);

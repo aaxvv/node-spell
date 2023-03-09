@@ -40,9 +40,9 @@ public class GuiContext {
             GuiElement prevFocused = this.focused;
             this.focused = null;
             prevFocused.onLoseFocus();
-        } else {
-            this.focused = focused;
         }
+
+        this.focused = focused;
     }
 
     public GuiElement getRootPane() {

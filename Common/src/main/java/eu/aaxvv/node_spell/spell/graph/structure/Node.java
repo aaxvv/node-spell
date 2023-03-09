@@ -98,7 +98,7 @@ public abstract class Node {
     }
 
     public int getExpectedHeight() {
-        return NodeConstants.SOCKET_START_Y + Math.max(this.inSocketCount, this.outSocketCount) * NodeConstants.SOCKET_STEP_Y;
+        return NodeConstants.SOCKET_START_Y + Math.max(this.inSocketCount, this.outSocketCount) * NodeConstants.SOCKET_STEP_Y - (NodeConstants.SOCKET_STEP_Y / 4);
     }
 
     public int getWidth() {

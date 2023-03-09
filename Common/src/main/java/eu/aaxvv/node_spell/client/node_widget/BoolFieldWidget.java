@@ -13,7 +13,7 @@ public class BoolFieldWidget extends Widget<Boolean> {
     private static final int SWITCH_WIDTH = 12;
 
     public BoolFieldWidget(NodeInstance parent, int width) {
-        super(parent, width, 12);
+        super(parent, width, 10);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class BoolFieldWidget extends Widget<Boolean> {
         int switchX = this.currentValue ? this.getGlobalX() + this.getWidth() - SWITCH_WIDTH - 2 :  this.getGlobalX() + 2;
         GuiComponent.fill(pose, switchX, this.getGlobalY() + 2, switchX + SWITCH_WIDTH, this.getGlobalY() + this.getHeight() - 2, SWITCH_COLOR);
 
-        Minecraft.getInstance().font.draw(pose, this.currentValue ? "True" : "False", this.getGlobalX() + this.getWidth() + 2, this.getGlobalY() + 2, 0xFF000000);
+        Minecraft.getInstance().font.draw(pose, this.currentValue ? "True" : "False", this.getGlobalX() + this.getWidth() + 2, this.getGlobalY() + 1, 0xFF000000);
     }
 
     @Override

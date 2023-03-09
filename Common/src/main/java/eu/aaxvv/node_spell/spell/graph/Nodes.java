@@ -50,6 +50,7 @@ public class Nodes {
     public static final Node NUMBER_CONSTANT = new NumberConstantNode();
     public static final Node BOOL_CONSTANT = new BoolConstantNode();
     public static final Node STRING_CONSTANT = new StringConstantNode();
+    public static final Node VECTOR_CONSTANT = new VectorConstantNode();
     public static final Node CASTER = new CasterNode();
 
     // ===== MATH =====
@@ -212,6 +213,7 @@ public static final Node VEC_LENGTH = new GenericConversionNode
         register(NUMBER_CONSTANT);
         register(BOOL_CONSTANT);
         register(STRING_CONSTANT);
+        register(VECTOR_CONSTANT);
         register(CASTER);
 
         register(ADD);
