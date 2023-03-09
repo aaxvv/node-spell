@@ -2,7 +2,6 @@ package eu.aaxvv.node_spell.spell.graph.nodes.constant;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.node_widget.BoolFieldWidget;
-import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
@@ -16,7 +15,7 @@ public class BoolConstantNode extends BaseConstantNode<Boolean> {
     @Override
     public BoolFieldWidget createWidget(NodeInstance instance) {
         BoolFieldWidget field = new BoolFieldWidget(instance, this.getWidth() - 6 - 30);
-        field.setLocalPosition(2, NodeConstants.HEADER_HEIGHT + 3);
+        field.setLocalPosition(2, ModConstants.Sizing.HEADER_HEIGHT + 3);
         return field;
     }
 

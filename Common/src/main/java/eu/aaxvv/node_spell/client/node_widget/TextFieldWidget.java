@@ -9,7 +9,7 @@ import net.minecraft.client.gui.GuiComponent;
 public class TextFieldWidget extends Widget<String> {
     private final TextEditController textEditController;
     public TextFieldWidget(NodeInstance parent, int width) {
-        super(parent, width, 13);
+        super(parent, width, 12);
         this.textEditController = new TextEditController();
         this.textEditController.setDisplayWidth(this.getWidth() - 4);
         this.textEditController.setRollbackValueProvider(() -> (String) this.instance.getInstanceData());

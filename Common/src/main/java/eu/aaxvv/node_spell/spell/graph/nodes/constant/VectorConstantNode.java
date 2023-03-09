@@ -2,7 +2,6 @@ package eu.aaxvv.node_spell.spell.graph.nodes.constant;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.node_widget.VectorNodeWidget;
-import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
@@ -20,13 +19,13 @@ public class VectorConstantNode extends BaseConstantNode<Vec3> {
     @Override
     public VectorNodeWidget createWidget(NodeInstance instance) {
         VectorNodeWidget field = new VectorNodeWidget(instance, this.getWidth() - 6);
-        field.setLocalPosition(2, NodeConstants.HEADER_HEIGHT + 2);
+        field.setLocalPosition(2, ModConstants.Sizing.HEADER_HEIGHT + 2);
         return field;
     }
 
     @Override
     public int getExpectedHeight() {
-        return NodeConstants.SOCKET_START_Y + 34;
+        return ModConstants.Sizing.SOCKET_START_Y + 34;
     }
 
     @Override

@@ -6,7 +6,6 @@ import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
-import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
@@ -69,8 +68,8 @@ public class GuiNodeView extends GuiElement {
 
         // header and background
         NodeCategory category = instance.getBaseNode().getCategory();
-        RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + 1, nodeWidth - 2, NodeConstants.HEADER_HEIGHT, category.r, category.g, category.b);
-        RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + NodeConstants.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - NodeConstants.HEADER_HEIGHT - 2, BACKGROUND_COLOR[1], BACKGROUND_COLOR[2], BACKGROUND_COLOR[3]);
+        RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + 1, nodeWidth - 2, ModConstants.Sizing.HEADER_HEIGHT, category.r, category.g, category.b);
+        RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + ModConstants.Sizing.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - ModConstants.Sizing.HEADER_HEIGHT - 2, BACKGROUND_COLOR[1], BACKGROUND_COLOR[2], BACKGROUND_COLOR[3]);
 
         // sockets
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
@@ -114,7 +113,7 @@ public class GuiNodeView extends GuiElement {
     private void renderNodeText(PoseStack pose, NodeInstance instance) {
         Font font = Minecraft.getInstance().font;
 
-        font.draw(pose, Component.translatable(instance.getBaseNode().getTranslationKey()), this.getGlobalX() + 2, this.getGlobalY() + 2, NodeConstants.TITLE_TEXT_COLOR);
+        font.draw(pose, Component.translatable(instance.getBaseNode().getTranslationKey()), this.getGlobalX() + 2, this.getGlobalY() + 2, ModConstants.Colors.TEXT);
 
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
             Component name = Component.translatable(socketInstance.getBase().getTranslationKey());
@@ -123,9 +122,9 @@ public class GuiNodeView extends GuiElement {
 
             if (socketInstance.getBase().getDirection() == Socket.Direction.OUT) {
                 int length = font.width(name);
-                font.draw(pose, name, socketX - length - 3, socketY - 3, NodeConstants.SOCKET_TEXT_COLOR);
+                font.draw(pose, name, socketX - length - 3, socketY - 3, ModConstants.Colors.TEXT);
             } else {
-                font.draw(pose, name, socketX + 5, socketY - 3, NodeConstants.SOCKET_TEXT_COLOR);
+                font.draw(pose, name, socketX + 5, socketY - 3, ModConstants.Colors.TEXT);
             }
         }
     }

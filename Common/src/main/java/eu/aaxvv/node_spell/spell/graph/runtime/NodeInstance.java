@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.runtime;
 
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.node_widget.Widget;
-import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -174,8 +174,8 @@ public class NodeInstance implements InstanceDataContainer {
     }
 
     public int getSocketY(int index) {
-        int socketStartY = y + NodeConstants.SOCKET_START_Y;
-        return socketStartY + (index * NodeConstants.SOCKET_STEP_Y);
+        int socketStartY = y + ModConstants.Sizing.SOCKET_START_Y;
+        return socketStartY + (index * ModConstants.Sizing.SOCKET_STEP_Y);
     }
 
     public int getLocalSocketX(Socket.Direction direction) {
@@ -183,7 +183,7 @@ public class NodeInstance implements InstanceDataContainer {
     }
 
     public int getLocalSocketY(int index) {
-        return NodeConstants.SOCKET_START_Y + (index * NodeConstants.SOCKET_STEP_Y);
+        return ModConstants.Sizing.SOCKET_START_Y + (index * ModConstants.Sizing.SOCKET_STEP_Y);
     }
 
     public boolean containsPoint(int x, int y) {

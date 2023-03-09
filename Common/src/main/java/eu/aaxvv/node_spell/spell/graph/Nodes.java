@@ -13,6 +13,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.comparison.NotEqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.BoolConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.NumberConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.StringConstantNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.constant.VectorConstantNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.entity.GenericEntityPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.entity.ItemInHandNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;

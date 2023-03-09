@@ -3,7 +3,6 @@ package eu.aaxvv.node_spell.spell.graph.nodes.memory;
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.node_widget.TextFieldWidget;
 import eu.aaxvv.node_spell.client.node_widget.Widget;
-import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
@@ -31,7 +30,7 @@ public class SetVariableNode extends SimpleFlowNode {
     @Override
     public Widget<?> createWidget(NodeInstance instance) {
         TextFieldWidget field = new TextFieldWidget(instance, this.getWidth() - 8);
-        field.setLocalPosition(4, NodeConstants.HEADER_HEIGHT + 2);
+        field.setLocalPosition(4, ModConstants.Sizing.HEADER_HEIGHT + 2);
         return field;
     }
 

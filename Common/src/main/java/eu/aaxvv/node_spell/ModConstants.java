@@ -37,5 +37,14 @@ public class ModConstants {
 		public static final int PAPER_BG = 0xffead4aa;
 		public static final int PAPER_GRID = 0xffE8C091;
 		public static final int PAPER_BORDER = 0xffe4a672;
+
+		public static final int TEXT = 0xFF000000;
+	}
+
+	public static class Sizing {
+		public static final int DEFAULT_NODE_WIDTH = 72;
+		public static final int HEADER_HEIGHT = 10;
+		public static final int SOCKET_START_Y = 17;
+		public static final int SOCKET_STEP_Y = 12;
 	}
 }
