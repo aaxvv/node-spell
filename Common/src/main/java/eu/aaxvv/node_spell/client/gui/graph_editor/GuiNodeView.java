@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.node_widget.Widget;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.client.widget.NodeConstants;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
@@ -39,6 +40,10 @@ public class GuiNodeView extends GuiElement {
         super(instance.getBaseNode().getWidth(), instance.getBaseNode().getExpectedHeight());
         this.instance = instance;
         this.selected = false;
+        Widget<?> widget = this.getInstance().createWidget();
+        if (widget != null) {
+            this.addChild(widget);
+        }
         this.invalidate();
     }
 

@@ -22,21 +22,21 @@ public class NumberFieldWidget extends Widget<Double> {
     }
 
     @Override
-    public void draw(PoseStack pose, int x, int y) {
-        GuiComponent.fill(pose, x, y, x + this.width, y + this.height, 0xFFFFFFFF);
-        GuiComponent.fill(pose, x + 1, y + 1, x + this.width - 1, y + this.height - 1, 0xFF000000);
+    public void render(PoseStack pose, int mouseX, int mouseY, float tickDelta) {
+        GuiComponent.fill(pose, this.getGlobalX(), this.getGlobalY(), this.getGlobalX() + this.getWidth(), this.getGlobalY() + this.getHeight(), 0xFFFFFFFF);
+        GuiComponent.fill(pose, this.getGlobalX() + 1, this.getGlobalY() + 1, this.getGlobalX() + this.getWidth() - 1, this.getGlobalY() + this.getHeight() - 1, 0xFF000000);
 
         String displayString = getStringWithCursor();
         if (!displayString.isEmpty()) {
-            String text = Minecraft.getInstance().font.plainSubstrByWidth(displayString, this.width - 4 - 4, this.focused);
-            Minecraft.getInstance().font.draw(pose, text, x + 2, y + 2, 0xFFFFFFFF);
+            String text = Minecraft.getInstance().font.plainSubstrByWidth(displayString, this.getWidth() - 4 - 4, this.isFocused());
+            Minecraft.getInstance().font.draw(pose, text, this.getGlobalX() + 2, this.getGlobalY() + 2, 0xFFFFFFFF);
         }
 
-        GuiComponent.fill(pose, x + this.width - 5, y + 3, x + this.width - 4, y + 4, 0xFFFFFFFF);
-        GuiComponent.fill(pose, x + this.width - 6, y + 4, x + this.width - 3, y + 5, 0xFFFFFFFF);
+        GuiComponent.fill(pose, this.getGlobalX() + this.getWidth() - 5, this.getGlobalY() + 3, this.getGlobalX() + this.getWidth() - 4, this.getGlobalY() + 4, 0xFFFFFFFF);
+        GuiComponent.fill(pose, this.getGlobalX() + this.getWidth() - 6, this.getGlobalY() + 4, this.getGlobalX() + this.getWidth() - 3, this.getGlobalY() + 5, 0xFFFFFFFF);
 
-        GuiComponent.fill(pose, x + this.width - 6, y + this.height - 4, x + this.width - 3, y + this.height - 5, 0xFFFFFFFF);
-        GuiComponent.fill(pose, x + this.width - 5, y + this.height - 3, x + this.width - 4, y + this.height - 4, 0xFFFFFFFF);
+        GuiComponent.fill(pose, this.getGlobalX() + this.getWidth() - 6, this.getGlobalY() + this.getHeight() - 4, this.getGlobalX() + this.getWidth() - 3, this.getGlobalY() + this.getHeight() - 5, 0xFFFFFFFF);
+        GuiComponent.fill(pose, this.getGlobalX() + this.getWidth() - 5, this.getGlobalY() + this.getHeight() - 3, this.getGlobalX() + this.getWidth() - 4, this.getGlobalY() + this.getHeight() - 4, 0xFFFFFFFF);
     }
 
     private String getStringWithCursor() {
@@ -52,58 +52,64 @@ public class NumberFieldWidget extends Widget<Double> {
     }
 
     @Override
-    public void receiveKeyPress(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ENTER) {
-            try {
-                this.currentValue = Double.parseDouble(this.currentStringValue);
-            } catch (NumberFormatException ex) {
-                rollbackValue();
-                return;
-            }
+    public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (!this.isFocused()) {
+            return false;
+        }
 
-            commitValue();
-            return;
+        if (keyCode == GLFW.GLFW_KEY_ENTER) {
+            commitFromText();
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             rollbackValue();
             this.cursorPos = this.currentStringValue.length();
-            return;
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
             if (this.cursorPos > 0) {
                 this.currentStringValue = this.currentStringValue.substring(0, this.cursorPos - 1) + this.currentStringValue.substring(this.cursorPos);
                 this.cursorPos -= 1;
             }
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_LEFT) {
             this.cursorPos = Math.max(this.cursorPos - 1, 0);
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
             this.cursorPos = Math.min(this.cursorPos + 1, this.currentStringValue.length());
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_HOME) {
             this.cursorPos = 0;
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_END) {
             this.cursorPos = this.currentStringValue.length();
+            return true;
         }
+
+        return false;
     }
 
     @Override
-    public void receiveCharTyped(char character, int modifiers) {
+    public boolean onCharTyped(char character, int modifiers) {
+        if (!this.isFocused()) {
+            return false;
+        }
+
         if (this.cursorPos == 0) {
             this.currentStringValue = character + this.currentStringValue;
         } else {
             this.currentStringValue =  this.currentStringValue.substring(0, this.cursorPos) + character + this.currentStringValue.substring(this.cursorPos);
         }
         this.cursorPos += 1;
+        return true;
     }
 
     @Override
-    public void receiveMouseInput(int mouseX, int mouseY, int button) {
-        super.receiveMouseInput(mouseX, mouseY, button);
-
-        int x = getX();
-        int y = getY();
-        if (mouseX >= x + this.width - 7 && mouseX < x + this.width - 1) {
+    public boolean onMouseDown(double screenX, double screenY, int button) {
+        this.requestFocus();
+        if (screenX >= this.getGlobalX() + this.getWidth() - 7 && screenX < this.getGlobalX() + this.getWidth() - 1) {
             // handle spinner buttons
-            if (mouseY < y + (this.height / 2)) {
+            if (screenY < this.getGlobalY() + (this.getHeight() / 2f)) {
                 this.currentValue += 1;
-            } else if (mouseY > y + (this.height / 2)) {
+            } else if (screenY > this.getGlobalY() + (this.getHeight() / 2f)) {
                 this.currentValue -= 1;
             }
             commitValue();
@@ -111,18 +117,36 @@ public class NumberFieldWidget extends Widget<Double> {
         } else {
             this.cursorPos = this.currentStringValue.length();
         }
+        return true;
+    }
+
+    private void commitFromText() {
+        try {
+            this.currentValue = Double.parseDouble(this.currentStringValue);
+        } catch (NumberFormatException ex) {
+            rollbackValue();
+        }
+
+        commitValue();
     }
 
     @Override
     public void commitValue() {
-        super.commitValue();
+        this.parent.setInstanceData(this.currentValue);
         updateStringRepresentation();
+        releaseFocus();
     }
 
     @Override
     public void rollbackValue() {
-        super.rollbackValue();
+        this.currentValue = (Double) this.parent.getInstanceData();
         updateStringRepresentation();
+        releaseFocus();
+    }
+
+    @Override
+    public void onLoseFocus() {
+        commitFromText();
     }
 
     private void updateStringRepresentation() {

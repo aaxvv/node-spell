@@ -25,8 +25,6 @@ public class NodeInstance {
     /** Additional data which must be stored with this instance e.g. the value of a constant node */
     private Object instanceData;
 
-    private final Widget<?> widget;
-
     /** The socket instances of this node */
     private final Map<Socket, SocketInstance> socketInstances;
 
@@ -36,7 +34,6 @@ public class NodeInstance {
     public NodeInstance(Node base) {
         this.base = base;
         this.instanceData = base.createInstanceData();
-        this.widget = base.createWidget(this);
         this.socketInstances = new HashMap<>();
         base.getSockets().forEach(s -> this.socketInstances.put(s, s.createInstance(this)));
     }
@@ -50,9 +47,6 @@ public class NodeInstance {
 
         NodeInstance instance = baseNode.createInstance();
         instance.deserialize(instanceNbt);
-        if (instance.widget != null) {
-            instance.widget.rollbackValue();
-        }
         return instance;
     }
 
@@ -72,8 +66,8 @@ public class NodeInstance {
         return base;
     }
 
-    public Widget<?> getWidget() {
-        return widget;
+    public Widget<?> createWidget() {
+        return this.getBaseNode().createWidget(this);
     }
 
     public Value getSocketValue(Socket socket, SpellContext ctx) {
@@ -140,6 +134,10 @@ public class NodeInstance {
 
     public Collection<SocketInstance> getSocketInstances() {
         return this.socketInstances.values();
+    }
+
+    public Collection<SocketInstance> getSocketInstancesSorted() {
+        return this.getBaseNode().getSockets().stream().map(this::getSocketInstance).toList();
     }
 
     public void run(SpellContext ctx) {

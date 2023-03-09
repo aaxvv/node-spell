@@ -198,9 +198,9 @@ public class SpellEditScreen extends Screen {
                     }
 
                     this.focusedWidget = widget;
-                    widget.setFocused(true);
+//                    widget.setFocused(true);
                     Vector2i mouseLocal = SpellEditScreen.this.canvas.toLocal(mouseX, mouseY);
-                    widget.receiveMouseInput(mouseLocal.x, mouseLocal.y, button);
+//                    widget.receiveMouseInput(mouseLocal.x, mouseLocal.y, button);
                     if (!this.focusedWidget.isFocused()) {
                         this.focusedWidget = null;
                     }
@@ -228,7 +228,7 @@ public class SpellEditScreen extends Screen {
             }
 
             if (!focusedWidgetClicked && prevWidget != null) {
-                prevWidget.setFocused(false);
+//                prevWidget.setFocused(false);
                 prevWidget.rollbackValue();
             }
         }
@@ -273,7 +273,7 @@ public class SpellEditScreen extends Screen {
 
         public boolean keyPressed(int key, int scanCode, int modifiers) {
             if (this.focusedWidget != null) {
-                this.focusedWidget.receiveKeyPress(key, scanCode, modifiers);
+//                this.focusedWidget.receiveKeyPress(key, scanCode, modifiers);
                 if (!this.focusedWidget.isFocused()) {
                     this.focusedWidget = null;
                     return true;
@@ -284,7 +284,7 @@ public class SpellEditScreen extends Screen {
 
         public boolean charTyped(char character, int modifiers) {
             if (this.focusedWidget != null) {
-                this.focusedWidget.receiveCharTyped(character, modifiers);
+//                this.focusedWidget.receiveCharTyped(character, modifiers);
                 if (!this.focusedWidget.isFocused()) {
                     this.focusedWidget = null;
                 }

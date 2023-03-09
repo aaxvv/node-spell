@@ -258,4 +258,9 @@ public class GuiElement {
 
         return false;
     }
+
+
+    public void onLoseFocus() {
+
+    }
 }

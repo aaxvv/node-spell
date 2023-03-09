@@ -172,10 +172,10 @@ public class GraphRenderer {
 
         renderNodeText(pose, instance);
 
-        if (instance.getWidget() != null) {
-            Widget<?> widget = instance.getWidget();
-            widget.draw(pose, x + widget.getLocalX(), y + widget.getLocalY());
-        }
+//        if (instance.getWidget() != null) {
+//            Widget<?> widget = instance.getWidget();
+//            widget.draw(pose, x + widget.getLocalX(), y + widget.getLocalY());
+//        }
     }
 
     private void renderEdge(Matrix4f mat, BufferBuilder bb, Edge edge) {

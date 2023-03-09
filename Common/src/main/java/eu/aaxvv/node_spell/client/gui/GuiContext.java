@@ -36,7 +36,13 @@ public class GuiContext {
     }
 
     public void setFocused(GuiElement focused) {
-        this.focused = focused;
+        if (this.focused != null && this.focused != focused) {
+            GuiElement prevFocused = this.focused;
+            this.focused = null;
+            prevFocused.onLoseFocus();
+        } else {
+            this.focused = focused;
+        }
     }
 
     public GuiElement getRootPane() {

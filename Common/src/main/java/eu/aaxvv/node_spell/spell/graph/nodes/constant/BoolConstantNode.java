@@ -15,8 +15,8 @@ public class BoolConstantNode extends BaseConstantNode<Boolean> {
 
     @Override
     public BoolFieldWidget createWidget(NodeInstance instance) {
-        BoolFieldWidget field = new BoolFieldWidget(instance, this.getWidth() - 6);
-        field.setLocalPosition(2, NodeConstants.HEADER_HEIGHT + 2);
+        BoolFieldWidget field = new BoolFieldWidget(instance, this.getWidth() - 6 - 30);
+        field.setLocalPosition(2, NodeConstants.HEADER_HEIGHT + 3);
         return field;
     }
 

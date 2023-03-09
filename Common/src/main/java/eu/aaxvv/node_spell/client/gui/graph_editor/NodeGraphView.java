@@ -224,7 +224,7 @@ public class NodeGraphView {
             }
 
         } else if (node != null) {
-            for (SocketInstance possibleSocket : node.getSocketInstances()) {
+            for (SocketInstance possibleSocket : node.getSocketInstancesSorted()) {
                 if (Edge.typesCompatible(this.draggingEdge.getExistingSocket(), possibleSocket)) {
                     Edge newEdge = this.draggingEdge.complete(possibleSocket);
                     if (newEdge != null) {

@@ -132,9 +132,9 @@ public class NodeCanvasWidget implements Renderable, GuiEventListener, Narratabl
                 }
             }
 
-            if (instance.getWidget() != null && instance.getWidget().isHit(localX, localY)) {
-                return Optional.of(instance.getWidget());
-            }
+//            if (instance.getWidget() != null && instance.getWidget().isHit(localX, localY)) {
+//                return Optional.of(instance.getWidget());
+//            }
 
             if (instance.containsPoint(localX, localY)) {
                 return Optional.of(instance);

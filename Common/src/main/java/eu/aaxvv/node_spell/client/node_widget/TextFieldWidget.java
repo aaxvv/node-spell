@@ -14,15 +14,15 @@ public class TextFieldWidget extends Widget<String> {
     }
 
     @Override
-    public void draw(PoseStack pose, int x, int y) {
-        GuiComponent.fill(pose, x, y, x + this.width, y + this.height, 0xFFFFFFFF);
-        GuiComponent.fill(pose, x + 1, y + 1, x + this.width - 1, y + this.height - 1, 0xFF000000);
+    public void render(PoseStack pose, int mouseX, int mouseY, float tickDelta) {
+        GuiComponent.fill(pose, this.getGlobalX(), this.getGlobalY(), this.getGlobalX() + this.getWidth(), this.getGlobalY() + this.getHeight(), 0xFFFFFFFF);
+        GuiComponent.fill(pose, this.getGlobalX() + 1, this.getGlobalY() + 1, this.getGlobalX() + this.getWidth() - 1, this.getGlobalY() + this.getHeight() - 1, 0xFF000000);
 
         String displayString = getStringWithCursor();
         if (!displayString.isEmpty()) {
             //TODO: string doesn't scroll back when cursor exists visible window
-            String text = Minecraft.getInstance().font.plainSubstrByWidth(displayString, this.width - 4, this.focused);
-            Minecraft.getInstance().font.draw(pose, text, x + 2, y + 2, 0xFFFFFFFF);
+            String text = Minecraft.getInstance().font.plainSubstrByWidth(displayString, this.getWidth() - 4, this.focused);
+            Minecraft.getInstance().font.draw(pose, text, this.getGlobalX() + 2, this.getGlobalY() + 2, 0xFFFFFFFF);
         }
     }
 
@@ -39,43 +39,60 @@ public class TextFieldWidget extends Widget<String> {
     }
 
     @Override
-    public void receiveKeyPress(int keyCode, int scanCode, int modifiers) {
+    public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (!this.isFocused()) {
+            return false;
+        }
+
         if (keyCode == GLFW.GLFW_KEY_ENTER) {
             commitValue();
-            return;
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             rollbackValue();
             this.cursorPos = this.currentValue.length();
-            return;
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
             if (this.cursorPos > 0) {
                 this.currentValue = this.currentValue.substring(0, this.cursorPos - 1) + this.currentValue.substring(this.cursorPos);
                 this.cursorPos -= 1;
             }
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_LEFT) {
             this.cursorPos = Math.max(this.cursorPos - 1, 0);
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
             this.cursorPos = Math.min(this.cursorPos + 1, this.currentValue.length());
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_HOME) {
             this.cursorPos = 0;
+            return true;
         } else if (keyCode == GLFW.GLFW_KEY_END) {
             this.cursorPos = this.currentValue.length();
+            return true;
         }
+
+        return false;
     }
 
     @Override
-    public void receiveCharTyped(char character, int modifiers) {
+    public boolean onCharTyped(char character, int modifiers) {
+        if (!this.isFocused()) {
+            return false;
+        }
+
         if (this.cursorPos == 0) {
             this.currentValue = character + this.currentValue;
         } else {
             this.currentValue =  this.currentValue.substring(0, this.cursorPos) + character + this.currentValue.substring(this.cursorPos);
         }
         this.cursorPos += 1;
+        return true;
     }
 
     @Override
-    public void receiveMouseInput(int mouseX, int mouseY, int button) {
-        super.receiveMouseInput(mouseX, mouseY, button);
+    public boolean onMouseDown(double mouseX, double mouseY, int button) {
+        this.requestFocus();
         this.cursorPos = this.currentValue.length();
+        return true;
     }
 }
