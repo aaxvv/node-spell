@@ -10,10 +10,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.block.RaycastBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.BasicNumberCompNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.EqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.NotEqualsNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.constant.BoolConstantNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.constant.NumberConstantNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.constant.StringConstantNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.constant.VectorConstantNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.constant.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.entity.GenericEntityPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.entity.ItemInHandNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
@@ -25,16 +22,14 @@ import eu.aaxvv.node_spell.spell.graph.nodes.logic.BasicBoolOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberTriOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberUnaryOpNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.math.MapRangeNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.GetSpellStorage;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.GetVariableNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetSpellStorage;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetVariableNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.BasicStringOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.ToStringNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.vector.BasicVectorOpNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorConstructNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorDestructNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.vector.VectorDotNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.vector.*;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
@@ -54,6 +49,10 @@ public class Nodes {
     public static final Node VECTOR_CONSTANT = new VectorConstantNode();
     public static final Node CASTER = new CasterNode();
 
+    public static final Node CONST_PI = new BuiltinConstNumberNode(ModConstants.resLoc("const_pi"), Math.PI);
+    public static final Node CONST_TAU = new BuiltinConstNumberNode(ModConstants.resLoc("const_tau"), Math.PI * 2);
+    public static final Node CONST_E = new BuiltinConstNumberNode(ModConstants.resLoc("const_e"), Math.E);
+
     // ===== MATH =====
     public static final Node ADD = new BasicNumberOpNode(ModConstants.resLoc("add"), Double::sum);
     public static final Node SUBTRACT = new BasicNumberOpNode(ModConstants.resLoc("subtract"), (a, b) -> a - b);
@@ -62,16 +61,24 @@ public class Nodes {
     public static final Node POW = new BasicNumberOpNode(ModConstants.resLoc("power"), "socket.node_spell.base", "socket.node_spell.exponent", Math::pow);
     public static final Node SQRT = new BasicNumberUnaryOpNode(ModConstants.resLoc("sqrt"), Math::sqrt);
     public static final Node SIGN = new BasicNumberUnaryOpNode(ModConstants.resLoc("sign"), Math::signum);
-    public static final Node CLAMP = new BasicNumberTriOpNode(ModConstants.resLoc("clamp"), "Low", "High", "Val", (l, h, v) -> Math.max(l, Math.min(h, v)));
+    public static final Node CLAMP = new BasicNumberTriOpNode(ModConstants.resLoc("clamp"), "socket.node_spell.low", "socket.node_spell.high", "socket.node_spell.val", (l, h, v) -> Math.max(l, Math.min(h, v)));
     public static final Node MIN = new BasicNumberOpNode(ModConstants.resLoc("min"), Math::min);
     public static final Node MAX = new BasicNumberOpNode(ModConstants.resLoc("max"), Math::max);
-    // map
 
+    public static final Node SIN = new BasicNumberUnaryOpNode(ModConstants.resLoc("sin"), Math::sin);
+    public static final Node COS = new BasicNumberUnaryOpNode(ModConstants.resLoc("cos"), Math::cos);
+    public static final Node TAN = new BasicNumberUnaryOpNode(ModConstants.resLoc("tan"), Math::tan);
+    public static final Node ASIN = new BasicNumberUnaryOpNode(ModConstants.resLoc("asin"), Math::asin);
+    public static final Node ACOS = new BasicNumberUnaryOpNode(ModConstants.resLoc("acos"), Math::acos);
+    public static final Node ATAN = new BasicNumberUnaryOpNode(ModConstants.resLoc("atan"), Math::atan);
+    public static final Node MAP_RANGE = new MapRangeNode();
+
+    // ===== VECTOR =====
     public static final Node VEC_CONSTRUCT = new VectorConstructNode();
     public static final Node VEC_DESTRUCT = new VectorDestructNode();
     public static final Node VEC_ADD = new BasicVectorOpNode(ModConstants.resLoc("vec_add"), Vec3::add);
     public static final Node VEC_SUB = new BasicVectorOpNode(ModConstants.resLoc("vec_subtract"), Vec3::subtract);
-public static final Node VEC_LENGTH = new GenericConversionNode
+    public static final Node VEC_LENGTH = new GenericConversionNode
         .Builder<Vec3, Double>(NodeCategories.VECTOR, "vec_length")
         .types(Datatype.VECTOR, Datatype.NUMBER)
         .socketNames("vector", "length")
@@ -89,8 +96,9 @@ public static final Node VEC_LENGTH = new GenericConversionNode
             .Builder<Vec3, Vec3>(NodeCategories.VECTOR, "vec_normalize")
             .types(Datatype.VECTOR, Datatype.VECTOR)
             .socketNames("vector", "vector")
-            .function(v -> v.scale(1/v.length()))
+            .function(Vec3::normalize)
             .build();
+    public static final Node VEC_SCALE = new VectorScaleNode();
 
     // scale, project, rotate around
 
@@ -214,6 +222,9 @@ public static final Node VEC_LENGTH = new GenericConversionNode
         register(BOOL_CONSTANT);
         register(STRING_CONSTANT);
         register(VECTOR_CONSTANT);
+        register(CONST_PI);
+        register(CONST_TAU);
+        register(CONST_E);
         register(CASTER);
 
         register(ADD);
@@ -226,6 +237,13 @@ public static final Node VEC_LENGTH = new GenericConversionNode
         register(CLAMP);
         register(MIN);
         register(MAX);
+        register(SIN);
+        register(COS);
+        register(TAN);
+        register(ASIN);
+        register(ACOS);
+        register(ATAN);
+        register(MAP_RANGE);
 
         register(VEC_CONSTRUCT);
         register(VEC_DESTRUCT);
@@ -236,6 +254,7 @@ public static final Node VEC_LENGTH = new GenericConversionNode
         register(VEC_CROSS);
         register(VEC_NEAREST_AXIS);
         register(VEC_NORMALIZE);
+        register(VEC_SCALE);
 
         register(AND);
         register(OR);
