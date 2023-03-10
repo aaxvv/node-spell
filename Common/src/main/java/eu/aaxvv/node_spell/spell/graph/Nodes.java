@@ -71,7 +71,6 @@ public class Nodes {
     public static final Node VEC_DESTRUCT = new VectorDestructNode();
     public static final Node VEC_ADD = new BasicVectorOpNode(ModConstants.resLoc("vec_add"), Vec3::add);
     public static final Node VEC_SUB = new BasicVectorOpNode(ModConstants.resLoc("vec_subtract"), Vec3::subtract);
-//    public static final Node VEC_LENGTH = new BasicVecToNumberNode(ModConstants.resLoc("vec_length"), Vec3::length);
 public static final Node VEC_LENGTH = new GenericConversionNode
         .Builder<Vec3, Double>(NodeCategories.VECTOR, "vec_length")
         .types(Datatype.VECTOR, Datatype.NUMBER)
@@ -102,7 +101,7 @@ public static final Node VEC_LENGTH = new GenericConversionNode
 
     public static final Node NOT = new GenericConversionNode.Builder<Boolean, Boolean>(NodeCategories.LOGIC, "not")
             .types(Datatype.BOOL, Datatype.BOOL)
-            .socketNames("empty", "result")
+            .socketNames("val", "result")
             .function(b -> !b)
             .build();
 
@@ -153,7 +152,7 @@ public static final Node VEC_LENGTH = new GenericConversionNode
     public static final Node ENTITY_IS_SNEAKING = new GenericEntityPropertyNode<>(
             "entity_is_sneaking",
             Datatype.BOOL,
-            "sneaking",
+            "bool",
             EntityHelper::isSneaking
     );
     public static final Node ENTITY_EYE_POSITION = new GenericEntityPropertyNode<>(

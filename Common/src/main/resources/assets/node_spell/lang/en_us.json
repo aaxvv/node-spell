@@ -115,6 +115,7 @@
   "socket.node_spell.empty": "",
   "socket.node_spell.result": "Result",
   "socket.node_spell.value": "Value",
+  "socket.node_spell.val": "Val.",
   "socket.node_spell.a": "a",
   "socket.node_spell.b": "b",
   "socket.node_spell.c": "c",
@@ -148,7 +149,7 @@
   "socket.node_spell.axis": "Axis",
   "socket.node_spell.length": "Len.",
   "socket.node_spell.string": "Str.",
-  "socket.node_spell.sneaking": "Sneaking",
   "socket.node_spell.side": "Side",
-  "socket.node_spell.hit": "Hit"
+  "socket.node_spell.hit": "Hit",
+  "socket.node_spell.bool": "Bool"
 }
