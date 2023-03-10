@@ -55,7 +55,7 @@ public class GuiNodePicker extends GuiElement {
 
     private void openCategoryPopup(GuiElement source, NodeCategory category) {
         GuiNodeListPopup popup = new GuiNodeListPopup(this.nodeCategoryLookup.getNodesForCategory(category));
-        int x = Mth.clamp(source.getGlobalX() + (source.getWidth() / 2) - (popup.getWidth()) / 2, 2, this.width - 2);
+        int x = Mth.clamp(source.getGlobalX() + (source.getWidth() / 2) - (popup.getWidth()) / 2, 2, this.width - 2 - popup.getWidth());
         int y = source.getGlobalY() - popup.getHeight() - 2;
         popup.setLocalPosition(x, y);
         this.getContext().getPopupPane().openPopup(popup);
