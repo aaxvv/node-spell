@@ -59,7 +59,10 @@ public class TextEditController {
             moveCursorToStart();
         } else if (keyCode == GLFW.GLFW_KEY_END) {
             moveCursorToEnd();
+        } else {
+            return;
         }
+
         updateDisplayString();
     }
 
@@ -138,6 +141,7 @@ public class TextEditController {
     public void startEditing(String text) {
         this.text = text;
         this.setFocused(true);
+        updateDisplayString();
     }
 
     public void setFocused(boolean focused) {

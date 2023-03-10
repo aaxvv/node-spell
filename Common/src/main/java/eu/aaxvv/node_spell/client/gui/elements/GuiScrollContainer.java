@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import java.util.List;
 
 public class GuiScrollContainer extends GuiElement {
+    private static final int SCROLL_MULTIPLIER = 6;
+
     // Appearance
     private int innerPadding;
     private int itemSeparation;
@@ -105,7 +107,7 @@ public class GuiScrollContainer extends GuiElement {
 
     @Override
     public boolean onMouseScrolled(double screenX, double screenY, double amount) {
-        this.scrollPosition -= amount * 4;
+        this.scrollPosition -= amount * SCROLL_MULTIPLIER;
 
         scrollTo(this.scrollPosition);
         return true;

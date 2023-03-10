@@ -8,6 +8,7 @@ import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
+import net.minecraft.util.Mth;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
@@ -224,6 +225,17 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         if (keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_BACKSPACE) {
             this.selectedNodes.forEach(this.graphView::removeNode);
             this.selectedNodes.clear();
+            return true;
+        } else if (keyCode == GLFW.GLFW_KEY_SPACE) {
+            double mouseX = GuiHelper.getMouseScreenX();
+            double mouseY = GuiHelper.getMouseScreenY();
+            GuiQuickNodePopup popup = new GuiQuickNodePopup();
+            int x = (int) Mth.clamp(mouseX - (popup.getWidth()) / 2f, 2, this.getParent().getWidth() - 2 - popup.getWidth());
+            int y = (int) Mth.clamp(mouseY - (popup.getHeight()) / 2f, 2, this.getParent().getHeight() - 2 - popup.getHeight());
+            popup.setLocalPosition(x, y);
+            popup.setNodeClickedCallback(node -> this.addNode(node, GuiHelper.getMouseScreenX(), GuiHelper.getMouseScreenY()));
+            getContext().getPopupPane().closeAllPopups();
+            getContext().getPopupPane().openPopup(popup);
             return true;
         }
 

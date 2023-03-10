@@ -1,7 +1,6 @@
 package eu.aaxvv.node_spell.client.gui.elements;
 
 import eu.aaxvv.node_spell.client.gui.GuiElement;
-import eu.aaxvv.node_spell.client.gui.elements.UnboundedGuiElement;
 
 public class GuiPopupPane extends UnboundedGuiElement {
     public GuiPopupPane() {
@@ -21,8 +20,22 @@ public class GuiPopupPane extends UnboundedGuiElement {
 
         for (int i = this.getChildren().size() - 1; i >= index; i--) {
             GuiElement child = this.getChildren().get(i);
+            if (this.getContext().getFocused() != null && this.getContext().getFocused().isChildOf(child)) {
+                this.getContext().setFocused(null);
+            }
             this.removeChild(child);
         }
+    }
+
+    public void closeAllPopups() {
+        if (this.getContext().getFocused() != null) {
+            GuiElement focused = this.getContext().getFocused();
+            if (this.getChildren().stream().anyMatch(focused::isChildOf)) {
+                this.getContext().setFocused(null);
+            }
+        }
+
+        this.getChildren().clear();
     }
 
     @Override
@@ -37,7 +50,7 @@ public class GuiPopupPane extends UnboundedGuiElement {
         if (topMostChild.containsPointGlobal(screenX, screenY)) {
             topMostChild.onMouseDown(screenX, screenY, button);
         } else {
-            this.removeChild(topMostChild);
+            closePopup(topMostChild);
         }
         return true;
     }

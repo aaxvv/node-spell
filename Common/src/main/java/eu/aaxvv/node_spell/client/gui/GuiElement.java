@@ -187,6 +187,20 @@ public class GuiElement {
         return this.parent.getChildren().indexOf(this);
     }
 
+    public boolean isChildOf(GuiElement other) {
+        GuiElement parent = this.getParent();
+
+        while (parent != null) {
+            if (parent == other) {
+                return true;
+            }
+
+            parent = parent.getParent();
+        }
+
+        return false;
+    }
+
     // event handlers
 
     public boolean onMouseDown(double screenX, double screenY, int button) {

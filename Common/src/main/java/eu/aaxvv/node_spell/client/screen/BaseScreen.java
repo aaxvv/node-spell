@@ -64,6 +64,7 @@ public class BaseScreen extends Screen {
             return true;
         }
 
+        // for exit via ESC key
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
