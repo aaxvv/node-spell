@@ -43,6 +43,28 @@ public class GuiDraggingEdgeView extends GuiEdgeView {
         invalidate();
     }
 
+    @Override
+    protected void invalidateEndpoints() {
+        if (getParent() != null) {
+            if (this.getExistingSocket().getBase().getDirection().isOut()) {
+                cachedOutX = this.getExistingSocket().getX();
+                cachedOutY = this.getExistingSocket().getY();
+                cachedInX = this.endpointLocalX;
+                cachedInY = this.endpointLocalY;
+            } else {
+                cachedInX = this.getExistingSocket().getX();
+                cachedInY = this.getExistingSocket().getY();
+                cachedOutX = this.endpointLocalX;
+                cachedOutY = this.endpointLocalY;
+            }
+
+            cachedOutX += this.getParent().getGlobalX();
+            cachedOutY += this.getParent().getGlobalY();
+            cachedInX += this.getParent().getGlobalX();
+            cachedInY += this.getParent().getGlobalY();
+        }
+    }
+
     public boolean isNew() {
         return this.getInstance() == null;
     }
@@ -74,23 +96,5 @@ public class GuiDraggingEdgeView extends GuiEdgeView {
     @Override
     public int getLocalY() {
         return Math.min(this.existingSocket.getY(), this.endpointLocalY);
-    }
-
-    @Override
-    public int getLeftY() {
-        if (this.existingSocket.getX() < this.endpointLocalX) {
-            return this.existingSocket.getY();
-        } else {
-            return this.endpointLocalY;
-        }
-    }
-
-    @Override
-    public int getRightY() {
-        if (this.existingSocket.getX() < this.endpointLocalX) {
-            return this.endpointLocalY;
-        } else {
-            return this.existingSocket.getY();
-        }
     }
 }
