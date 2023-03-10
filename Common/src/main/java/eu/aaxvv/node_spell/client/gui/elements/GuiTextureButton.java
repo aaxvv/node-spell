@@ -1,6 +1,9 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.gui.elements;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import eu.aaxvv.node_spell.client.gui.GuiContext;
+import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import net.minecraft.network.chat.Component;
 

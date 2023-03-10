@@ -1,4 +1,7 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.gui.helper;
+
+import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.gui.helper.GuiHelper;
 
 import java.util.Collection;
 import java.util.Collections;

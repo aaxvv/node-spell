@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.client.screen;
 
-import eu.aaxvv.node_spell.client.gui.GuiHelper;
-import eu.aaxvv.node_spell.client.gui.base.GuiPanContainer;
+import eu.aaxvv.node_spell.client.gui.helper.GuiHelper;
+import eu.aaxvv.node_spell.client.gui.elements.GuiPanContainer;
 import eu.aaxvv.node_spell.client.gui.graph_editor.GuiGraphEditor;
 import eu.aaxvv.node_spell.client.gui.graph_editor.GuiNodePicker;
 import eu.aaxvv.node_spell.spell.Spell;

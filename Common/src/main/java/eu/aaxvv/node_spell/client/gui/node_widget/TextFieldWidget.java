@@ -1,7 +1,7 @@
-package eu.aaxvv.node_spell.client.node_widget;
+package eu.aaxvv.node_spell.client.gui.node_widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import eu.aaxvv.node_spell.client.gui.TextEditController;
+import eu.aaxvv.node_spell.client.gui.helper.TextEditController;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
-import eu.aaxvv.node_spell.client.node_widget.Widget;
+import eu.aaxvv.node_spell.client.gui.node_widget.Widget;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;

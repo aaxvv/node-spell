@@ -1,10 +1,11 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.gui.elements;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import eu.aaxvv.node_spell.client.gui.GuiElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-public class GuiTransientText extends GuiElement{
+public class GuiTransientText extends GuiElement {
     private static final int FADE_OUT_TICKS = 10;
     private float ticksLeft;
     private Component currentText;

@@ -1,7 +1,8 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.gui.elements;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 

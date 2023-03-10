@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.gui.helper;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;

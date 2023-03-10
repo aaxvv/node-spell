@@ -1,7 +1,10 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.gui.spell_list;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.gui.elements.GuiTextureButton;
+import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.client.Minecraft;

@@ -1,7 +1,8 @@
 package eu.aaxvv.node_spell.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import eu.aaxvv.node_spell.client.gui.base.UnboundedGuiElement;
+import eu.aaxvv.node_spell.client.gui.elements.GuiPopupPane;
+import eu.aaxvv.node_spell.client.gui.elements.UnboundedGuiElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import org.lwjgl.glfw.GLFW;

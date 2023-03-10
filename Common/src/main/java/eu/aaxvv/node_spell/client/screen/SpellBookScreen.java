@@ -2,8 +2,12 @@ package eu.aaxvv.node_spell.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.NodeSpellCommon;
 import eu.aaxvv.node_spell.client.gui.*;
+import eu.aaxvv.node_spell.client.gui.elements.*;
+import eu.aaxvv.node_spell.client.gui.helper.MultiSelectionModel;
+import eu.aaxvv.node_spell.client.gui.helper.TextEditController;
+import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
+import eu.aaxvv.node_spell.client.gui.spell_list.GuiSpellListItem;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
 import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
 import eu.aaxvv.node_spell.spell.Spell;

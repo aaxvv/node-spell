@@ -2,8 +2,8 @@ package eu.aaxvv.node_spell.client.gui.graph_editor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
-import eu.aaxvv.node_spell.client.gui.GuiHelper;
-import eu.aaxvv.node_spell.client.gui.base.UnboundedGuiElement;
+import eu.aaxvv.node_spell.client.gui.helper.GuiHelper;
+import eu.aaxvv.node_spell.client.gui.elements.UnboundedGuiElement;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;

@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.client.gui.base;
+package eu.aaxvv.node_spell.client.gui.elements;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;

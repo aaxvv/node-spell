@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.client.gui.base;
+package eu.aaxvv.node_spell.client.gui.elements;
 
 import eu.aaxvv.node_spell.client.gui.GuiElement;
 

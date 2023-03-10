@@ -1,6 +1,7 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.gui.elements;
 
-import eu.aaxvv.node_spell.client.gui.base.UnboundedGuiElement;
+import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.gui.elements.UnboundedGuiElement;
 
 public class GuiPopupPane extends UnboundedGuiElement {
     public GuiPopupPane() {

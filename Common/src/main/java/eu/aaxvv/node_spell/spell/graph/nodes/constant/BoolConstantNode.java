@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.constant;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.client.node_widget.BoolFieldWidget;
+import eu.aaxvv.node_spell.client.gui.node_widget.BoolFieldWidget;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;

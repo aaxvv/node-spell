@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.client.gui;
+package eu.aaxvv.node_spell.client.gui.helper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;

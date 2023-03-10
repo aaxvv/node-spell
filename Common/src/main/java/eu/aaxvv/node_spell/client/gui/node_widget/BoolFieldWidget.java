@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.client.node_widget;
+package eu.aaxvv.node_spell.client.gui.node_widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.ModConstants;

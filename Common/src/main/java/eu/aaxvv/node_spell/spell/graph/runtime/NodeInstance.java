@@ -1,7 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.runtime;
 
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.client.node_widget.Widget;
+import eu.aaxvv.node_spell.client.gui.node_widget.Widget;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;

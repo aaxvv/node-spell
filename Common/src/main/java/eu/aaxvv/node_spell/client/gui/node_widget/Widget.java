@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.client.node_widget;
+package eu.aaxvv.node_spell.client.gui.node_widget;
 
 import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.spell.graph.runtime.InstanceDataContainer;
