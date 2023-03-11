@@ -5,10 +5,13 @@ import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
+import eu.aaxvv.node_spell.spell.graph.structure.Node;
+import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class NodeGraphView {
     private final SpellGraph graph;
@@ -78,8 +81,11 @@ public class NodeGraphView {
     }
 
     public GuiEdgeView addNewEdge(Edge edge) {
-        this.graph.addEdge(edge);
-        return addEdge(edge);
+        Edge toAdd = this.graph.addEdge(edge);
+        if (toAdd == null) {
+            return null;
+        }
+        return addEdge(toAdd);
     }
 
     public GuiEdgeView addEdge(Edge edge) {
@@ -246,5 +252,27 @@ public class NodeGraphView {
         if (this.draggingEdge != null) {
             this.draggingEdge.setLocalEndpoint(localX, localY);
         }
+    }
+
+    public Predicate<Node> getDraggingEdgeTargetFilter() {
+        if (this.draggingEdge == null) {
+            return node -> true;
+        }
+
+        Socket existingSocket = this.draggingEdge.getExistingSocket().getBase();
+
+        return node -> {
+            for (Socket socket : node.getSockets()) {
+                if (Edge.typesCompatible(existingSocket, socket)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+    }
+
+    public boolean isDraggingNewEdge() {
+        return this.draggingEdge != null && this.draggingEdge.isNew();
     }
 }

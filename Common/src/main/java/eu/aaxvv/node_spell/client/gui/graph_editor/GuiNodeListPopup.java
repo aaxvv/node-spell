@@ -8,7 +8,6 @@ import eu.aaxvv.node_spell.client.gui.elements.GuiTextButton;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 import java.util.List;
@@ -49,9 +48,9 @@ public class GuiNodeListPopup extends GuiElement {
         int maxNameWidth = DEFAULT_WIDTH;
 
         for (Node node : nodes) {
-            int nameWidth = Minecraft.getInstance().font.width(Component.translatable(node.getTranslationKey()));
+            int nameWidth = Minecraft.getInstance().font.width(node.getDisplayName());
             maxNameWidth = Math.max(maxNameWidth, nameWidth);
-            GuiTextButton button = new GuiTextButton(0, 11, Component.translatable(node.getTranslationKey()));
+            GuiTextButton button = new GuiTextButton(0, 11, node.getDisplayName());
             button.setClickCallback(() -> this.nodeClicked(node));
             this.nodeList.addChild(button);
         }

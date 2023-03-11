@@ -9,7 +9,6 @@ import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +54,9 @@ public class GuiNodePicker extends GuiElement {
 
     private void openCategoryPopup(GuiElement source, NodeCategory category) {
         GuiNodeListPopup popup = new GuiNodeListPopup(this.nodeCategoryLookup.getNodesForCategory(category));
-        int x = Mth.clamp(source.getGlobalX() + (source.getWidth() / 2) - (popup.getWidth()) / 2, 2, this.width - 2 - popup.getWidth());
+        int x = source.getGlobalX() + (source.getWidth() / 2) - (popup.getWidth()) / 2;
         int y = source.getGlobalY() - popup.getHeight() - 2;
-        popup.setLocalPosition(x, y);
-        this.getContext().getPopupPane().openPopup(popup);
+        this.getContext().getPopupPane().openPopup(popup, x, y);
 
         popup.setNodeClickedCallback(this::createNode);
     }

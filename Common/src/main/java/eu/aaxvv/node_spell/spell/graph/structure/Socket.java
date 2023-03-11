@@ -63,6 +63,13 @@ public class Socket {
             return this == OUT;
         }
 
+        public Direction getOpposite() {
+            if (this == IN) {
+                return OUT;
+            } else {
+                return IN;
+            }
+        }
     }
 
     public int getSerializationHash() {

@@ -204,7 +204,7 @@ public class Value {
             return false;
         }
 
-        return this.value.equals(otherValue.value);
+        return Objects.equals(this.value, otherValue.value);
     }
 
     public CompoundTag toNbt() {

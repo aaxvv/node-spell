@@ -113,7 +113,7 @@ public class GuiNodeView extends GuiElement {
     private void renderNodeText(PoseStack pose, NodeInstance instance) {
         Font font = Minecraft.getInstance().font;
 
-        font.draw(pose, Component.translatable(instance.getBaseNode().getTranslationKey()), this.getGlobalX() + 2, this.getGlobalY() + 2, ModConstants.Colors.TEXT);
+        font.draw(pose, instance.getBaseNode().getDisplayName(), this.getGlobalX() + 2, this.getGlobalY() + 2, ModConstants.Colors.TEXT);
 
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
             Component name = Component.translatable(socketInstance.getBase().getTranslationKey());

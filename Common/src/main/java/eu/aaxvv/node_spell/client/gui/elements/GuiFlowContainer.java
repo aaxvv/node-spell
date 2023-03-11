@@ -53,6 +53,12 @@ public class GuiFlowContainer extends GuiElement {
     }
 
     @Override
+    public void removeAllChildren() {
+        super.removeAllChildren();
+        invalidateLayout();
+    }
+
+    @Override
     public void invalidate() {
         invalidateLayout();
         super.invalidate();

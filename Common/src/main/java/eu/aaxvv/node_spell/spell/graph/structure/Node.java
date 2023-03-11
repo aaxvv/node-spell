@@ -6,6 +6,7 @@ import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -71,6 +72,10 @@ public abstract class Node {
         addSocket(socket);
         this.outSocketCount++;
         return socket;
+    }
+
+    public Component getDisplayName() {
+        return Component.translatable(this.translationKey);
     }
 
     public NodeInstance createInstance() {

@@ -94,6 +94,12 @@ public class GuiScrollContainer extends GuiElement {
     }
 
     @Override
+    public void removeAllChildren() {
+        this.contentPane.removeAllChildren();
+        invalidateLayout();
+    }
+
+    @Override
     public List<GuiElement> getChildren() {
         return this.contentPane.getChildren();
     }

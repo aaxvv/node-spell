@@ -136,7 +136,13 @@ public class GuiElement {
     }
 
     public void removeChild(GuiElement child) {
+        child.onRemove();
         this.children.remove(child);
+    }
+
+    public void removeAllChildren() {
+        this.children.forEach(GuiElement::onRemove);
+        this.children.clear();
     }
 
     public GuiElement getParent() {
@@ -275,6 +281,10 @@ public class GuiElement {
 
 
     public void onLoseFocus() {
+
+    }
+
+    public void onRemove() {
 
     }
 }

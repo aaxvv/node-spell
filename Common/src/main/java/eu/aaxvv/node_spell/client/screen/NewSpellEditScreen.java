@@ -33,7 +33,7 @@ public class NewSpellEditScreen extends BaseScreen {
         this.nodePicker.setNodeCreatedCallback(node -> {
             double x = GuiHelper.getMouseScreenX();
             double y = GuiHelper.getMouseScreenY();
-            this.nodeGraph.addNode(node, x, y);
+            this.nodeGraph.addNode(node.createInstance(), x, y);
         });
     }
 

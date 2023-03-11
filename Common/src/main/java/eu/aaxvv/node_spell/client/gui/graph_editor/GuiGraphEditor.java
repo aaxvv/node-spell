@@ -2,13 +2,12 @@ package eu.aaxvv.node_spell.client.gui.graph_editor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
-import eu.aaxvv.node_spell.client.gui.helper.GuiHelper;
 import eu.aaxvv.node_spell.client.gui.elements.UnboundedGuiElement;
+import eu.aaxvv.node_spell.client.gui.helper.GuiHelper;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
+import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
-import eu.aaxvv.node_spell.spell.graph.structure.Node;
-import net.minecraft.util.Mth;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
@@ -45,8 +44,8 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.currentAction = CurrentAction.NONE;
     }
 
-    public void addNode(Node node, double screenX, double screenY) {
-        GuiNodeView newNode = this.graphView.addNewNode(node.createInstance());
+    public GuiNodeView addNode(NodeInstance nodeInstance, double screenX, double screenY) {
+        GuiNodeView newNode = this.graphView.addNewNode(nodeInstance);
         Vector2i pos = this.toLocal((int) screenX, (int) screenY);
         newNode.setLocalPosition(pos.x - (newNode.getWidth() / 2), pos.y - (newNode.getHeight() / 2));
         newNode.setDragOffset(new Vector2i(newNode.getWidth() / 2, newNode.getHeight() / 2));
@@ -55,6 +54,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.currentAction = CurrentAction.DRAGGING_NODES;
         updateSelectionState();
         requestFocus();
+        return newNode;
     }
 
     private void nodeClicked(GuiNodeView node, double screenX, double screenY) {
@@ -206,13 +206,33 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         return false;
     }
 
-    private void onReleaseLeft(double screenX, double screenY) {
+    private void onReleaseLeft(double mouseX, double mouseY) {
         this.selectionStart = null;
         this.selectionEnd = null;
         if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
-            this.graphView.stopDragEdge(null, null);
+            if (!this.graphView.isDraggingNewEdge()) {
+                this.graphView.stopDragEdge(null, null);
+                return;
+            }
+
+            GuiQuickNodePopup popup = new GuiQuickNodePopup(this.graphView.getDraggingEdgeTargetFilter());
+            int x = (int) (mouseX - (popup.getWidth() / 2f));
+            int y = (int) (mouseY - (popup.getHeight() / 2f));
+            popup.setNodeClickedCallback(node -> {
+                if (node == null) {
+                    this.graphView.stopDragEdge(null, null);
+                    return;
+                }
+
+                this.currentAction = CurrentAction.NONE;
+                GuiNodeView newNode = this.addNode(node.createInstance(), GuiHelper.getMouseScreenX(), GuiHelper.getMouseScreenY());
+                this.graphView.stopDragEdge(newNode.getInstance(), null);
+            });
+            this.getContext().getPopupPane().openPopup(popup, x, y);
+            // dumb hack to focus the search field immediately
+            popup.onCharTyped(' ', 0);
         }
-        this.currentAction = CurrentAction.NONE;
+
         releaseFocus();
     }
 
@@ -230,12 +250,16 @@ public class GuiGraphEditor extends UnboundedGuiElement {
             double mouseX = GuiHelper.getMouseScreenX();
             double mouseY = GuiHelper.getMouseScreenY();
             GuiQuickNodePopup popup = new GuiQuickNodePopup();
-            int x = (int) Mth.clamp(mouseX - (popup.getWidth()) / 2f, 2, this.getParent().getWidth() - 2 - popup.getWidth());
-            int y = (int) Mth.clamp(mouseY - (popup.getHeight()) / 2f, 2, this.getParent().getHeight() - 2 - popup.getHeight());
+            int x = (int) (mouseX - (popup.getWidth() / 2f));
+            int y = (int) (mouseY - (popup.getHeight() / 2f));
             popup.setLocalPosition(x, y);
-            popup.setNodeClickedCallback(node -> this.addNode(node, GuiHelper.getMouseScreenX(), GuiHelper.getMouseScreenY()));
+            popup.setNodeClickedCallback(node -> {
+                if (node != null) {
+                    this.addNode(node.createInstance(), GuiHelper.getMouseScreenX(), GuiHelper.getMouseScreenY());
+                }
+            });
             getContext().getPopupPane().closeAllPopups();
-            getContext().getPopupPane().openPopup(popup);
+            getContext().getPopupPane().openPopup(popup, x, y);
             return true;
         }
 

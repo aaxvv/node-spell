@@ -66,7 +66,7 @@ public class SocketInstance {
 
     public Edge getSingleConnection() {
         if (this.connections.isEmpty()) {
-            throw new IllegalStateException("Cannot calculate value of socket with missing input.");
+            throw new IllegalStateException("Tried to get single connection on empty socket.");
         }
         return this.connections.get(0);
     }

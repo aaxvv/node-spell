@@ -76,14 +76,18 @@ public class Edge {
     }
 
     public static boolean typesCompatible(SocketInstance start, SocketInstance end) {
-        if (start.getBase().getDirection() == end.getBase().getDirection()) {
+        return typesCompatible(start.getBase(), end.getBase());
+    }
+
+    public static boolean typesCompatible(Socket start, Socket end) {
+        if (start.getDirection() == end.getDirection()) {
             return false;
         }
 
-        if (start.getBase().getDirection() == Socket.Direction.IN) {
-            return start.getBase().getDataType().isAssignableFrom(end.getBase().getDataType());
+        if (start.getDirection() == Socket.Direction.IN) {
+            return start.getDataType().isAssignableFrom(end.getDataType());
         } else {
-            return end.getBase().getDataType().isAssignableFrom(start.getBase().getDataType());
+            return end.getDataType().isAssignableFrom(start.getDataType());
         }
     }
 }

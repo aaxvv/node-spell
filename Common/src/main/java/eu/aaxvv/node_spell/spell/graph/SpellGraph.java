@@ -64,6 +64,7 @@ public class SpellGraph {
 
     public Edge addEdge(Edge edge) {
         if (edge.getStart().getParentInstance() == edge.getEnd().getParentInstance()) {
+            edge.remove();
             return null;
         }
         this.edges.add(edge);

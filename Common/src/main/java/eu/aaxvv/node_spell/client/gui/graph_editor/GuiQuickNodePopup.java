@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class GuiQuickNodePopup extends GuiElement {
     private static final int HEIGHT = 160;
@@ -26,9 +27,11 @@ public class GuiQuickNodePopup extends GuiElement {
     private final GuiTextField searchField;
     private final GuiScrollContainer nodeList;
     private Consumer<Node> nodeClickedCallback;
+    private final Predicate<Node> nodeFilter;
 
-    public GuiQuickNodePopup() {
+    public GuiQuickNodePopup(Predicate<Node> nodeFilter) {
         super(WIDTH, HEIGHT);
+        this.nodeFilter = nodeFilter;
         this.searchField = new GuiTextField(this.getWidth(), SEARCH_FIELD_HEIGHT);
         this.searchField.setValueChangedCallback(this::updateResults);
         this.searchField.setEnterPressedCallback(this::enterPressed);
@@ -36,6 +39,11 @@ public class GuiQuickNodePopup extends GuiElement {
         this.nodeList = new GuiScrollContainer(this.getWidth() - 2, this.getHeight() - SEARCH_FIELD_HEIGHT);
         this.nodeList.setLocalPosition(1, SEARCH_FIELD_HEIGHT);
         addChild(this.nodeList);
+//        updateResults("");
+    }
+
+    public GuiQuickNodePopup() {
+        this(node -> true);
     }
 
     private void enterPressed() {
@@ -63,6 +71,10 @@ public class GuiQuickNodePopup extends GuiElement {
         List<SearchResult> toDisplay = new ArrayList<>();
         for (var entry : Nodes.REGISTRY.entrySet()) {
             Node node = entry.getValue();
+            if (!this.nodeFilter.test(node)) {
+                continue;
+            }
+
             String displayName = Component.translatable(node.getTranslationKey()).getString();
             float matchScore = matchScore(displayName, searchText);
             if (matchScore != 0) {
@@ -126,9 +138,32 @@ public class GuiQuickNodePopup extends GuiElement {
     public boolean onCharTyped(char character, int modifiers) {
         if (!this.searchField.isFocused()) {
             this.searchField.focus();
-            return true;
+            if (character == ' ') {
+                return true;
+            }
         }
 
         return super.onCharTyped(character, modifiers);
+    }
+
+    @Override
+    public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (this.nodeClickedCallback != null) {
+                this.nodeClickedCallback.accept(null);
+            }
+
+            this.getContext().getPopupPane().closePopup(this);
+            return true;
+        }
+
+        return super.onKeyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public void onRemove() {
+        if (this.nodeClickedCallback != null) {
+            this.nodeClickedCallback.accept(null);
+        }
     }
 }
