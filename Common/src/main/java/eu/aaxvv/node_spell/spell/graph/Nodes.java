@@ -17,6 +17,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.ForLoopNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericConversionNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericSelectNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.input.CasterNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.logic.BasicBoolOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberOpNode;
@@ -72,6 +73,7 @@ public class Nodes {
     public static final Node ACOS = new BasicNumberUnaryOpNode(ModConstants.resLoc("acos"), Math::acos);
     public static final Node ATAN = new BasicNumberUnaryOpNode(ModConstants.resLoc("atan"), Math::atan);
     public static final Node MAP_RANGE = new MapRangeNode();
+    public static final Node SELECT_NUM = new GenericSelectNode(NodeCategories.MATH, ModConstants.resLoc("select_num"), Datatype.NUMBER);
 
     // ===== VECTOR =====
     public static final Node VEC_CONSTRUCT = new VectorConstructNode();
@@ -99,6 +101,7 @@ public class Nodes {
             .function(Vec3::normalize)
             .build();
     public static final Node VEC_SCALE = new VectorScaleNode();
+    public static final Node SELECT_VEC = new GenericSelectNode(NodeCategories.VECTOR, ModConstants.resLoc("select_vec"), Datatype.VECTOR);
 
     // scale, project, rotate around
 
@@ -106,7 +109,6 @@ public class Nodes {
     public static final Node AND = new BasicBoolOpNode(ModConstants.resLoc("and"), (a, b) -> a && b);
     public static final Node OR = new BasicBoolOpNode(ModConstants.resLoc("or"), (a, b) -> a || b);
     public static final Node XOR = new BasicBoolOpNode(ModConstants.resLoc("xor"), (a, b) -> a ^ b);
-
     public static final Node NOT = new GenericConversionNode.Builder<Boolean, Boolean>(NodeCategories.LOGIC, "not")
             .types(Datatype.BOOL, Datatype.BOOL)
             .socketNames("val", "result")
@@ -169,6 +171,7 @@ public class Nodes {
             "position",
             Entity::getEyePosition
     );
+    public static final Node SELECT_ENTITY = new GenericSelectNode(NodeCategories.ENTITY, ModConstants.resLoc("select_entity"), Datatype.ENTITY);
 
     // target entity / position,
     // item: next in hot bar, hand (other for caster), from entity
@@ -179,6 +182,7 @@ public class Nodes {
     // block: at position, from item, is in tag, redstone activated, name, waterlogged / flammable?
     public static final Node BLOCK_FROM_ITEM = new BlockFromItemNode();
     public static final Node RAY_CAST_BLOCK = new RaycastBlockNode();
+    public static final Node SELECT_BLOCK = new GenericSelectNode(NodeCategories.BLOCK, ModConstants.resLoc("select_block"), Datatype.BLOCK);
     // break, get at position, get id, is liquid, is solid, is flammable
 
     // ===== ITEM =====
@@ -188,6 +192,7 @@ public class Nodes {
             .socketNames("item", "count")
             .function(i -> (double) i.getCount())
             .build();
+    public static final Node SELECT_ITEM = new GenericSelectNode(NodeCategories.ITEM, ModConstants.resLoc("select_item"), Datatype.ITEM);
     // is stackable, has nbt, is edible, is damaged, from block
 
     // ===== STRING =====
@@ -196,7 +201,7 @@ public class Nodes {
     public static final Node STRING_STARTS_WITH = new BasicStringOpNode<>(ModConstants.resLoc("string_starts_with"), Datatype.BOOL, Value::createBool, String::startsWith);
     public static final Node STRING_ENDS_WITH = new BasicStringOpNode<>(ModConstants.resLoc("string_ends_with"), Datatype.BOOL, Value::createBool, String::endsWith);
     public static final Node STRING_INDEX_OF = new BasicStringOpNode<>(ModConstants.resLoc("string_index_of"), Datatype.NUMBER, Value::createNumber, (a, b) -> (double)a.indexOf(b));
-
+    public static final Node SELECT_STRING = new GenericSelectNode(NodeCategories.STRING, ModConstants.resLoc("select_string"), Datatype.STRING);
     public static final Node TO_STRING = new ToStringNode();
     // substring, char at,
 
@@ -211,6 +216,9 @@ public class Nodes {
     public static final Node GET_SPELL_STORAGE = new GetSpellStorage();
     public static final Node SET_SPELL_STORAGE = new SetSpellStorage();
     // player storage too? for passing data between spells?
+
+    // ===== LIST =====
+    public static final Node SELECT_LIST = new GenericSelectNode(NodeCategories.LIST, ModConstants.resLoc("select_list"), Datatype.LIST);
 
     public static void initRegistry(PlatformRegistryWrapper<Node> nodeRegistry) {
         REGISTRY = nodeRegistry;
@@ -244,6 +252,7 @@ public class Nodes {
         register(ACOS);
         register(ATAN);
         register(MAP_RANGE);
+        register(SELECT_NUM);
 
         register(VEC_CONSTRUCT);
         register(VEC_DESTRUCT);
@@ -255,6 +264,7 @@ public class Nodes {
         register(VEC_NEAREST_AXIS);
         register(VEC_NORMALIZE);
         register(VEC_SCALE);
+        register(SELECT_VEC);
 
         register(AND);
         register(OR);
@@ -280,17 +290,21 @@ public class Nodes {
         register(ENTITY_LOOK_DIRECTION);
         register(ENTITY_IS_SNEAKING);
         register(ENTITY_EYE_POSITION);
+        register(SELECT_ENTITY);
 
         register(BLOCK_FROM_ITEM);
         register(RAY_CAST_BLOCK);
+        register(SELECT_BLOCK);
 
         register(ITEM_COUNT);
+        register(SELECT_ITEM);
 
         register(STRING_APPEND);
         register(STRING_CONTAINS);
         register(STRING_STARTS_WITH);
         register(STRING_ENDS_WITH);
         register(STRING_INDEX_OF);
+        register(SELECT_STRING);
         register(TO_STRING);
 
         register(PRINT);
@@ -300,6 +314,8 @@ public class Nodes {
         register(SET_VARIABLE);
         register(GET_SPELL_STORAGE);
         register(SET_SPELL_STORAGE);
+
+        register(SELECT_LIST);
     }
 
     private static void register(Node node) {
