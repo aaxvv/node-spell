@@ -15,14 +15,12 @@ import java.util.Objects;
 public class Socket {
     private final Datatype dataType;
     private final String translationKey;
-    private final Node parentNode;
     private final Direction direction;
     private final int positionOnNode;
 
     public Socket(Datatype dataType, String translationKey, Node parentNode, Direction direction, int positionOnNode) {
         this.dataType = dataType;
         this.translationKey = translationKey;
-        this.parentNode = parentNode;
         this.direction = direction;
         this.positionOnNode = positionOnNode;
     }
@@ -37,10 +35,6 @@ public class Socket {
 
     public String getTranslationKey() {
         return translationKey;
-    }
-
-    public Node getParentNode() {
-        return parentNode;
     }
 
     public Datatype getDataType() {

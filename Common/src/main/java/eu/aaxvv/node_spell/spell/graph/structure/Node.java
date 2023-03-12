@@ -56,7 +56,7 @@ public abstract class Node {
         this.sockets.add(socket);
     }
 
-    public final List<Socket> getSockets() {
+    public List<Socket> getSockets() {
         return Collections.unmodifiableList(this.sockets);
     }
 
