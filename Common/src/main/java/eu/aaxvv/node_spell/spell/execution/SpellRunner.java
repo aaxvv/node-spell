@@ -5,17 +5,19 @@ import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
+import eu.aaxvv.node_spell.spell.sub_spell.SubSpellInstanceData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
 public class SpellRunner {
     protected SpellGraph graph;
     protected SpellContext ctx;
-
     protected int waitTicks;
     protected NodeInstance currentNode;
     protected SpellRunner activeSubRunner;
     protected boolean running;
+
+    protected SubSpellInstanceData subSpellData;
 
     public SpellRunner(SpellGraph graph, SpellContext ctx) {
         this(ctx);
@@ -110,5 +112,9 @@ public class SpellRunner {
         } else {
             return null;
         }
+    }
+
+    public SubSpellInstanceData getSubSpellData() {
+        return this.subSpellData;
     }
 }

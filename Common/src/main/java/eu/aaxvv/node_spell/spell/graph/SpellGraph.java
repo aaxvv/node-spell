@@ -4,7 +4,7 @@ import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
-import eu.aaxvv.node_spell.spell.value.Datatype;
+import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
@@ -23,12 +23,12 @@ public class SpellGraph {
     private final List<NodeInstance> nodeInstances;
     private final List<Edge> edges;
 
-    private List<Argument> arguments;
+    private Map<NodeInstance, Socket> externalSockets;
 
     public SpellGraph() {
         this.edges = new ArrayList<>();
         this.nodeInstances = new ArrayList<>();
-        this.arguments = new ArrayList<>();
+        this.externalSockets = new HashMap<>();
     }
 
     public NodeInstance getEntrypoint() {
@@ -201,6 +201,7 @@ public class SpellGraph {
         this.entrypoint = null;
     }
 
-
-    public record Argument(String name, Datatype type){};
+    public Map<NodeInstance, Socket> getExternalSockets() {
+        return externalSockets;
+    }
 }

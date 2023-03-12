@@ -10,10 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * The context for the execution of a single spell.
@@ -25,12 +22,14 @@ public class SpellContext {
     private final Map<String, Value> locals;
     private final CasterWrapper caster;
     private final Level level;
+    private final Deque<SpellRunner> runnerStack;
 
     public SpellContext(ServerPlayer player, Level level, String spellName) {
         this.caster = new CasterWrapper(player);
         this.level = level;
         this.spellName = spellName;
         this.locals = new HashMap<>();
+        this.runnerStack = new ArrayDeque<>();
     }
 
     public void putLocal(String name, Value value) {
@@ -59,6 +58,18 @@ public class SpellContext {
 
     public String getSpellName() {
         return spellName;
+    }
+
+    public void pushRunner(SpellRunner runner) {
+        this.runnerStack.addLast(runner);
+    }
+
+    public SpellRunner popRunner() {
+        return this.runnerStack.removeLast();
+    }
+
+    public SpellRunner getCurrentRunner() {
+        return this.runnerStack.peekLast();
     }
 
     public static class CasterWrapper {

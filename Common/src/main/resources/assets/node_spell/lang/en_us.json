@@ -71,6 +71,7 @@
   "node.category.node_spell.world":  "WORLD",
   "node.category.node_spell.list":  "LIST",
   "node.category.node_spell.string": "STRING",
+  "node.category.node_spell.sub_spell":  "SUB SPELL",
   "node.category.node_spell.custom":  "CUSTOM",
 
   "datatype.node_spell.bool":  "Bool",

@@ -25,7 +25,8 @@ public class NodeCategories {
     public static final NodeCategory MEMORY = new NodeCategory(ModConstants.resLoc("memory"), 1000, ModConstants.Colors.RED);
     public static final NodeCategory LIST = new NodeCategory(ModConstants.resLoc("list"), 1100, ModConstants.Colors.GREEN);
     public static final NodeCategory STRING = new NodeCategory(ModConstants.resLoc("string"), 1200, ModConstants.Colors.GREEN);
-    public static final NodeCategory CUSTOM = new NodeCategory(ModConstants.resLoc("custom"), 1300, ModConstants.Colors.DARK_GREY);
+    public static final NodeCategory SUB_SPELL = new NodeCategory(ModConstants.resLoc("sub_spell"), 1300, ModConstants.Colors.RED);
+    public static final NodeCategory CUSTOM = new NodeCategory(ModConstants.resLoc("custom"), 1400, ModConstants.Colors.PURPLE);
 
     public static void initRegistry(PlatformRegistryWrapper<NodeCategory> categoryRegistry) {
         REGISTRY = categoryRegistry;
@@ -51,6 +52,7 @@ public class NodeCategories {
         register(MEMORY);
         register(LIST);
         register(STRING);
+        register(SUB_SPELL);
         register(CUSTOM);
     }
 
