@@ -34,11 +34,13 @@ public class GuiNodeView extends GuiElement {
     private Vector2i dragOffset;
     private TriConsumer<Double, Double, Boolean> nodeInteractCallback;
     private BiConsumer<SocketInstance, Boolean> socketInteractCallback;
+    private int highlightColor;
 
     public GuiNodeView(NodeInstance instance) {
         super(instance.getBaseNode().getWidth(), instance.getBaseNode().getExpectedHeight());
         this.instance = instance;
         this.selected = false;
+        this.highlightColor = 0;
         Widget<?> widget = this.getInstance().createWidget();
         if (widget != null) {
             this.addChild(widget);
@@ -60,7 +62,9 @@ public class GuiNodeView extends GuiElement {
         int nodeHeight = instance.getBaseNode().getExpectedHeight();
 
         // border
-        if (this.selected) {
+        if (this.highlightColor != 0) {
+            RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, this.highlightColor);
+        } else if (this.selected) {
             RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, SELECTED_BORDER_COLOR[1], SELECTED_BORDER_COLOR[2], SELECTED_BORDER_COLOR[3]);
         } else {
             RenderUtil.putQuad(mat, bb, getGlobalX(), getGlobalY(), nodeWidth, nodeHeight, BORDER_COLOR[1], BORDER_COLOR[2], BORDER_COLOR[3]);
@@ -81,12 +85,6 @@ public class GuiNodeView extends GuiElement {
         RenderSystem.disableBlend();
 
         renderNodeText(pose, instance);
-
-        //TODO: widgets should be proper children of nodes
-//        if (instance.getWidget() != null) {
-//            Widget<?> widget = instance.getWidget();
-//            widget.draw(pose, x + widget.getLocalX(), y + widget.getLocalY());
-//        }
 
         super.render(pose, mouseX, mouseY, tickDelta);
     }
@@ -210,6 +208,10 @@ public class GuiNodeView extends GuiElement {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public void setHighlightColor(int highlightColor) {
+        this.highlightColor = highlightColor;
     }
 
     public void setDragOffset(Vector2i dragOffset) {

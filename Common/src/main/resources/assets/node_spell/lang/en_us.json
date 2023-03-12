@@ -24,6 +24,10 @@
   "gui.node_spell.spell_list.multiple_selection_error": "Multiple spells selected",
   "gui.node_spell.spell_list.favorite_limit_error": "The maximum number of favorite spells is %d",
 
+  "gui.node_spell.spell_verification.problems_heading": "Problems:",
+  "gui.node_spell.spell_verification.cycle_found": "Graph contains a cycle.",
+  "gui.node_spell.spell_verification.no_entrypoint": "No Flow Source found.",
+  "gui.node_spell.spell_verification.multiple_entrypoints": "Multiple Flow Sources found.",
 
   "node.category.node_spell.input": "INPUT",
   "node.category.node_spell.flow": "FLOW",
@@ -66,6 +70,7 @@
   "node.node_spell.acos": "Arc Cos",
   "node.node_spell.atan": "Arc Tan",
   "node.node_spell.map_range": "Map Range",
+  "node.node_spell.select_num": "Select Num.",
 
   "node.node_spell.vec_construct": "Vec. Constr.",
   "node.node_spell.vec_destruct": "Vec. Destr.",
@@ -77,6 +82,7 @@
   "node.node_spell.vec_nearest_axis": "Nearest Axis",
   "node.node_spell.vec_normalize": "Normalize",
   "node.node_spell.vec_scale": "Vec. Scale",
+  "node.node_spell.select_vec": "Select Vec.",
 
   "node.node_spell.and": "And",
   "node.node_spell.or": "Or",
@@ -102,11 +108,14 @@
   "node.node_spell.entity_velocity": "Entity Vel.",
   "node.node_spell.entity_is_sneaking": "Is Sneaking",
   "node.node_spell.entity_eye_pos": "Eye Pos.",
+  "node.node_spell.select_ent": "Select Ent.",
 
   "node.node_spell.block_from_item": "Item -> Block",
   "node.node_spell.ray_cast_block": "Raycast Block",
+  "node.node_spell.select_block": "Select Block",
 
   "node.node_spell.item_count": "Item Count",
+  "node.node_spell.select_item": "Select Item",
 
   "node.node_spell.string_append": "Append",
   "node.node_spell.string_contains": "Contains",
@@ -114,6 +123,7 @@
   "node.node_spell.string_ends_with": "Ends with",
   "node.node_spell.string_index_of": "Index of",
   "node.node_spell.to_string": "To String",
+  "node.node_spell.select_string": "Select Str.",
 
   "node.node_spell.print": "Print",
   "node.node_spell.place_block": "Place Block",
@@ -123,16 +133,18 @@
   "node.node_spell.get_spell_storage": "Get Storage",
   "node.node_spell.set_spell_storage": "Set Storage",
 
+  "node.node_spell.select_list": "Select List",
+
   "socket.node_spell.empty": "",
   "socket.node_spell.result": "Result",
   "socket.node_spell.value": "Value",
   "socket.node_spell.val": "Val.",
-  "socket.node_spell.a": "a",
-  "socket.node_spell.b": "b",
-  "socket.node_spell.c": "c",
-  "socket.node_spell.x": "x",
-  "socket.node_spell.y": "y",
-  "socket.node_spell.z": "z",
+  "socket.node_spell.a": "A",
+  "socket.node_spell.b": "B",
+  "socket.node_spell.c": "C",
+  "socket.node_spell.x": "X",
+  "socket.node_spell.y": "Y",
+  "socket.node_spell.z": "Z",
   "socket.node_spell.true": "True",
   "socket.node_spell.false": "False",
   "socket.node_spell.base": "Base",
@@ -168,5 +180,6 @@
   "socket.node_spell.low_in": "In Low",
   "socket.node_spell.high_in": "In High",
   "socket.node_spell.low_out": "Out Low",
-  "socket.node_spell.high_out": "Out High"
+  "socket.node_spell.high_out": "Out High",
+  "socket.node_spell.select_a": "Select A"
 }

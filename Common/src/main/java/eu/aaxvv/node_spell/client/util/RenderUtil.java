@@ -27,6 +27,18 @@ public class RenderUtil extends GuiComponent {
         font.draw(pose, subStr + "...", x, y, packedColor);
     }
 
+    public static void putQuad(Matrix4f mat, BufferBuilder bb, int x, int y, int w, int h, int packedColor) {
+        float a = (float)(packedColor >> 24 & 255) / 255.0F;
+        float r = (float)(packedColor >> 16 & 255) / 255.0F;
+        float g = (float)(packedColor >> 8 & 255) / 255.0F;
+        float b = (float)(packedColor & 255) / 255.0F;
+
+        bb.vertex(mat, (float)x, (float)y, 0.0F).color(r, g, b, a).endVertex();
+        bb.vertex(mat, (float)x, (float)y+h, 0.0F).color(r, g, b, a).endVertex();
+        bb.vertex(mat, (float)x+w, (float)y+h, 0.0F).color(r, g, b, a).endVertex();
+        bb.vertex(mat, (float)x+w, (float)y, 0.0F).color(r, g, b, a).endVertex();
+    }
+
     public static void putQuad(Matrix4f mat, BufferBuilder bb, int x, int y, int w, int h, float r, float g, float b) {
         bb.vertex(mat, (float)x, (float)y, 0.0F).color(r, g, b, 1).endVertex();
         bb.vertex(mat, (float)x, (float)y+h, 0.0F).color(r, g, b, 1).endVertex();

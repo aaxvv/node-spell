@@ -27,6 +27,8 @@ public class GuiGraphEditor extends UnboundedGuiElement {
     private Vector2i selectionEnd;
     private CurrentAction currentAction;
 
+    private Runnable graphChangedCallback;
+
     public GuiGraphEditor(SpellGraph graph) {
         super();
         this.selectedNodes = new HashSet<>();
@@ -42,6 +44,8 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.graphView.setSocketReleasedCallback(this::socketReleased);
 
         this.currentAction = CurrentAction.NONE;
+
+        this.graphChangedCallback = null;
     }
 
     public GuiNodeView addNode(NodeInstance nodeInstance, double screenX, double screenY) {
@@ -54,6 +58,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.currentAction = CurrentAction.DRAGGING_NODES;
         updateSelectionState();
         requestFocus();
+        graphChanged();
         return newNode;
     }
 
@@ -76,11 +81,13 @@ public class GuiGraphEditor extends UnboundedGuiElement {
             this.currentAction = CurrentAction.DRAGGING_NODES;
             this.selectedNodes.clear();
             this.selectedNodes.addAll(newSelection);
+            graphChanged();
             requestFocus();
 
         } else if (GuiHelper.isControlDown()) {
             this.graphView.removeNode(node);
             this.selectedNodes.remove(node);
+            graphChanged();
 
         } else {
             this.currentAction = CurrentAction.DRAGGING_NODES;
@@ -98,6 +105,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
     private void nodeReleased(GuiNodeView node, double screenX, double screenY) {
         if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
             this.graphView.stopDragEdge(node.getInstance(), null);
+            graphChanged();
             this.currentAction = CurrentAction.NONE;
         }
 
@@ -107,6 +115,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
     private void socketClicked(SocketInstance socket) {
         this.currentAction = CurrentAction.DRAGGING_EDGE;
         this.graphView.startDragEdge(socket);
+        graphChanged();
         requestFocus();
     }
     private void socketReleased(SocketInstance socket) {
@@ -115,6 +124,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         }
 
         this.graphView.stopDragEdge(socket.getParentInstance(), socket);
+        graphChanged();
         releaseFocus();
     }
 
@@ -212,6 +222,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
             if (!this.graphView.isDraggingNewEdge()) {
                 this.graphView.stopDragEdge(null, null);
+                graphChanged();
                 return;
             }
 
@@ -227,6 +238,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
                 this.currentAction = CurrentAction.NONE;
                 GuiNodeView newNode = this.addNode(node.createInstance(), GuiHelper.getMouseScreenX(), GuiHelper.getMouseScreenY());
                 this.graphView.stopDragEdge(newNode.getInstance(), null);
+                graphChanged();
             });
             this.getContext().getPopupPane().openPopup(popup, x, y);
             // dumb hack to focus the search field immediately
@@ -282,6 +294,20 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         for (GuiNodeView node : this.graphView.getNodes()) {
             node.setSelected(this.selectedNodes.contains(node));
         }
+    }
+
+    public void setGraphChangedCallback(Runnable graphChangedCallback) {
+        this.graphChangedCallback = graphChangedCallback;
+    }
+
+    private void graphChanged() {
+        if (this.graphChangedCallback != null) {
+            this.graphChangedCallback.run();
+        }
+    }
+
+    public NodeGraphView getGraphView() {
+        return graphView;
     }
 
     private enum CurrentAction {
