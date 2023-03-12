@@ -242,7 +242,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
             return true;
         }
 
-        if (keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+        if (keyCode == GLFW.GLFW_KEY_DELETE || keyCode == GLFW.GLFW_KEY_BACKSPACE || keyCode == GLFW.GLFW_KEY_X) {
             this.selectedNodes.forEach(this.graphView::removeNode);
             this.selectedNodes.clear();
             return true;

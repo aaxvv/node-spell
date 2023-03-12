@@ -90,7 +90,7 @@
   "node.node_spell.less_than_or_eq": "<=",
   "node.node_spell.greater_than_or_eq": ">=",
 
-  "node.node_spell.entrypoint": "Entrypoint",
+  "node.node_spell.entrypoint": "Flow Source",
   "node.node_spell.branch": "Branch",
   "node.node_spell.for_range": "For Range",
 

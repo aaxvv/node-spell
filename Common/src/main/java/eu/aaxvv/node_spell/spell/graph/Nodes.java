@@ -136,7 +136,7 @@ public class Nodes {
     public static final Node ENTITY_HEALTH = new GenericEntityPropertyNode<>(
             "entity_health",
             Datatype.NUMBER,
-            "entity_health",
+            "hp",
             e -> e instanceof LivingEntity living ? (double)living.getHealth() : 0.0
     );
     public static final Node ENTITY_MAX_HEALTH = new GenericEntityPropertyNode<>(
