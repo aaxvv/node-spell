@@ -15,7 +15,7 @@ public class Edge {
             return;
         }
 
-        if (!typesCompatible(startSocket, endSocket)) {
+        if (!socketsCompatible(startSocket, endSocket)) {
             throw new IllegalArgumentException("Incompatible start and end sockets.");
         }
 
@@ -75,7 +75,11 @@ public class Edge {
         this.endSocket.removeConnection(this);
     }
 
-    public static boolean typesCompatible(SocketInstance start, SocketInstance end) {
+    public static boolean socketsCompatible(SocketInstance start, SocketInstance end) {
+        if (start.getParentInstance() == end.getParentInstance()) {
+            return false;
+        }
+
         return typesCompatible(start.getBase(), end.getBase());
     }
 

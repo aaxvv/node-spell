@@ -8,7 +8,8 @@ public class NodeCategories {
     public static PlatformRegistryWrapper<NodeCategory> REGISTRY;
 
     public static final NodeCategory INPUT = new NodeCategory(ModConstants.resLoc("input"), 0, ModConstants.Colors.RED);
-    public static final NodeCategory FLOW = new NodeCategory(ModConstants.resLoc("flow"), 100, ModConstants.Colors.LIGHT_GREY);
+    public static final NodeCategory FLOW = new NodeCategory(ModConstants.resLoc("spell_flow"), 100, ModConstants.Colors.LIGHT_GREY);
+    public static final NodeCategory DATA_FLOW = new NodeCategory(ModConstants.resLoc("data_flow"), 150, ModConstants.Colors.LIGHT_GREY);
     public static final NodeCategory ACTION = new NodeCategory(ModConstants.resLoc("action"), 200, ModConstants.Colors.LIGHT_BLUE);
 
     public static final NodeCategory MATH = new NodeCategory(ModConstants.resLoc("math"), 300, ModConstants.Colors.GREEN);
@@ -33,6 +34,7 @@ public class NodeCategories {
         ModConstants.LOG.info("Registering node categories.");
         register(INPUT);
         register(FLOW);
+        register(DATA_FLOW);
         register(ACTION);
 
         register(MATH);

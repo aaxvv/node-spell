@@ -235,7 +235,7 @@ public class NodeGraphView {
                     continue;
                 }
 
-                if (Edge.typesCompatible(this.draggingEdge.getExistingSocket(), possibleSocket)) {
+                if (Edge.socketsCompatible(this.draggingEdge.getExistingSocket(), possibleSocket)) {
                     Edge newEdge = this.draggingEdge.complete(possibleSocket);
                     if (newEdge != null) {
                         this.addNewEdge(newEdge);

@@ -174,7 +174,7 @@ public class NodeInstance implements InstanceDataContainer {
     }
 
     public int getSocketY(int index) {
-        int socketStartY = y + ModConstants.Sizing.SOCKET_START_Y;
+        int socketStartY = y + this.base.getStyle().getSocketYOffset();
         return socketStartY + (index * ModConstants.Sizing.SOCKET_STEP_Y);
     }
 
@@ -183,7 +183,7 @@ public class NodeInstance implements InstanceDataContainer {
     }
 
     public int getLocalSocketY(int index) {
-        return ModConstants.Sizing.SOCKET_START_Y + (index * ModConstants.Sizing.SOCKET_STEP_Y);
+        return this.base.getStyle().getSocketYOffset() + (index * ModConstants.Sizing.SOCKET_STEP_Y);
     }
 
     public boolean containsPoint(int x, int y) {
@@ -226,5 +226,10 @@ public class NodeInstance implements InstanceDataContainer {
         }
         copy.setPosition(this.getX(), this.getY());
         return copy;
+    }
+
+    @Override
+    public String toString() {
+        return "NodeInstance[" + this.getBaseNode().getDisplayName().getString() + "]";
     }
 }

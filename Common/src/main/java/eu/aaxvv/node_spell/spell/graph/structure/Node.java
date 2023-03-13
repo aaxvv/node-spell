@@ -28,14 +28,10 @@ public abstract class Node {
     private int inSocketCount;
     private int outSocketCount;
     private final ResourceLocation resourceLocation;
+    private NodeStyle style;
 
     public Node(NodeCategory category, ResourceLocation resourceLocation) {
-        this.translationKey = resourceLocation.toLanguageKey("node");
-        this.category = category;
-        this.sockets = new ArrayList<>();
-        this.inSocketCount = 0;
-        this.outSocketCount = 0;
-        this.resourceLocation = resourceLocation;
+        this(resourceLocation.toLanguageKey("node"), category, resourceLocation);
     }
 
     public Node(String translationKey, NodeCategory category, ResourceLocation resourceLocation) {
@@ -45,6 +41,7 @@ public abstract class Node {
         this.inSocketCount = 0;
         this.outSocketCount = 0;
         this.resourceLocation = resourceLocation;
+        this.style = NodeStyle.getDefault();
     }
 
     private void addSocket(Socket socket) {
@@ -102,8 +99,16 @@ public abstract class Node {
         return 1;
     }
 
+    protected void setStyle(NodeStyle style) {
+        this.style = style;
+    }
+
+    public NodeStyle getStyle() {
+        return style;
+    }
+
     public int getExpectedHeight() {
-        return ModConstants.Sizing.SOCKET_START_Y + Math.max(this.inSocketCount, this.outSocketCount) * ModConstants.Sizing.SOCKET_STEP_Y - (ModConstants.Sizing.SOCKET_STEP_Y / 4);
+        return this.style.getSocketYOffset() + Math.max(this.inSocketCount, this.outSocketCount) * ModConstants.Sizing.SOCKET_STEP_Y - 3;
     }
 
     public int getWidth() {

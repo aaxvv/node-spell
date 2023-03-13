@@ -25,7 +25,7 @@ public class VectorConstantNode extends BaseConstantNode<Vec3> {
 
     @Override
     public int getExpectedHeight() {
-        return ModConstants.Sizing.SOCKET_START_Y + 34;
+        return 51;
     }
 
     @Override

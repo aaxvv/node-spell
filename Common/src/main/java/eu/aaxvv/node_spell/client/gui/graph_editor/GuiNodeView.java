@@ -9,6 +9,7 @@ import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
+import eu.aaxvv.node_spell.spell.graph.structure.NodeStyle;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.util.ColorUtil;
@@ -60,6 +61,7 @@ public class GuiNodeView extends GuiElement {
 
         int nodeWidth = instance.getBaseNode().getWidth();
         int nodeHeight = instance.getBaseNode().getExpectedHeight();
+        NodeStyle style = instance.getBaseNode().getStyle();
 
         // border
         if (this.highlightColor != 0) {
@@ -71,9 +73,13 @@ public class GuiNodeView extends GuiElement {
         }
 
         // header and background
-        NodeCategory category = instance.getBaseNode().getCategory();
-        RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + 1, nodeWidth - 2, ModConstants.Sizing.HEADER_HEIGHT, category.r, category.g, category.b);
-        RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + ModConstants.Sizing.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - ModConstants.Sizing.HEADER_HEIGHT - 2, BACKGROUND_COLOR[1], BACKGROUND_COLOR[2], BACKGROUND_COLOR[3]);
+        if (style.drawHeader()) {
+            NodeCategory category = instance.getBaseNode().getCategory();
+            RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + 1, nodeWidth - 2, ModConstants.Sizing.HEADER_HEIGHT, category.r, category.g, category.b);
+            RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + ModConstants.Sizing.HEADER_HEIGHT + 1, nodeWidth - 2, nodeHeight - ModConstants.Sizing.HEADER_HEIGHT - 2, BACKGROUND_COLOR[1], BACKGROUND_COLOR[2], BACKGROUND_COLOR[3]);
+        } else {
+            RenderUtil.putQuad(mat, bb, getGlobalX() + 1, getGlobalY() + 1, nodeWidth - 2, nodeHeight - 2, BACKGROUND_COLOR[1], BACKGROUND_COLOR[2], BACKGROUND_COLOR[3]);
+        }
 
         // sockets
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
@@ -111,7 +117,9 @@ public class GuiNodeView extends GuiElement {
     private void renderNodeText(PoseStack pose, NodeInstance instance) {
         Font font = Minecraft.getInstance().font;
 
-        font.draw(pose, instance.getBaseNode().getDisplayName(), this.getGlobalX() + 2, this.getGlobalY() + 2, ModConstants.Colors.TEXT);
+        if (instance.getBaseNode().getStyle().drawHeader()) {
+            font.draw(pose, instance.getBaseNode().getDisplayName(), this.getGlobalX() + 2, this.getGlobalY() + 2, ModConstants.Colors.TEXT);
+        }
 
         for (SocketInstance socketInstance : instance.getSocketInstances()) {
             Component name = Component.translatable(socketInstance.getBase().getTranslationKey());

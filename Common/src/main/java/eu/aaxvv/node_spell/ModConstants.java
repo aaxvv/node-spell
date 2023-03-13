@@ -44,7 +44,7 @@ public class ModConstants {
 	public static class Sizing {
 		public static final int DEFAULT_NODE_WIDTH = 72;
 		public static final int HEADER_HEIGHT = 10;
-		public static final int SOCKET_START_Y = 17;
+		public static final int SOCKET_START_Y = 6;
 		public static final int SOCKET_STEP_Y = 12;
 	}
 }

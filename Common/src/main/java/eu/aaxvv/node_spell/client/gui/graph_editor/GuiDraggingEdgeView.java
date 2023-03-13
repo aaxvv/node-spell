@@ -24,7 +24,7 @@ public class GuiDraggingEdgeView extends GuiEdgeView {
     }
 
     public Edge complete(SocketInstance other) {
-        if (Edge.typesCompatible(this.getExistingSocket(), other)) {
+        if (Edge.socketsCompatible(this.getExistingSocket(), other)) {
             // create new
             return Edge.create(this.getExistingSocket(), other);
         } else {

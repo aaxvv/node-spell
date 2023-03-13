@@ -30,7 +30,8 @@
   "gui.node_spell.spell_verification.multiple_entrypoints": "Multiple Flow Sources found.",
 
   "node.category.node_spell.input": "INPUT",
-  "node.category.node_spell.flow": "FLOW",
+  "node.category.node_spell.spell_flow": "SPELL FLOW",
+  "node.category.node_spell.data_flow": "DATA FLOW",
   "node.category.node_spell.action":  "ACTION",
   "node.category.node_spell.logic": "LOGIC",
   "node.category.node_spell.comparison":  "COMPARE",
@@ -70,7 +71,6 @@
   "node.node_spell.acos": "Arc Cos",
   "node.node_spell.atan": "Arc Tan",
   "node.node_spell.map_range": "Map Range",
-  "node.node_spell.select_num": "Select Num.",
 
   "node.node_spell.vec_construct": "Vec. Constr.",
   "node.node_spell.vec_destruct": "Vec. Destr.",
@@ -82,7 +82,6 @@
   "node.node_spell.vec_nearest_axis": "Nearest Axis",
   "node.node_spell.vec_normalize": "Normalize",
   "node.node_spell.vec_scale": "Vec. Scale",
-  "node.node_spell.select_vec": "Select Vec.",
 
   "node.node_spell.and": "And",
   "node.node_spell.or": "Or",
@@ -100,6 +99,23 @@
   "node.node_spell.branch": "Branch",
   "node.node_spell.for_range": "For Range",
 
+  "node.node_spell.repeat_bool": "Repeat Bool",
+  "node.node_spell.repeat_num": "Repeat Number",
+  "node.node_spell.repeat_vec": "Repeat Vector",
+  "node.node_spell.repeat_entity": "Repeat Entity",
+  "node.node_spell.repeat_block": "Repeat Block",
+  "node.node_spell.repeat_item": "Repeat Item",
+  "node.node_spell.repeat_string": "Repeat String",
+  "node.node_spell.repeat_list": "Repeat List",
+  "node.node_spell.repeat_any": "Repeat Any",
+  "node.node_spell.select_num": "Select Num.",
+  "node.node_spell.select_vec": "Select Vec.",
+  "node.node_spell.select_entity": "Select Ent.",
+  "node.node_spell.select_block": "Select Block",
+  "node.node_spell.select_item": "Select Item",
+  "node.node_spell.select_string": "Select Str.",
+  "node.node_spell.select_list": "Select List",
+
   "node.node_spell.entity_pos": "Entity Pos.",
   "node.node_spell.entity_item_in_hand": "Item in hand",
   "node.node_spell.entity_health": "Entity HP",
@@ -108,14 +124,11 @@
   "node.node_spell.entity_velocity": "Entity Vel.",
   "node.node_spell.entity_is_sneaking": "Is Sneaking",
   "node.node_spell.entity_eye_pos": "Eye Pos.",
-  "node.node_spell.select_ent": "Select Ent.",
 
   "node.node_spell.block_from_item": "Item -> Block",
   "node.node_spell.ray_cast_block": "Raycast Block",
-  "node.node_spell.select_block": "Select Block",
 
   "node.node_spell.item_count": "Item Count",
-  "node.node_spell.select_item": "Select Item",
 
   "node.node_spell.string_append": "Append",
   "node.node_spell.string_contains": "Contains",
@@ -123,7 +136,6 @@
   "node.node_spell.string_ends_with": "Ends with",
   "node.node_spell.string_index_of": "Index of",
   "node.node_spell.to_string": "To String",
-  "node.node_spell.select_string": "Select Str.",
 
   "node.node_spell.print": "Print",
   "node.node_spell.place_block": "Place Block",
@@ -133,7 +145,6 @@
   "node.node_spell.get_spell_storage": "Get Storage",
   "node.node_spell.set_spell_storage": "Set Storage",
 
-  "node.node_spell.select_list": "Select List",
 
   "socket.node_spell.empty": "",
   "socket.node_spell.result": "Result",
