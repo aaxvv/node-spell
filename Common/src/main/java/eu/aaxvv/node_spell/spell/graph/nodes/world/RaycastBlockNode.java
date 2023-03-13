@@ -61,4 +61,9 @@ public class RaycastBlockNode extends Node {
             instance.setSocketValue(sHitOut, Value.createBool(true));
         }
     }
+
+    @Override
+    public int getWidth() {
+        return super.getWidth() + 4;
+    }
 }

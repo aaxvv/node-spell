@@ -12,6 +12,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockFromItemNode extends Node {
     public final Socket sItem;
@@ -27,11 +28,11 @@ public class BlockFromItemNode extends Node {
     public void run(SpellContext ctx, NodeInstance instance) {
         ItemStack itemStack = instance.getSocketValue(sItem, ctx).itemValue();
         if (!(itemStack.getItem() instanceof BlockItem blockItem)) {
-            instance.setSocketValue(sBlock, Value.createBlock(Blocks.AIR));
+            instance.setSocketValue(sBlock, Value.createBlock(Blocks.AIR.defaultBlockState()));
             return;
         }
 
-        Block block = blockItem.getBlock();
-        instance.setSocketValue(sBlock, Value.createBlock(block));
+        BlockState blockState = blockItem.getBlock().defaultBlockState();
+        instance.setSocketValue(sBlock, Value.createBlock(blockState));
     }
 }

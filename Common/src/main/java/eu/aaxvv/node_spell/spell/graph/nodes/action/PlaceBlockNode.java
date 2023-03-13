@@ -11,12 +11,11 @@ import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class PlaceBlockNode extends SimpleFlowNode {
@@ -32,8 +31,8 @@ public class PlaceBlockNode extends SimpleFlowNode {
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
         Container inventory = ctx.getCaster().container;
-        Block block = instance.getSocketValue(this.sBlock, ctx).blockValue();
-        Item blockItem = block.asItem();
+        BlockState blockState = instance.getSocketValue(this.sBlock, ctx).blockValue();
+        Item blockItem = blockState.getBlock().asItem();
 
         if (blockItem == Items.AIR) {
             // TODO: display error ?
@@ -65,7 +64,7 @@ public class PlaceBlockNode extends SimpleFlowNode {
             throw new SpellExecutionException("Target position is out of range");
         }
 
-        ctx.getLevel().setBlock(blockPos, block.defaultBlockState(), Block.UPDATE_ALL);
+        ctx.getLevel().setBlock(blockPos, blockState, Block.UPDATE_ALL);
     }
 
     public ItemStack getUsedItem(Container container, Item item) {

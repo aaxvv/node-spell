@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph.runtime;
 
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellExecutionException;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
@@ -80,7 +81,12 @@ public class SocketInstance {
             return getSingleConnection().getOpposite(this).getComputedValue(ctx);
         } else {
             if (!this.parentInstance.getBaseNode().hasSideEffects()) {
-                this.parentInstance.run(ctx);
+                try {
+                    this.parentInstance.run(ctx);
+                } catch (SpellExecutionException ex) {
+                    ex.addNodeContext(this.parentInstance);
+                    throw ex;
+                }
             }
             return this.currentValue;
         }

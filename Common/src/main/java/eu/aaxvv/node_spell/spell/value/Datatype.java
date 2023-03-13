@@ -16,7 +16,7 @@ public enum Datatype {
     STRING(ModConstants.Colors.PINK, () -> Value.createString("")),
     VECTOR(ModConstants.Colors.ORANGE, () -> Value.createVector(Vec3.ZERO)),
     ENTITY(ModConstants.Colors.DARK_BLUE, () -> Value.createEntity(null)),
-    BLOCK(ModConstants.Colors.GREEN, () -> Value.createBlock(Blocks.AIR)),
+    BLOCK(ModConstants.Colors.GREEN, () -> Value.createBlock(Blocks.AIR.defaultBlockState())),
     ITEM(ModConstants.Colors.PURPLE, () -> Value.createItem(ItemStack.EMPTY)),
     LIST(ModConstants.Colors.YELLOW, () -> Value.createList(Collections.emptyList())),
     FLOW(ModConstants.Colors.DARK_GREY, () -> null),

@@ -34,6 +34,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetVariableNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.BasicStringOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.ToStringNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.*;
+import eu.aaxvv.node_spell.spell.graph.nodes.world.GenericBlockPosQueryNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.world.GenericWorldPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.world.RaycastBlockNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
@@ -48,6 +49,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class Nodes {
@@ -216,7 +220,10 @@ public class Nodes {
     // ===== BLOCK =====
     // block: at position, from item, is in tag, redstone activated, name, waterlogged / flammable?
     public static final Node BLOCK_FROM_ITEM = new BlockFromItemNode();
-    public static final Node RAY_CAST_BLOCK = new RaycastBlockNode();
+    public static final Node BLOCK_IN_TAG = new GenericIsInTagNode<BlockState>(NodeCategories.BLOCK, "block_in_tag", Datatype.BLOCK, "block", (block, tagName) -> {
+        TagKey<Block> tag =  TagKey.create(Registries.BLOCK, new ResourceLocation(tagName));
+        return block.is(tag);
+    });
     // break, get at position, get id, is liquid, is solid, is flammable
 
     // ===== ITEM =====
@@ -234,6 +241,8 @@ public class Nodes {
     public static final Node RAY_CAST_BLOCK = new RaycastBlockNode();
     public static final Node DIMENSION_ID = new GenericWorldPropertyNode<>("dimension_id", Datatype.STRING, "id", level -> level.dimension().location().toString());
     public static final Node DAY_TIME = new GenericWorldPropertyNode<>("day_time", Datatype.NUMBER, "ticks", level -> ((double) level.dayTime()));
+    public static final Node REDSTONE_POWER = new GenericBlockPosQueryNode<>("redstone_power", Datatype.NUMBER, "power", (level, pos) -> (double)level.getDirectSignalTo(pos));
+    public static final Node BLOCK_AT_POS = new GenericBlockPosQueryNode<>("block_at_pos", Datatype.BLOCK, "block", Level::getBlockState);
 
     // ===== STRING =====
     public static final Node STRING_APPEND = new BasicStringOpNode<>(ModConstants.resLoc("string_append"), Datatype.STRING, Value::createString, (a, b) -> a + b);
@@ -353,6 +362,7 @@ public class Nodes {
         register(ENTITY_IN_TAG);
 
         register(BLOCK_FROM_ITEM);
+        register(BLOCK_IN_TAG);
 
         register(ITEM_COUNT);
         register(ITEM_HAS_NBT);
@@ -363,6 +373,8 @@ public class Nodes {
         register(RAY_CAST_BLOCK);
         register(DIMENSION_ID);
         register(DAY_TIME);
+        register(REDSTONE_POWER);
+        register(BLOCK_AT_POS);
 
         register(STRING_APPEND);
         register(STRING_CONTAINS);

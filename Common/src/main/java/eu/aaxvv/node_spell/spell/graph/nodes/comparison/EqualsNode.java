@@ -29,7 +29,7 @@ public class EqualsNode extends Node {
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
         Value valueA = instance.getSocketValue(this.sA, ctx);
-        Value valueB = instance.getSocketValue(this.sA, ctx);
+        Value valueB = instance.getSocketValue(this.sB, ctx);
 
         instance.setSocketValue(this.sResult, Value.createBool(valueA.equals(valueB)));
     }

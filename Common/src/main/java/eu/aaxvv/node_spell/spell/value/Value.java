@@ -8,17 +8,15 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.List;
 
 
 /**
@@ -100,9 +98,9 @@ public class Value {
         }
     }
 
-    public Block blockValue() {
+    public BlockState blockValue() {
         if (this.datatype == Datatype.BLOCK) {
-            return (Block) this.value;
+            return (BlockState) this.value;
         } else {
             throw new SpellExecutionException("Expected value of type BLOCK but got: " + this.datatype);
         }
@@ -130,7 +128,7 @@ public class Value {
             case STRING -> Value.createString((String) value);
             case VECTOR -> Value.createVector((Vec3) value);
             case ENTITY -> Value.createEntity((UUID) value);
-            case BLOCK -> Value.createBlock((Block) value);
+            case BLOCK -> Value.createBlock((BlockState) value);
             case ITEM -> Value.createItem((ItemStack) value);
             case LIST -> Value.createList((List<Value>) value);
             case FLOW -> throw new IllegalArgumentException("Cannot create value of type flow.");
@@ -158,7 +156,7 @@ public class Value {
         return new Value(Datatype.ENTITY, value);
     }
 
-    public static Value createBlock(Block value) {
+    public static Value createBlock(BlockState value) {
         return new Value(Datatype.BLOCK, value);
     }
 
@@ -177,7 +175,7 @@ public class Value {
             case STRING -> this.stringValue();
             case VECTOR -> "(" + format.format(this.vectorValue().x) + ", " + format.format(this.vectorValue().y) + ", " + format.format(this.vectorValue().z) + ")";
             case ENTITY -> EntityHelper.getFromUuid(ctx.getLevel(), this.entityValue()).map(Entity::getDisplayName).map(Component::getString).orElseGet(() -> this.entityValue().toString());
-            case BLOCK -> this.blockValue().getName().getString();
+            case BLOCK -> this.blockValue().getBlock().getName().getString();
             case ITEM -> this.itemValue().toString();
             case LIST -> "[" + String.join(", ", this.listValue().stream().map(Value::toString).toList()) + "]";
             case FLOW -> "<FLOW>";
@@ -235,8 +233,8 @@ public class Value {
                 nbt.put("Val", uuidTag);
             }
             case BLOCK -> {
-                ResourceLocation blockResLoc = BuiltInRegistries.BLOCK.getKey(((Block) this.value));
-                nbt.putString("Val", blockResLoc.toString());
+                CompoundTag stateTag = NbtUtils.writeBlockState((BlockState) this.value);
+                nbt.put("Val", stateTag);
             }
             case ITEM -> {
                 CompoundTag itemTag = new CompoundTag();
@@ -288,8 +286,8 @@ public class Value {
                     yield Value.createEntity(NbtUtils.loadUUID(uuidTag));
                 }
                 case BLOCK -> {
-                    ResourceLocation blockResLoc = ResourceLocation.tryParse(nbt.getString("Val"));
-                    yield Value.createBlock(BuiltInRegistries.BLOCK.get(blockResLoc));
+                    BlockState state = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("Val"));
+                    yield Value.createBlock(state);
                 }
                 case ITEM -> Value.createItem(ItemStack.of(nbt.getCompound("Val")));
                 case LIST -> {

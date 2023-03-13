@@ -57,7 +57,7 @@ public class SpellRunner {
             } catch (SpellExecutionException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new SpellExecutionException("<Unhandled Exception> " + ex.getMessage());
+                throw new SpellExecutionException(ex);
             }
         }
     }
@@ -87,7 +87,12 @@ public class SpellRunner {
                 this.activeSubRunner = subRunner;
                 subRunner.start();
             } else {
-                this.currentNode.run(this.ctx);
+                try {
+                    this.currentNode.run(this.ctx);
+                } catch (SpellExecutionException ex) {
+                    ex.addNodeContext(this.currentNode);
+                    throw ex;
+                }
             }
             this.waitTicks = baseNode.getExecutionDelay();
 
