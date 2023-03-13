@@ -1,6 +1,8 @@
 package eu.aaxvv.node_spell.spell.execution;
 
 import eu.aaxvv.node_spell.spell.Spell;
+import eu.aaxvv.node_spell.spell.graph.verification.GraphVerifier;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.*;
 
@@ -18,6 +20,24 @@ public class PlayerSpellCache {
         }
 
         return Optional.ofNullable(map.get(spellName));
+    }
+
+    public Optional<Spell> getOrCreate(UUID playerUuid, String spellName, CompoundTag spellNbt) {
+        Map<String, Spell> map = cache.computeIfAbsent(playerUuid, key -> new HashMap<>());
+        Spell spell = map.get(spellName);
+
+        if (spell == null) {
+            if (spellNbt == null) {
+                return Optional.empty();
+            }
+
+            spell = Spell.fromNbt(spellNbt);
+            GraphVerifier verifier = new GraphVerifier(spell.getGraph());
+            spell.setHasErrors(!verifier.check());
+            map.put(spellName, spell);
+        }
+
+        return Optional.of(spell);
     }
 
     public void put(UUID playerUuid, String spellName, Spell spell) {

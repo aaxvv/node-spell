@@ -4,6 +4,7 @@ import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
@@ -18,7 +19,14 @@ public class SpellTaskRunner {
         runningSpells = new HashMap<>();
     }
 
-    public void startSpell(UUID casterId, Spell spell, SpellContext context) {
+    public boolean startSpell(UUID casterId, Spell spell, SpellContext context) {
+         if (spell.hasErrors()) {
+             context.getCaster().asPlayer().ifPresent(player -> {
+                 player.displayClientMessage(Component.translatable("gui.node_spell.spell_has_errors").withStyle(ChatFormatting.RED), true);
+             });
+            return false;
+        }
+
         SpellRunner newRunner = new SpellRunner(spell.getGraph(), context);
         newRunner.start();
 
@@ -26,6 +34,8 @@ public class SpellTaskRunner {
         if (prevRunner != null) {
             prevRunner.stop();
         }
+
+        return true;
     }
 
     public void onTick(Level level) {

@@ -71,24 +71,17 @@ public class WandItem extends Item {
         }
 
         String spellName = tag.getString("Spell");
-        Optional<Spell> cachedSpell = NodeSpellCommon.playerSpellCache.get(player.getUUID(), spellName);
+        CompoundTag spellNbt = this.getSpellFromBook(spellBook.bookStack, spellName);
+        Optional<Spell> cachedSpell = NodeSpellCommon.playerSpellCache.getOrCreate(player.getUUID(), spellName, spellNbt);
 
-        Spell spellToCast;
         if (cachedSpell.isEmpty()) {
-            spellToCast = this.getSpellFromBook(spellBook.bookStack, spellName);
-            NodeSpellCommon.playerSpellCache.put(player.getUUID(), spellName, spellToCast);
-        } else {
-            spellToCast = cachedSpell.get();
-        }
-
-        if (spellToCast == null) {
             player.displayClientMessage(Component.translatable("gui.node_spell.spell_not_active").withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);
         }
 
-        NodeSpellCommon.spellTaskRunner.startSpell(player.getUUID(), spellToCast, new SpellContext((ServerPlayer) player, level, spellToCast.getName()));
+        boolean success = NodeSpellCommon.spellTaskRunner.startSpell(player.getUUID(), cachedSpell.get(), new SpellContext((ServerPlayer) player, level, cachedSpell.get().getName()));
 
-            return InteractionResultHolder.consume(stack);
+        return success ? InteractionResultHolder.consume(stack) : InteractionResultHolder.fail(stack);
     }
 
     private SpellBookResult findPlayerSpellBook(Player player) {
@@ -108,7 +101,7 @@ public class WandItem extends Item {
         return new SpellBookResult(found, false);
     }
 
-    private Spell getSpellFromBook(ItemStack spellBook, String spellName) {
+    private CompoundTag getSpellFromBook(ItemStack spellBook, String spellName) {
         ListTag bookActiveSpellsTag = spellBook.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
         if (!bookActiveSpellsTag.contains(StringTag.valueOf(spellName))) {
             return null;
@@ -116,7 +109,7 @@ public class WandItem extends Item {
 
         CompoundTag bookSpellListTag = spellBook.getOrCreateTagElement("Spells");
         if (bookSpellListTag.contains(spellName)) {
-            return Spell.fromNbt(bookSpellListTag.getCompound(spellName));
+            return bookSpellListTag.getCompound(spellName);
         } else {
             return null;
         }

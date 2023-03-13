@@ -10,6 +10,7 @@
   "gui.node_spell.no_spell_selected": "No spell selected",
   "gui.node_spell.spell_not_active": "Selected spell is not active",
   "gui.node_spell.spell_no_entrypoint": "Selected spell has no entrypoint node",
+  "gui.node_spell.spell_has_errors": "Selected spell has errors. Check spell book",
   "gui.node_spell.wand_spell_tooltip": "Current Spell: %s",
   "gui.node_spell.delete_tooltip_1": "Drag Node here to delete",
   "gui.node_spell.delete_tooltip_2": "Shift click to delete all",

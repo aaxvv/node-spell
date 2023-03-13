@@ -9,15 +9,16 @@ public class Spell {
     private String name;
 
     private final SpellGraph graph;
+    private boolean hasErrors;
 
     public Spell(String name) {
-        this.name = name;
-        this.graph = new SpellGraph();
+        this(name, new SpellGraph());
     }
 
     private Spell(String name, SpellGraph graph) {
         this.name = name;
         this.graph = graph;
+        this.hasErrors = false;
     }
 
     public static Tag createEmptyNbt(String name) {
@@ -56,5 +57,13 @@ public class Spell {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setHasErrors(boolean hasErrors) {
+        this.hasErrors = hasErrors;
+    }
+
+    public boolean hasErrors() {
+        return hasErrors;
     }
 }
