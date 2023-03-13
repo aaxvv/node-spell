@@ -6,7 +6,6 @@ import eu.aaxvv.node_spell.platform.registry.PlatformRegistryWrapper;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.PlaceBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.block.BlockFromItemNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.block.RaycastBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.BasicNumberCompNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.EqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.NotEqualsNode;
@@ -17,9 +16,12 @@ import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.ForLoopNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericConversionNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericIsInTagNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericRepeatNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericSelectNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.input.CasterNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.input.RandomNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.item.GenericItemPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.logic.BasicBoolOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberTriOpNode;
@@ -32,12 +34,19 @@ import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetVariableNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.BasicStringOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.ToStringNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.*;
+import eu.aaxvv.node_spell.spell.graph.nodes.world.GenericWorldPropertyNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.world.RaycastBlockNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 import eu.aaxvv.node_spell.util.VectorUtil;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -54,6 +63,7 @@ public class Nodes {
     public static final Node CONST_PI = new BuiltinConstNumberNode(ModConstants.resLoc("const_pi"), Math.PI);
     public static final Node CONST_TAU = new BuiltinConstNumberNode(ModConstants.resLoc("const_tau"), Math.PI * 2);
     public static final Node CONST_E = new BuiltinConstNumberNode(ModConstants.resLoc("const_e"), Math.E);
+    public static final Node RANDOM = new RandomNode();
 
     // ===== MATH =====
     public static final Node ADD = new BasicNumberOpNode(ModConstants.resLoc("add"), Double::sum);
@@ -66,6 +76,12 @@ public class Nodes {
     public static final Node CLAMP = new BasicNumberTriOpNode(ModConstants.resLoc("clamp"), "socket.node_spell.low", "socket.node_spell.high", "socket.node_spell.val", (l, h, v) -> Math.max(l, Math.min(h, v)));
     public static final Node MIN = new BasicNumberOpNode(ModConstants.resLoc("min"), Math::min);
     public static final Node MAX = new BasicNumberOpNode(ModConstants.resLoc("max"), Math::max);
+    public static final Node ABS = new BasicNumberUnaryOpNode(ModConstants.resLoc("abs"), Math::abs);
+    public static final Node FLOOR = new BasicNumberUnaryOpNode(ModConstants.resLoc("floor"), Math::floor);
+    public static final Node CEIL = new BasicNumberUnaryOpNode(ModConstants.resLoc("ceil"), Math::ceil);
+    public static final Node ROUND = new BasicNumberUnaryOpNode(ModConstants.resLoc("round"), val -> (double)Math.round(val));
+    public static final Node TO_RADIANS = new BasicNumberUnaryOpNode(ModConstants.resLoc("to_radians"), Math::toRadians);
+    public static final Node TO_DEGREES = new BasicNumberUnaryOpNode(ModConstants.resLoc("to_degrees"), Math::toDegrees);
 
     public static final Node SIN = new BasicNumberUnaryOpNode(ModConstants.resLoc("sin"), Math::sin);
     public static final Node COS = new BasicNumberUnaryOpNode(ModConstants.resLoc("cos"), Math::cos);
@@ -188,6 +204,10 @@ public class Nodes {
             "position",
             Entity::getEyePosition
     );
+    public static final Node ENTITY_IN_TAG = new GenericIsInTagNode<Entity>(NodeCategories.ENTITY, "entity_in_tag", Datatype.ENTITY, "ent", (entity, tagName) -> {
+        TagKey<EntityType<?>> tag =  TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(tagName));
+        return entity.getType().is(tag);
+    });
 
     // target entity / position,
 
@@ -200,13 +220,20 @@ public class Nodes {
     // break, get at position, get id, is liquid, is solid, is flammable
 
     // ===== ITEM =====
-    public static final Node ITEM_COUNT = new GenericConversionNode
-            .Builder<ItemStack, Double>(NodeCategories.ITEM, "item_count")
-            .types(Datatype.ITEM, Datatype.NUMBER)
-            .socketNames("item", "count")
-            .function(i -> (double) i.getCount())
-            .build();
-    // is stackable, has nbt, is edible, is damaged, from block, from entity
+    public static final Node ITEM_COUNT = new GenericItemPropertyNode<>("item_count", Datatype.NUMBER, "count", item -> ((double) item.getCount()));
+    public static final Node ITEM_HAS_NBT = new GenericItemPropertyNode<>("item_has_nbt", Datatype.BOOL, "has_nbt", ItemStack::hasTag);
+    public static final Node ITEM_IS_DAMAGED = new GenericItemPropertyNode<>("item_is_damaged", Datatype.BOOL, "damaged", ItemStack::isDamaged);
+    public static final Node ITEM_IS_STACKABLE = new GenericItemPropertyNode<>("item_is_stackable", Datatype.BOOL, "stackable", ItemStack::isStackable);
+    public static final Node ITEM_IN_TAG = new GenericIsInTagNode<ItemStack>(NodeCategories.ITEM, "item_in_tag", Datatype.ITEM, "item", (item, tagName) -> {
+        TagKey<Item> tag =  TagKey.create(Registries.ITEM, new ResourceLocation(tagName));
+        return item.is(tag);
+    });
+
+
+    // ===== WORLD =====
+    public static final Node RAY_CAST_BLOCK = new RaycastBlockNode();
+    public static final Node DIMENSION_ID = new GenericWorldPropertyNode<>("dimension_id", Datatype.STRING, "id", level -> level.dimension().location().toString());
+    public static final Node DAY_TIME = new GenericWorldPropertyNode<>("day_time", Datatype.NUMBER, "ticks", level -> ((double) level.dayTime()));
 
     // ===== STRING =====
     public static final Node STRING_APPEND = new BasicStringOpNode<>(ModConstants.resLoc("string_append"), Datatype.STRING, Value::createString, (a, b) -> a + b);
@@ -245,6 +272,7 @@ public class Nodes {
         register(CONST_TAU);
         register(CONST_E);
         register(CASTER);
+        register(RANDOM);
 
         register(ADD);
         register(SUBTRACT);
@@ -263,6 +291,12 @@ public class Nodes {
         register(ACOS);
         register(ATAN);
         register(MAP_RANGE);
+        register(ABS);
+        register(FLOOR);
+        register(CEIL);
+        register(ROUND);
+        register(TO_DEGREES);
+        register(TO_RADIANS);
 
         register(VEC_CONSTRUCT);
         register(VEC_DESTRUCT);
@@ -316,11 +350,19 @@ public class Nodes {
         register(ENTITY_LOOK_DIRECTION);
         register(ENTITY_IS_SNEAKING);
         register(ENTITY_EYE_POSITION);
+        register(ENTITY_IN_TAG);
 
         register(BLOCK_FROM_ITEM);
-        register(RAY_CAST_BLOCK);
 
         register(ITEM_COUNT);
+        register(ITEM_HAS_NBT);
+        register(ITEM_IS_DAMAGED);
+        register(ITEM_IS_STACKABLE);
+        register(ITEM_IN_TAG);
+
+        register(RAY_CAST_BLOCK);
+        register(DIMENSION_ID);
+        register(DAY_TIME);
 
         register(STRING_APPEND);
         register(STRING_CONTAINS);

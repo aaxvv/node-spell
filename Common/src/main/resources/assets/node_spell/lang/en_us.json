@@ -42,6 +42,7 @@
   "node.category.node_spell.entity": "ENTITY",
   "node.category.node_spell.block": "BLOCK",
   "node.category.node_spell.item": "ITEM",
+  "node.category.node_spell.world":  "WORLD",
   "node.category.node_spell.list":  "LIST",
   "node.category.node_spell.string": "STRING",
   "node.category.node_spell.custom":  "CUSTOM",
@@ -54,6 +55,7 @@
   "node.node_spell.const_tau": "Tau",
   "node.node_spell.const_e": "e",
   "node.node_spell.caster": "Caster",
+  "node.node_spell.random": "Random Num.",
 
   "node.node_spell.add": "Add",
   "node.node_spell.subtract": "Subtract",
@@ -71,6 +73,12 @@
   "node.node_spell.asin": "Arc Sin",
   "node.node_spell.acos": "Arc Cos",
   "node.node_spell.atan": "Arc Tan",
+  "node.node_spell.abs": "Abs",
+  "node.node_spell.floor": "Floor",
+  "node.node_spell.ceil": "Ceil",
+  "node.node_spell.round": "Round",
+  "node.node_spell.to_radians": "To Radians",
+  "node.node_spell.to_degrees": "To Degrees",
   "node.node_spell.map_range": "Map Range",
 
   "node.node_spell.vec_construct": "Vec. Constr.",
@@ -125,11 +133,20 @@
   "node.node_spell.entity_velocity": "Entity Vel.",
   "node.node_spell.entity_is_sneaking": "Is Sneaking",
   "node.node_spell.entity_eye_pos": "Eye Pos.",
+  "node.node_spell.entity_in_tag": "Ent. in Tag",
 
   "node.node_spell.block_from_item": "Item -> Block",
   "node.node_spell.ray_cast_block": "Raycast Block",
+  "node.node_spell.block_in_tag": "Block in Tag",
 
   "node.node_spell.item_count": "Item Count",
+  "node.node_spell.item_has_nbt": "Item has NBT",
+  "node.node_spell.item_is_damaged": "Item Damaged",
+  "node.node_spell.item_is_stackable": "Item Stackable",
+  "node.node_spell.item_in_tag": "Item in Tag",
+
+  "node.node_spell.dimension_id": "Dimension Id",
+  "node.node_spell.day_time": "Day Time",
 
   "node.node_spell.string_append": "Append",
   "node.node_spell.string_contains": "Contains",
@@ -193,5 +210,13 @@
   "socket.node_spell.high_in": "In High",
   "socket.node_spell.low_out": "Out Low",
   "socket.node_spell.high_out": "Out High",
-  "socket.node_spell.select_a": "Select A"
+  "socket.node_spell.select_a": "Select A",
+  "socket.node_spell.has_nbt": "Has NBT",
+  "socket.node_spell.id": "Id",
+  "socket.node_spell.ticks": "Ticks",
+  "socket.node_spell.in_tag": "In Tag",
+  "socket.node_spell.stackable": "Stackable",
+  "socket.node_spell.damaged": "Damaged",
+  "socket.node_spell.tag": "Tag",
+  "socket.node_spell.ent": "Ent."
 }

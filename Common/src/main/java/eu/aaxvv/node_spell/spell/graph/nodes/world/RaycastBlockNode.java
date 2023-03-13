@@ -1,4 +1,4 @@
-package eu.aaxvv.node_spell.spell.graph.nodes.block;
+package eu.aaxvv.node_spell.spell.graph.nodes.world;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
@@ -27,7 +27,7 @@ public class RaycastBlockNode extends Node {
     public final Socket sHitOut;
 
     public RaycastBlockNode() {
-        super(NodeCategories.BLOCK, ModConstants.resLoc("ray_cast_block"));
+        super(NodeCategories.WORLD, ModConstants.resLoc("ray_cast_block"));
         this.sOriginIn = addInputSocket(Datatype.VECTOR, "socket.node_spell.origin");
         this.sDirectionIn = addInputSocket(Datatype.VECTOR, "socket.node_spell.direction");
         this.sPosOut = addOutputSocket(Datatype.VECTOR, "socket.node_spell.pos");

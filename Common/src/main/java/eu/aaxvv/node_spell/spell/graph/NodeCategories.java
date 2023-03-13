@@ -20,6 +20,7 @@ public class NodeCategories {
     public static final NodeCategory ENTITY = new NodeCategory(ModConstants.resLoc("entity"), 700, ModConstants.Colors.GREEN);
     public static final NodeCategory BLOCK = new NodeCategory(ModConstants.resLoc("block"), 800, ModConstants.Colors.GREEN);
     public static final NodeCategory ITEM = new NodeCategory(ModConstants.resLoc("item"), 900, ModConstants.Colors.GREEN);
+    public static final NodeCategory WORLD = new NodeCategory(ModConstants.resLoc("world"), 950, ModConstants.Colors.GREEN);
 
     public static final NodeCategory MEMORY = new NodeCategory(ModConstants.resLoc("memory"), 1000, ModConstants.Colors.RED);
     public static final NodeCategory LIST = new NodeCategory(ModConstants.resLoc("list"), 1100, ModConstants.Colors.GREEN);
@@ -45,6 +46,7 @@ public class NodeCategories {
         register(ENTITY);
         register(BLOCK);
         register(ITEM);
+        register(WORLD);
 
         register(MEMORY);
         register(LIST);

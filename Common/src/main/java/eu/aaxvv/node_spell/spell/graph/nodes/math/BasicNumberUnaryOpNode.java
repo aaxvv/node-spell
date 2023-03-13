@@ -19,7 +19,7 @@ public class BasicNumberUnaryOpNode extends Node {
 
     public BasicNumberUnaryOpNode(ResourceLocation resLoc, Function<Double, Double> operation) {
         super(NodeCategories.MATH, resLoc);
-        this.sA = addInputSocket(Datatype.NUMBER, "socket.node_spell.empty");
+        this.sA = addInputSocket(Datatype.NUMBER, "socket.node_spell.val");
         this.sResult = addOutputSocket(Datatype.NUMBER, "socket.node_spell.result");
         this.operation = operation;
     }
