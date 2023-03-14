@@ -14,6 +14,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.entity.GenericEntityPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.entity.ItemInHandNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.flow.FlowRepeaterNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.ForLoopNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericConversionNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericIsInTagNode;
@@ -146,6 +147,7 @@ public class Nodes {
     public static final Node ENTRY_POINT = new EntryPointNode();
     public static final Node BRANCH = new BranchNode();
     public static final Node FOR_RANGE = new ForLoopNode();
+    public static final Node REPEAT_FLOW = new FlowRepeaterNode();
 
     // ===== DATA FLOW =====
     public static final Node REPEAT_BOOL = new GenericRepeatNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("repeat_bool"), Datatype.BOOL);
@@ -333,6 +335,7 @@ public class Nodes {
         register(ENTRY_POINT);
         register(BRANCH);
         register(FOR_RANGE);
+        register(REPEAT_FLOW);
 
         register(REPEAT_BOOL);
         register(REPEAT_NUM);

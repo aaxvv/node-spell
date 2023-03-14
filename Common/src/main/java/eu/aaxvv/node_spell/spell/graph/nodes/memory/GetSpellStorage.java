@@ -20,7 +20,7 @@ public class GetSpellStorage extends Node {
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
-        Value value = NodeSpellCommon.spellPersistentStorage.getValue(ctx.getCaster().uuid, ctx.getSpellName());
+        Value value = NodeSpellCommon.spellPersistentStorage.getValue(ctx.getCaster().uuid);
         instance.setSocketValue(sOut, value);
     }
 }

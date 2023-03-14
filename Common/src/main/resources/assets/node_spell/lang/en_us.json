@@ -107,6 +107,7 @@
   "node.node_spell.entrypoint": "Flow Source",
   "node.node_spell.branch": "Branch",
   "node.node_spell.for_range": "For Range",
+  "node.node_spell.repeat_flow": "Repeat Flow",
 
   "node.node_spell.repeat_bool": "Repeat Bool",
   "node.node_spell.repeat_num": "Repeat Number",

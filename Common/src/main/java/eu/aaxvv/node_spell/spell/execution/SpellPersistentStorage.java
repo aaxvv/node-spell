@@ -24,70 +24,49 @@ public class SpellPersistentStorage {
         this.data = storage.computeIfAbsent(SpellStorageData::createFromNbt, SpellStorageData::new, ModConstants.MOD_ID);
     }
 
-    public Value getValue(UUID owner, String spellName) {
-        return this.data.getValue(owner, spellName);
+    public Value getValue(UUID owner) {
+        return this.data.getValue(owner);
     }
 
-    public void setValue(UUID owner, String spellName, Value value) {
-        this.data.setValue(owner, spellName, value);
-    }
-
-    public void removeOwner(UUID owner) {
-        this.data.removeOwner(owner);
-    }
-    public boolean ownerExists(UUID owner) {
-        return this.data.ownerExists(owner);
+    public void setValue(UUID owner, Value value) {
+        this.data.setValue(owner, value);
     }
 
 
     public static class SpellStorageData extends SavedData {
-        private final Map<UUID, Map<String, Value>> storage;
+        private final Map<UUID, Value> storage;
 
         public SpellStorageData() {
             this.storage = new HashMap<>();
         }
 
-        public Value getValue(UUID owner, String spellName) {
-            Map<String, Value> playerStorage = this.storage.computeIfAbsent(owner, key -> new HashMap<>());
-            return playerStorage.get(spellName);
+        public Value getValue(UUID owner) {
+            return this.storage.get(owner);
         }
 
-        public void setValue(UUID owner, String spellName, Value value) {
-            Map<String, Value> playerStorage = this.storage.computeIfAbsent(owner, key -> new HashMap<>());
-            playerStorage.put(spellName, value);
+        public void setValue(UUID owner, Value value) {
+            this.storage.put(owner, value);
             this.setDirty();
-        }
-
-        public void removeOwner(UUID owner) {
-            this.storage.remove(owner);
-            this.setDirty();
-        }
-
-        public boolean ownerExists(UUID owner) {
-            return this.storage.containsKey(owner);
         }
 
         @Override
         public @NotNull CompoundTag save(@NotNull CompoundTag nbt) {
-            storage.forEach((ownerUuid, playerStorage) -> {
-                CompoundTag ownerTag = new CompoundTag();
-                playerStorage.forEach((spellName, value) -> {
-                    ownerTag.put(spellName, value.toNbt());
-                });
-                nbt.put(ownerUuid.toString(), ownerTag);
+            CompoundTag storageTag = new CompoundTag();
+            storage.forEach((ownerUuid, playerValue) -> {
+                if (playerValue != null) {
+                    storageTag.put(ownerUuid.toString(), playerValue.toNbt());
+                }
             });
 
+            nbt.put("SpellStorage", storageTag);
             return nbt;
         }
 
         public void load(CompoundTag nbt) {
-            for (String uuid : nbt.getAllKeys()) {
-                Map<String, Value> valueMap = new HashMap<>();
-                CompoundTag ownerValuesNbt = nbt.getCompound(uuid);
-                for (String spellName : ownerValuesNbt.getAllKeys()) {
-                    valueMap.put(spellName, Value.fromNbt(ownerValuesNbt.getCompound(spellName)));
-                }
-                this.storage.put(UUID.fromString(uuid), valueMap);
+            CompoundTag storageTag = nbt.getCompound("SpellStorage");
+            for (String uuid : storageTag.getAllKeys()) {
+                CompoundTag playerValue = nbt.getCompound(uuid);
+                this.storage.put(UUID.fromString(uuid), Value.fromNbt(playerValue));
             }
         }
 

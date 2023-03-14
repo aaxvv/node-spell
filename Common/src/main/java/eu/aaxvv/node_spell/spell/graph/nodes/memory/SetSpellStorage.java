@@ -21,6 +21,6 @@ public class SetSpellStorage extends SimpleFlowNode {
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
         Value value = instance.getSocketValue(sIn, ctx);
-        NodeSpellCommon.spellPersistentStorage.setValue(ctx.getCaster().uuid, ctx.getSpellName(), value);
+        NodeSpellCommon.spellPersistentStorage.setValue(ctx.getCaster().uuid, value);
     }
 }

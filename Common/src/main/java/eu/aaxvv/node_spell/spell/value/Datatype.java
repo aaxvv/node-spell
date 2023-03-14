@@ -39,6 +39,10 @@ public enum Datatype {
     public final Supplier<Value> defaultValue;
 
     public boolean isAssignableFrom(Datatype other) {
+        if ((this == Datatype.FLOW || other == Datatype.FLOW) && this != other) {
+            return false;
+        }
+
         if (this == Datatype.ANY || other == Datatype.ANY) {
             return true;
         }

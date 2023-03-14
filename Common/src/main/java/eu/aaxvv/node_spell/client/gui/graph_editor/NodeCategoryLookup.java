@@ -44,7 +44,7 @@ public class NodeCategoryLookup {
         }
 
         for (List<Node> list : nodesByCategory.values()) {
-            list.sort(Comparator.comparing(n -> (Component.translatable(n.getTranslationKey()).toString())));
+            list.sort(Comparator.comparing(n -> (Component.translatable(n.getTranslationKey()).getString().toLowerCase())));
         }
 
 
