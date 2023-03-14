@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.network;
 
+import eu.aaxvv.node_spell.network.packet.ExportSpellsC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateWandActiveSpellC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -21,6 +22,7 @@ public class FabricPacketHandler {
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(UpdateSpellBookC2SPacket.ID, makeServerBoundHandler(UpdateSpellBookC2SPacket::decode, UpdateSpellBookC2SPacket::handle));
         ServerPlayNetworking.registerGlobalReceiver(UpdateWandActiveSpellC2SPacket.ID, makeServerBoundHandler(UpdateWandActiveSpellC2SPacket::decode, UpdateWandActiveSpellC2SPacket::handle));
+        ServerPlayNetworking.registerGlobalReceiver(ExportSpellsC2SPacket.ID, makeServerBoundHandler(ExportSpellsC2SPacket::decode, ExportSpellsC2SPacket::handle));
     }
 
     public static void initClient() {

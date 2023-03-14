@@ -10,9 +10,11 @@ import java.util.function.BiConsumer;
 public class ModItems {
     public static final WandItem WAND = new WandItem(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1));
     public static final SpellBookItem SPELL_BOOK = new SpellBookItem(new Item.Properties().rarity(Rarity.RARE).stacksTo(1));
+    public static final Item WRITTEN_PAPER = new WrittenPaperItem(new Item.Properties().stacksTo(1));
 
     public static void register(BiConsumer<ResourceLocation, Item> reg) {
         reg.accept(ModConstants.resLoc("wand"), WAND);
         reg.accept(ModConstants.resLoc("spell_book"), SPELL_BOOK);
+        reg.accept(ModConstants.resLoc("written_paper"), WRITTEN_PAPER);
     }
 }

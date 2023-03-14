@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.network;
 
 import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.network.packet.ExportSpellsC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateWandActiveSpellC2SPacket;
 import net.minecraft.server.MinecraftServer;
@@ -20,6 +21,7 @@ public class ForgePacketHandler {
     public static void init() {
         CHANNEL.registerMessage(0, UpdateSpellBookC2SPacket.class, UpdateSpellBookC2SPacket::encode, UpdateSpellBookC2SPacket::decode, makeServerBoundHandler(UpdateSpellBookC2SPacket::handle));
         CHANNEL.registerMessage(1, UpdateWandActiveSpellC2SPacket.class, UpdateWandActiveSpellC2SPacket::encode, UpdateWandActiveSpellC2SPacket::decode, makeServerBoundHandler(UpdateWandActiveSpellC2SPacket::handle));
+        CHANNEL.registerMessage(2, ExportSpellsC2SPacket.class, ExportSpellsC2SPacket::encode, ExportSpellsC2SPacket::decode, makeServerBoundHandler(ExportSpellsC2SPacket::handle));
     }
 
     private static <T> BiConsumer<T, Supplier<NetworkEvent.Context>> makeServerBoundHandler(TriConsumer<T, MinecraftServer, ServerPlayer> handler) {

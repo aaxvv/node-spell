@@ -1,10 +1,8 @@
 package eu.aaxvv.node_spell.item;
 
 import eu.aaxvv.node_spell.NodeSpellCommon;
-import eu.aaxvv.node_spell.spell.execution.PlayerSpellCache;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
-import eu.aaxvv.node_spell.spell.execution.SpellRunner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

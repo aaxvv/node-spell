@@ -8,6 +8,8 @@ import eu.aaxvv.node_spell.client.gui.helper.MultiSelectionModel;
 import eu.aaxvv.node_spell.client.gui.helper.TextEditController;
 import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
 import eu.aaxvv.node_spell.client.gui.spell_list.GuiSpellListItem;
+import eu.aaxvv.node_spell.helper.InventoryHelper;
+import eu.aaxvv.node_spell.network.packet.ExportSpellsC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
 import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
 import eu.aaxvv.node_spell.spell.Spell;
@@ -23,10 +25,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SpellBookScreen extends BaseScreen {
@@ -78,7 +80,7 @@ public class SpellBookScreen extends BaseScreen {
                 .setClickCallback(() -> System.out.println("Import button clicked"));
 
         makeAndAddButton(6, Component.translatable("gui.node_spell.spell_list.export"))
-                .setClickCallback(() -> System.out.println("Export button clicked"));
+                .setClickCallback(this::onExportSpells);
 
         this.spellList = new GuiScrollContainer(SAFE_AREA_WIDTH, SAFE_AREA_HEIGHT - 18);
         getGuiRoot().addChild(spellList);
@@ -247,6 +249,32 @@ public class SpellBookScreen extends BaseScreen {
         ClientPlatformHelper.INSTANCE.sendToServer(new UpdateSpellBookC2SPacket(slot, this.bookStack.getTag()));
 
         super.onClose();
+    }
+
+    private void onExportSpells() {
+        if (InventoryHelper.findStackInInventory(player, stack -> stack.is(Items.PAPER)) == null) {
+            this.errorText.show(Component.translatable("gui.node_spell.spell_list.no_paper_error", 8).withStyle(ChatFormatting.RED), 60);
+            return;
+        }
+
+        CompoundTag spellsToExport = new CompoundTag();
+
+        this.selectionModel.getSelectedItems().forEach(item -> {
+            if (item instanceof GuiSpellListItem listItem) {
+                CompoundTag spellTag;
+                if (listItem.getCachedSpell() != null) {
+                    spellTag = new CompoundTag();
+                    listItem.getCachedSpell().serialize(spellTag);
+                } else {
+                    spellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(listItem.getSpellName());
+                }
+
+                spellsToExport.put(listItem.getSpellName(), spellTag);
+            }
+        });
+
+        ClientPlatformHelper.INSTANCE.sendToServer(new ExportSpellsC2SPacket(spellsToExport));
+        this.errorText.show(Component.translatable("gui.node_spell.spell_list.exported", 8).withStyle(ChatFormatting.WHITE), 60);
     }
 
     private GuiTextureButton makeAndAddButton(int screenXIndex, Component tooltip) {

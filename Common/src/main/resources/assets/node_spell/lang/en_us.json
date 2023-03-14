@@ -1,6 +1,9 @@
 {
   "item.node_spell.wand": "Wand",
   "item.node_spell.spell_book": "Spell Book",
+  "item.node_spell.written_paper": "Written Paper",
+  "node_spell.written_paper.spell_header": "Spells:",
+  "node_spell.written_paper.value_header": "Value:",
 
   "key.node_spell.test": "Node Spell Test",
   "key.node_spell.test.desc": "Trigger Node Spell test",
@@ -24,6 +27,8 @@
   "gui.node_spell.spell_list.no_selection_error": "No spell selected",
   "gui.node_spell.spell_list.multiple_selection_error": "Multiple spells selected",
   "gui.node_spell.spell_list.favorite_limit_error": "The maximum number of favorite spells is %d",
+  "gui.node_spell.spell_list.no_paper_error": "No paper in inventory",
+  "gui.node_spell.spell_list.exported": "Selected spells exported",
 
   "gui.node_spell.spell_verification.problems_heading": "Problems:",
   "gui.node_spell.spell_verification.cycle_found": "Graph contains a cycle.",

@@ -184,12 +184,22 @@ public class Value {
     }
 
     /**
-     * @deprecated Use {@link Value#toString(SpellContext)} instead
+     * Use {@link Value#toString(SpellContext)} instead if a SpellContext is available.
      */
     @Override
-    @Deprecated
     public String toString() {
-        return super.toString();
+        return switch (this.getDatatype()) {
+            case BOOL -> this.boolValue().toString();
+            case NUMBER -> format.format(this.numberValue());
+            case STRING -> '"' + this.stringValue() + '"';
+            case VECTOR -> "(" + format.format(this.vectorValue().x) + ", " + format.format(this.vectorValue().y) + ", " + format.format(this.vectorValue().z) + ")";
+            case ENTITY -> "<Entity>";
+            case BLOCK -> this.blockValue().getBlock().getName().getString();
+            case ITEM -> this.itemValue().toString();
+            case LIST -> "[" + String.join(", ", this.listValue().stream().map(Value::toString).toList()) + "]";
+            case FLOW -> "<FLOW>";
+            case ANY -> "<ANY>";
+        };
     }
 
     @Override
@@ -300,7 +310,7 @@ public class Value {
                 case ANY -> throw new IllegalArgumentException("Cannot deserialize value of type any.");
             };
 
-        } catch (IllegalArgumentException | ClassCastException | NullPointerException | ResourceLocationException ex) {
+        } catch (IllegalArgumentException | ClassCastException | NullPointerException | ResourceLocationException | IndexOutOfBoundsException ex) {
             ModConstants.LOG.error("Failed to deserialize value.", ex);
             return null;
         }
