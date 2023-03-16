@@ -79,6 +79,8 @@ public class WandItem extends Item {
 
         boolean success = NodeSpellCommon.spellTaskRunner.startSpell(player.getUUID(), cachedSpell.get(), new SpellContext((ServerPlayer) player, level, cachedSpell.get().getName()));
 
+        player.getCooldowns().addCooldown(this.asItem(), 20);
+
         return success ? InteractionResultHolder.consume(stack) : InteractionResultHolder.fail(stack);
     }
 

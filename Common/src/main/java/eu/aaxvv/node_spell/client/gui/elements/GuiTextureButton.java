@@ -6,10 +6,14 @@ import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import net.minecraft.network.chat.Component;
+import org.apache.logging.log4j.util.TriConsumer;
+
+import java.util.List;
 
 public class GuiTextureButton extends GuiElement {
-    private Component tooltip;
+    private List<Component> tooltip;
     private Runnable clickCallback;
+    private TriConsumer<Double, Double, Double> scrollCallback;
     private TextureRegion texture;
     private int xTextureOffset;
     private int yTextureOffset;
@@ -22,12 +26,16 @@ public class GuiTextureButton extends GuiElement {
         this.drawHoverOverlay = true;
     }
 
-    public void setTooltip(Component tooltip) {
+    public void setTooltip(List<Component> tooltip) {
         this.tooltip = tooltip;
     }
 
     public void setClickCallback(Runnable callback) {
         this.clickCallback = callback;
+    }
+
+    public void setScrollCallback(TriConsumer<Double, Double, Double> scrollCallback) {
+        this.scrollCallback = scrollCallback;
     }
 
     public void setTexture(TextureRegion texture) {
@@ -63,7 +71,7 @@ public class GuiTextureButton extends GuiElement {
 
         if (hovered && this.tooltip != null) {
             GuiContext context = this.getContext();
-            context.scheduleRenderLast((_pose, mX, mY, _tickDelta) -> context.getParentScreen().renderTooltip(_pose, this.tooltip, mX, mY));
+            context.scheduleRenderLast((_pose, mX, mY, _tickDelta) -> context.getParentScreen().renderComponentTooltip(_pose, this.tooltip, mX, mY));
         }
     }
 
@@ -75,5 +83,15 @@ public class GuiTextureButton extends GuiElement {
         }
 
         return super.onMouseDown(screenX, screenY, button);
+    }
+
+    @Override
+    public boolean onMouseScrolled(double screenX, double screenY, double amount) {
+        if (this.scrollCallback != null) {
+            this.scrollCallback.accept(screenX, screenY, amount);
+            return true;
+        }
+
+        return super.onMouseScrolled(screenX, screenY, amount);
     }
 }

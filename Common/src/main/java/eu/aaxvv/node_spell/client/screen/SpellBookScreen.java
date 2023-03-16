@@ -9,6 +9,7 @@ import eu.aaxvv.node_spell.client.gui.helper.TextEditController;
 import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
 import eu.aaxvv.node_spell.client.gui.spell_list.GuiSpellListItem;
 import eu.aaxvv.node_spell.helper.InventoryHelper;
+import eu.aaxvv.node_spell.item.ModItems;
 import eu.aaxvv.node_spell.network.packet.ExportSpellsC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
 import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
@@ -21,6 +22,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -43,10 +45,13 @@ public class SpellBookScreen extends BaseScreen {
     private final ItemStack bookStack;
     private final Player player;
     private final InteractionHand hand;
+    private final List<ItemStack> writtenSpellPaperItems;
+    private int selectedImportItemIdx;
 
     private final GuiScrollContainer spellList;
     private final GuiTransientText errorText;
     private final MultiSelectionModel selectionModel;
+    private final GuiTextureButton importButton;
 
     private GuiSpellListItem renaming;
     private final TextEditController textEditController;
@@ -58,6 +63,9 @@ public class SpellBookScreen extends BaseScreen {
         this.hand = hand;
         this.selectionModel = new MultiSelectionModel();
         this.textEditController = new TextEditController();
+        this.writtenSpellPaperItems = this.findSpellPaperItems(this.player);
+        this.selectedImportItemIdx = 0;
+
 
         this.guiContext.getRootPane().setSize(SAFE_AREA_WIDTH, SAFE_AREA_HEIGHT);
 
@@ -76,8 +84,11 @@ public class SpellBookScreen extends BaseScreen {
         makeAndAddButton(4, Component.translatable("gui.node_spell.spell_list.duplicate"))
                 .setClickCallback(this::onDuplicateSpell);
 
-        makeAndAddButton(5, Component.translatable("gui.node_spell.spell_list.import"))
-                .setClickCallback(() -> System.out.println("Import button clicked"));
+        // need to save this one because we need to change its tooltip
+        this.importButton = makeAndAddButton(5, Component.empty());
+        this.importButton.setClickCallback(this::onImportSpells);
+        this.importButton.setScrollCallback(this::onScrollImportButton);
+        this.importButton.setTooltip(this.getImportButtonTooltip());
 
         makeAndAddButton(6, Component.translatable("gui.node_spell.spell_list.export"))
                 .setClickCallback(this::onExportSpells);
@@ -90,6 +101,16 @@ public class SpellBookScreen extends BaseScreen {
         this.errorText.setCentered(true);
         getGuiRoot().addChild(this.errorText);
         addSpellsFromBook();
+    }
+
+    private List<ItemStack> findSpellPaperItems(Player player) {
+        return InventoryHelper.findAllStacksInInventory(player, stack -> {
+            if (!stack.is(ModItems.WRITTEN_PAPER)) {
+                return false;
+            }
+
+            return stack.getOrCreateTag().contains("Spells", Tag.TAG_COMPOUND);
+        });
     }
 
     private void onEditSpell() {
@@ -277,11 +298,65 @@ public class SpellBookScreen extends BaseScreen {
         this.errorText.show(Component.translatable("gui.node_spell.spell_list.exported", 8).withStyle(ChatFormatting.WHITE), 60);
     }
 
+    private void onImportSpells() {
+        if (this.writtenSpellPaperItems.isEmpty()) {
+            this.errorText.show(Component.translatable("gui.node_spell.spell_list.import.no_paper", 8).withStyle(ChatFormatting.RED), 60);
+            return;
+        }
+
+        ItemStack stackToLoad = this.writtenSpellPaperItems.get(this.selectedImportItemIdx);
+        CompoundTag spellsTag = stackToLoad.getOrCreateTagElement("Spells");
+
+        List<String> duplicateSpells = new ArrayList<>();
+        for (String spellName : spellsTag.getAllKeys()) {
+            if (this.spellList.getChildren().stream().map(elem -> ((GuiSpellListItem) elem)).anyMatch(item -> item.getSpellName().equals(spellName))) {
+                // already exists
+                duplicateSpells.add(spellName);
+                continue;
+            }
+            addSpellItem(spellName);
+            this.bookStack.getOrCreateTagElement("Spells").put(spellName, spellsTag.getCompound(spellName));
+        }
+
+        if (!duplicateSpells.isEmpty()) {
+            String names = String.join(", ", duplicateSpells);
+            this.errorText.show(Component.translatable("gui.node_spell.spell_list.import.duplicate_spells", names).withStyle(ChatFormatting.RED), 60);
+        }
+    }
+
+    private void onScrollImportButton(double mouseX, double mouseY, double amount) {
+        if (amount < 0) {
+            this.selectedImportItemIdx += 1;
+        } else {
+            this.selectedImportItemIdx -= 1;
+        }
+        this.selectedImportItemIdx = Mth.clamp(this.selectedImportItemIdx, 0, this.writtenSpellPaperItems.size() - 1);
+        this.importButton.setTooltip(this.getImportButtonTooltip());
+    }
+
+    private List<Component> getImportButtonTooltip() {
+        List<Component> tooltip = new ArrayList<>();
+        tooltip.add(Component.translatable("gui.node_spell.spell_list.import"));
+
+        if (this.writtenSpellPaperItems.isEmpty()) {
+            tooltip.add(Component.translatable("gui.node_spell.spell_list.import.no_paper").withStyle(ChatFormatting.RED));
+        } else {
+            tooltip.add(Component.translatable("gui.node_spell.spell_list.import.scroll_hint").withStyle(ChatFormatting.GRAY));
+            ItemStack current = this.writtenSpellPaperItems.get(this.selectedImportItemIdx);
+            tooltip.add(Component.translatable("gui.node_spell.spell_list.import.spell_header"));
+            for (String spellName : current.getOrCreateTagElement("Spells").getAllKeys()) {
+                tooltip.add(Component.literal(" - " + spellName).withStyle(ChatFormatting.GRAY));
+            }
+        }
+
+        return tooltip;
+    }
+
     private GuiTextureButton makeAndAddButton(int screenXIndex, Component tooltip) {
         GuiTextureButton button = new GuiTextureButton(15, 15);
         button.setLocalPosition(3 + 19*screenXIndex, SAFE_AREA_HEIGHT - 16);
         button.setTexture(new TextureRegion(BACKGROUND_LOCATION, 2 + 19*screenXIndex, 188, 16, 16));
-        button.setTooltip(tooltip);
+        button.setTooltip(List.of(tooltip));
         this.guiContext.getRootPane().addChild(button);
         return button;
     }
@@ -356,4 +431,6 @@ public class SpellBookScreen extends BaseScreen {
 
         return true;
     }
+
+
 }

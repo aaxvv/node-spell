@@ -28,7 +28,6 @@ public class SpellSelectionOverlay extends GuiComponent {
     private static final double SLICE_ANGLE = (2 * Math.PI) / SLICE_COUNT;
     private static final int CENTER_OFFSET = 10;
     private static final int MENU_RADIUS = 105;
-//    private static final int TEXT_RADIUS = 20;
     private static final int TEXT_MAX_WIDTH = 80;
 
     private static final int SLICE_COLOR = 0xC0101010;
