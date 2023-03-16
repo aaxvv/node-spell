@@ -28,10 +28,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberTriOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.BasicNumberUnaryOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.math.MapRangeNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.memory.GetSpellStorage;
-import eu.aaxvv.node_spell.spell.graph.nodes.memory.GetVariableNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetSpellStorage;
-import eu.aaxvv.node_spell.spell.graph.nodes.memory.SetVariableNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.memory.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.BasicStringOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.ToStringNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.*;
@@ -265,7 +262,9 @@ public class Nodes {
     public static final Node SET_VARIABLE = new SetVariableNode();
     public static final Node GET_SPELL_STORAGE = new GetSpellStorage();
     public static final Node SET_SPELL_STORAGE = new SetSpellStorage();
-    // player storage too? for passing data between spells?
+    public static final Node WRITE_PAPER = new WritePaperNode();
+    public static final Node READ_PAPER = new ReadPaperNode();
+    public static final Node IS_WRITTEN_PAPER = new IsWrittenPaperNode();
 
     // ===== LIST =====
 
@@ -393,7 +392,9 @@ public class Nodes {
         register(SET_VARIABLE);
         register(GET_SPELL_STORAGE);
         register(SET_SPELL_STORAGE);
-
+        register(WRITE_PAPER);
+        register(READ_PAPER);
+        register(IS_WRITTEN_PAPER);
     }
 
     private static void register(Node node) {
