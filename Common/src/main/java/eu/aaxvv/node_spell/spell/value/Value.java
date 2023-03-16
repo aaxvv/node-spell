@@ -54,7 +54,7 @@ public class Value {
         if (this.datatype == Datatype.BOOL) {
             return (Boolean)this.value;
         } else {
-            throw new SpellExecutionException("Expected value of type BOOL but got: " + this.datatype);
+            throw new SpellExecutionException(Component.translatable("error.node_spell.type_mismatch", "BOOL", this.datatype));
         }
     }
 
@@ -62,7 +62,7 @@ public class Value {
         if (this.datatype == Datatype.NUMBER) {
             return (Double) this.value;
         } else {
-            throw new SpellExecutionException("Expected value of type NUMBER but got: " + this.datatype);
+            throw new SpellExecutionException(Component.translatable("error.node_spell.type_mismatch", "NUMBER", this.datatype));
         }
     }
 
@@ -70,7 +70,7 @@ public class Value {
         if (this.datatype == Datatype.STRING) {
             return (String)this.value;
         } else {
-            throw new SpellExecutionException("Expected value of type STRING but got: " + this.datatype);
+            throw new SpellExecutionException(Component.translatable("error.node_spell.type_mismatch", "STRING", this.datatype));
         }
     }
 
@@ -78,7 +78,7 @@ public class Value {
         if (this.datatype == Datatype.VECTOR) {
             return (Vec3)this.value;
         } else {
-            throw new SpellExecutionException("Expected value of type VECTOR but got: " + this.datatype);
+            throw new SpellExecutionException(Component.translatable("error.node_spell.type_mismatch", "VECTOR", this.datatype));
         }
     }
 
@@ -86,7 +86,7 @@ public class Value {
         if (this.datatype == Datatype.ENTITY) {
             return (UUID) this.value;
         } else {
-            throw new SpellExecutionException("Expected value of type ENTITY but got: " + this.datatype);
+            throw new SpellExecutionException(Component.translatable("error.node_spell.type_mismatch", "ENTITY", this.datatype));
         }
     }
 
@@ -94,7 +94,7 @@ public class Value {
         if (this.datatype == Datatype.ITEM) {
             return (ItemStack) this.value;
         } else {
-            throw new SpellExecutionException("Expected value of type ITEM but got: " + this.datatype);
+            throw new SpellExecutionException(Component.translatable("error.node_spell.type_mismatch", "ITEM", this.datatype));
         }
     }
 
@@ -102,7 +102,7 @@ public class Value {
         if (this.datatype == Datatype.BLOCK) {
             return (BlockState) this.value;
         } else {
-            throw new SpellExecutionException("Expected value of type BLOCK but got: " + this.datatype);
+            throw new SpellExecutionException(Component.translatable("error.node_spell.type_mismatch", "BLOCK", this.datatype));
         }
     }
 
@@ -111,7 +111,7 @@ public class Value {
         if (this.datatype == Datatype.LIST) {
             return (List<Value>) this.value;
         } else {
-            throw new SpellExecutionException("Expected value of type LIST but got: " + this.datatype);
+            throw new SpellExecutionException(Component.translatable("error.node_spell.type_mismatch", "LIST", this.datatype));
         }
     }
 
@@ -172,7 +172,7 @@ public class Value {
         return switch (this.getDatatype()) {
             case BOOL -> this.boolValue().toString();
             case NUMBER -> format.format(this.numberValue());
-            case STRING -> this.stringValue();
+            case STRING -> '"' + this.stringValue() + '"';
             case VECTOR -> "(" + format.format(this.vectorValue().x) + ", " + format.format(this.vectorValue().y) + ", " + format.format(this.vectorValue().z) + ")";
             case ENTITY -> EntityHelper.getFromUuid(ctx.getLevel(), this.entityValue()).map(Entity::getDisplayName).map(Component::getString).orElseGet(() -> this.entityValue().toString());
             case BLOCK -> this.blockValue().getBlock().getName().getString();

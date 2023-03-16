@@ -22,7 +22,7 @@ public class SpellTaskRunner {
     public boolean startSpell(UUID casterId, Spell spell, SpellContext context) {
          if (spell.hasErrors()) {
              context.getCaster().asPlayer().ifPresent(player -> {
-                 player.displayClientMessage(Component.translatable("gui.node_spell.spell_has_errors").withStyle(ChatFormatting.RED), true);
+                 player.displayClientMessage(Component.translatable("error.node_spell.spell_has_errors").withStyle(ChatFormatting.RED), true);
              });
             return false;
         }
@@ -56,7 +56,7 @@ public class SpellTaskRunner {
 
             } catch (SpellExecutionException ex) {
                 runner.ctx.getCaster().asPlayer().ifPresent(player -> {
-                    player.displayClientMessage(Component.literal(ex.getShortDescription()).withStyle(ChatFormatting.RED), true);
+                    player.displayClientMessage(ex.getShortDescription().withStyle(ChatFormatting.RED), true);
                     if (ex.getCause() != null) {
                         player.sendSystemMessage(Component.literal(ex.getMessage()).withStyle(ChatFormatting.RED));
                     }

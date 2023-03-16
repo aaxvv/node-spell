@@ -33,7 +33,7 @@ public class SpellRunner {
             this.running = true;
         } else {
             ctx.getCaster().asPlayer().ifPresent(player -> {
-                player.displayClientMessage(Component.translatable("gui.node_spell.spell_no_entrypoint").withStyle(ChatFormatting.RED), true);
+                player.displayClientMessage(Component.translatable("error.node_spell.spell_no_entrypoint").withStyle(ChatFormatting.RED), true);
             });
             ModConstants.LOG.warn("Tried to run spell without an entrypoint: '{}'", this.ctx.getSpellName());
         }

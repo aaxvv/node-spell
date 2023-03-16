@@ -10,6 +10,7 @@ import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +43,7 @@ public class PlaceBlockNode extends SimpleFlowNode {
         ItemStack usedStack = getUsedItem(inventory, blockItem);
 
         if (usedStack.isEmpty()) {
-            throw new SpellExecutionException("Missing item");
+            throw new SpellExecutionException(Component.translatable("error.node_spell.missing_item"));
         }
 
         boolean isCreative = ctx.getCaster().asPlayer().map(p -> p.getAbilities().instabuild).orElse(false);
@@ -52,7 +53,7 @@ public class PlaceBlockNode extends SimpleFlowNode {
         Vec3 pos = instance.getSocketValue(this.sPos, ctx).vectorValue();;
         BlockPos blockPos = new BlockPos(pos.x, pos.y, pos.z);
         if (!ctx.getLevel().isLoaded(blockPos)) {
-            throw new SpellExecutionException("Target position is not loaded");
+            throw new SpellExecutionException(Component.translatable("error.node_spell.target_not_loaded"));
         }
 
         if (!ctx.getLevel().getBlockState(blockPos).canBeReplaced()) {
@@ -61,7 +62,7 @@ public class PlaceBlockNode extends SimpleFlowNode {
 
         int distance = ctx.getCaster().blockPos.distManhattan(new Vec3i(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
         if (distance > ModConstants.SPELL_INTERACTION_RANGE) {
-            throw new SpellExecutionException("Target position is out of range");
+            throw new SpellExecutionException(Component.translatable("error.node_spell.target_out_of_range"));
         }
 
         ctx.getLevel().setBlock(blockPos, blockState, Block.UPDATE_ALL);

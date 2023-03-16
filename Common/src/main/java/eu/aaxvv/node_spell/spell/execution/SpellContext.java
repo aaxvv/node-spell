@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.spell.execution;
 import eu.aaxvv.node_spell.helper.EntityHelper;
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -39,13 +40,13 @@ public class SpellContext {
     public Value getLocal(String name) {
         Value localValue = this.locals.get(name);
         if (localValue == null) {
-            throw new SpellExecutionException("Tried to access value of variable '" + name + "' before it was set.");
+            throw new SpellExecutionException(Component.translatable("error.node_spell.local_access_before_set", name));
         }
         return this.locals.get(name);
     }
 
     public Entity getEntityOrThrow(UUID uuid) {
-        return EntityHelper.getFromUuid(this.level, uuid).orElseThrow(() -> new SpellExecutionException("Cannot find entity"));
+        return EntityHelper.getFromUuid(this.level, uuid).orElseThrow(() -> new SpellExecutionException(Component.translatable("error.node_spell.cannot_find_entity")));
     }
 
     public CasterWrapper getCaster() {
