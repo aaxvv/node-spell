@@ -10,6 +10,7 @@ import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
@@ -46,7 +47,7 @@ public class RaycastBlockNode extends Node {
         // make a fake player for auto casters
         Optional<ServerPlayer> player = ctx.getCaster().asPlayer();
         if (player.isEmpty()) {
-            throw new SpellExecutionException("Cannot ray-cast without entity.");
+            throw new SpellExecutionException(Component.translatable("error.node_spell.raycast_without_entity"));
         }
 
         BlockHitResult result = ctx.getLevel().clip(new ClipContext(source, target, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player.get()));

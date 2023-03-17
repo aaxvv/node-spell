@@ -23,6 +23,7 @@
   "error.node_spell.item_not_written_paper": "Given item is not written paper",
   "error.node_spell.raycast_without_entity": "Cannot ray-cast without entity",
   "error.node_spell.type_mismatch": "Expected value of type %s but got: %s",
+  "error.node_spell.invalid_socket_access": "Tried to access value of currently invalid socket",
   "error.node_spell.cannot_find_entity": "Cannot find entity",
   "error.node_spell.local_access_before_set": "Tried to access value of variable '%s' before it was set",
   "error.node_spell.invalid_holder": "Invalid holder",

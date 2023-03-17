@@ -35,6 +35,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.vector.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.world.GenericBlockPosQueryNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.world.GenericWorldPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.world.RaycastBlockNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.world.RaycastEntityNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
@@ -238,6 +239,7 @@ public class Nodes {
 
     // ===== WORLD =====
     public static final Node RAY_CAST_BLOCK = new RaycastBlockNode();
+    public static final Node RAY_CAST_ENTITY = new RaycastEntityNode();
     public static final Node DIMENSION_ID = new GenericWorldPropertyNode<>("dimension_id", Datatype.STRING, "id", level -> level.dimension().location().toString());
     public static final Node DAY_TIME = new GenericWorldPropertyNode<>("day_time", Datatype.NUMBER, "ticks", level -> ((double) level.dayTime()));
     public static final Node REDSTONE_POWER = new GenericBlockPosQueryNode<>("redstone_power", Datatype.NUMBER, "power", (level, pos) -> (double)level.getDirectSignalTo(pos));
@@ -373,6 +375,7 @@ public class Nodes {
         register(ITEM_IN_TAG);
 
         register(RAY_CAST_BLOCK);
+        register(RAY_CAST_ENTITY);
         register(DIMENSION_ID);
         register(DAY_TIME);
         register(REDSTONE_POWER);

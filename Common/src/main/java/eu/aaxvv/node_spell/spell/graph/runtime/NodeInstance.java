@@ -92,6 +92,11 @@ public class NodeInstance implements InstanceDataContainer {
         instance.setCurrentValue(value);
     }
 
+    public void setSocketInvalid(Socket socket) {
+        SocketInstance instance = this.socketInstances.get(socket);
+        instance.setCurrentValue(null);
+    }
+
     public List<Edge> getSocketConnections(Socket socket) {
         SocketInstance instance =  this.socketInstances.get(socket);
         if (instance == null) {

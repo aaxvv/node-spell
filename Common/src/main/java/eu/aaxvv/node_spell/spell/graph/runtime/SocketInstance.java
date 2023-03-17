@@ -5,6 +5,7 @@ import eu.aaxvv.node_spell.spell.execution.SpellExecutionException;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,7 +89,14 @@ public class SocketInstance {
                     throw ex;
                 }
             }
-            return this.currentValue;
+
+            if (this.currentValue != null) {
+                return this.currentValue;
+            } else {
+                SpellExecutionException ex = new SpellExecutionException(Component.translatable("error.node_spell.invalid_socket_access"));
+                ex.addNodeContext(this.parentInstance);
+                throw ex;
+            }
         }
     }
 
