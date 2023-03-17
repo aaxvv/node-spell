@@ -4,6 +4,7 @@ import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
+import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
 import eu.aaxvv.node_spell.spell.graph.verification.VerificationResult;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.network.chat.Component;
@@ -30,7 +31,7 @@ public class NoCyclesRule implements VerificationRule {
     }
 
     private void recursiveDfs(NodeInstance nextInstance, Deque<NodeInstance> dfsStack, boolean traversingFlow, Set<NodeInstance> cycleNodes) {
-        if (dfsStack.contains(nextInstance)) {
+        if (dfsStack.contains(nextInstance) && (traversingFlow == (nextInstance.getBaseNode() instanceof FlowNode))) {
             Iterator<NodeInstance> stackIter = dfsStack.descendingIterator();
             while (stackIter.hasNext()) {
                 NodeInstance next = stackIter.next();

@@ -72,6 +72,17 @@
   "node.category.node_spell.string": "STRING",
   "node.category.node_spell.custom":  "CUSTOM",
 
+  "datatype.node_spell.bool":  "Bool",
+  "datatype.node_spell.number":  "Num.",
+  "datatype.node_spell.string":  "Str.",
+  "datatype.node_spell.vector":  "Vec.",
+  "datatype.node_spell.entity":  "Ent.",
+  "datatype.node_spell.block":  "Block",
+  "datatype.node_spell.item":  "Item",
+  "datatype.node_spell.list":  "List",
+  "datatype.node_spell.any":  "Any",
+  "datatype.node_spell.flow":  "Flow",
+
   "node.node_spell.const_num": "Const. Num.",
   "node.node_spell.const_str": "Const. Str.",
   "node.node_spell.const_bool": "Const. Bool",
@@ -150,6 +161,14 @@
   "node.node_spell.select_item": "Select Item",
   "node.node_spell.select_string": "Select Str.",
   "node.node_spell.select_list": "Select List",
+  "node.node_spell.cast_to_bool": "Cast to Bool",
+  "node.node_spell.cast_to_number": "Cast to Num.",
+  "node.node_spell.cast_to_vector": "Cast to Vec.",
+  "node.node_spell.cast_to_string": "Cast to Str.",
+  "node.node_spell.cast_to_entity": "Cast to Ent.",
+  "node.node_spell.cast_to_block": "Cast to Block",
+  "node.node_spell.cast_to_item": "Cast to Item",
+  "node.node_spell.cast_to_list": "Cast to List",
 
   "node.node_spell.entity_pos": "Entity Pos.",
   "node.node_spell.entity_item_in_hand": "Item in hand",
@@ -253,5 +272,7 @@
   "socket.node_spell.ent": "Ent.",
   "socket.node_spell.power": "Power",
   "socket.node_spell.holder": "Holder",
-  "socket.node_spell.paper": "Paper"
+  "socket.node_spell.paper": "Paper",
+  "socket.node_spell.success": "Success",
+  "socket.node_spell.failure": "Failure"
 }

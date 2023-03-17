@@ -11,18 +11,18 @@ import java.util.Collections;
 import java.util.function.Supplier;
 
 public enum Datatype {
-    BOOL(ModConstants.Colors.RED, () -> Value.createBool(false)),
-    NUMBER(ModConstants.Colors.LIGHT_BLUE, () -> Value.createNumber(0.0)),
-    STRING(ModConstants.Colors.PINK, () -> Value.createString("")),
-    VECTOR(ModConstants.Colors.ORANGE, () -> Value.createVector(Vec3.ZERO)),
-    ENTITY(ModConstants.Colors.DARK_BLUE, () -> Value.createEntity(null)),
-    BLOCK(ModConstants.Colors.GREEN, () -> Value.createBlock(Blocks.AIR.defaultBlockState())),
-    ITEM(ModConstants.Colors.PURPLE, () -> Value.createItem(ItemStack.EMPTY)),
-    LIST(ModConstants.Colors.YELLOW, () -> Value.createList(Collections.emptyList())),
-    FLOW(ModConstants.Colors.DARK_GREY, () -> null),
-    ANY(ModConstants.Colors.LIGHT_GREY, () -> null);
+    BOOL(ModConstants.Colors.RED,           "bool", () -> Value.createBool(false)),
+    NUMBER(ModConstants.Colors.LIGHT_BLUE,  "number", () -> Value.createNumber(0.0)),
+    STRING(ModConstants.Colors.PINK,        "string", () -> Value.createString("")),
+    VECTOR(ModConstants.Colors.ORANGE,      "vector", () -> Value.createVector(Vec3.ZERO)),
+    ENTITY(ModConstants.Colors.DARK_BLUE,   "entity", () -> Value.createEntity(null)),
+    BLOCK(ModConstants.Colors.GREEN,        "block", () -> Value.createBlock(Blocks.AIR.defaultBlockState())),
+    ITEM(ModConstants.Colors.PURPLE,        "item", () -> Value.createItem(ItemStack.EMPTY)),
+    LIST(ModConstants.Colors.YELLOW,        "list", () -> Value.createList(Collections.emptyList())),
+    FLOW(ModConstants.Colors.DARK_GREY,     "flow", () -> null),
+    ANY(ModConstants.Colors.LIGHT_GREY,     "any", () -> null);
 
-    Datatype(int packedColor, Supplier<Value> defaultValue) {
+    Datatype(int packedColor, String translation, Supplier<Value> defaultValue) {
         this.packedColor = packedColor;
         this.defaultValue = defaultValue;
         float[] components = new float[4];
@@ -30,6 +30,7 @@ public enum Datatype {
         this.r = components[1];
         this.g = components[2];
         this.b = components[3];
+        this.translationKey = "datatype.node_spell." + translation;
     }
 
     public final float r;
@@ -37,6 +38,7 @@ public enum Datatype {
     public final float b;
     public final int packedColor;
     public final Supplier<Value> defaultValue;
+    public final String translationKey;
 
     public boolean isAssignableFrom(Datatype other) {
         if ((this == Datatype.FLOW || other == Datatype.FLOW) && this != other) {

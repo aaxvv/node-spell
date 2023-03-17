@@ -16,10 +16,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.FlowRepeaterNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.ForLoopNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericConversionNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericIsInTagNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericRepeatNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericSelectNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.generic.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.input.CasterNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.input.RandomNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.item.GenericItemPropertyNode;
@@ -157,6 +154,7 @@ public class Nodes {
     public static final Node REPEAT_STRING = new GenericRepeatNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("repeat_string"), Datatype.STRING);
     public static final Node REPEAT_LIST = new GenericRepeatNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("repeat_list"), Datatype.LIST);
     public static final Node REPEAT_ANY = new GenericRepeatNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("repeat_any"), Datatype.ANY);
+
     public static final Node SELECT_NUM = new GenericSelectNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("select_num"), Datatype.NUMBER);
     public static final Node SELECT_VEC = new GenericSelectNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("select_vec"), Datatype.VECTOR);
     public static final Node SELECT_ENTITY = new GenericSelectNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("select_entity"), Datatype.ENTITY);
@@ -164,6 +162,17 @@ public class Nodes {
     public static final Node SELECT_ITEM = new GenericSelectNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("select_item"), Datatype.ITEM);
     public static final Node SELECT_STRING = new GenericSelectNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("select_string"), Datatype.STRING);
     public static final Node SELECT_LIST = new GenericSelectNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("select_list"), Datatype.LIST);
+
+    public static final Node CAST_TO_BOOL = new GenericCastNode(Datatype.BOOL, ModConstants.resLoc("cast_to_bool"));
+    public static final Node CAST_TO_NUMBER = new GenericCastNode(Datatype.NUMBER, ModConstants.resLoc("cast_to_number"));
+    public static final Node CAST_TO_VECTOR = new GenericCastNode(Datatype.VECTOR, ModConstants.resLoc("cast_to_vector"));
+    public static final Node CAST_TO_STRING = new GenericCastNode(Datatype.STRING, ModConstants.resLoc("cast_to_string"));
+    public static final Node CAST_TO_ENTITY = new GenericCastNode(Datatype.ENTITY, ModConstants.resLoc("cast_to_entity"));
+    public static final Node CAST_TO_BLOCK = new GenericCastNode(Datatype.BLOCK, ModConstants.resLoc("cast_to_block"));
+    public static final Node CAST_TO_ITEM = new GenericCastNode(Datatype.ITEM, ModConstants.resLoc("cast_to_item"));
+    public static final Node CAST_TO_LIST = new GenericCastNode(Datatype.LIST, ModConstants.resLoc("cast_to_list"));
+
+
 
     // ===== ENTITY =====
     public static final Node ENTITY_POSITION = new GenericEntityPropertyNode<>(
@@ -354,6 +363,14 @@ public class Nodes {
         register(SELECT_ITEM);
         register(SELECT_STRING);
         register(SELECT_LIST);
+        register(CAST_TO_BOOL);
+        register(CAST_TO_NUMBER);
+        register(CAST_TO_VECTOR);
+        register(CAST_TO_STRING);
+        register(CAST_TO_ENTITY);
+        register(CAST_TO_BLOCK);
+        register(CAST_TO_ITEM);
+        register(CAST_TO_LIST);
 
         register(ENTITY_POSITION);
         register(ITEM_IN_HAND);
