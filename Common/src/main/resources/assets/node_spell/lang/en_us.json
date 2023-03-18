@@ -172,7 +172,8 @@
   "node.node_spell.cast_to_list": "Cast to List",
 
   "node.node_spell.entity_pos": "Entity Pos.",
-  "node.node_spell.entity_item_in_hand": "Item in hand",
+  "node.node_spell.item_in_hand": "Item in hand",
+  "node.node_spell.next_item_in_hotbar": "Next Item in Hotbar",
   "node.node_spell.entity_health": "Entity HP",
   "node.node_spell.entity_max_health": "Entity Max HP",
   "node.node_spell.entity_look_direction": "Look Dir.",
@@ -183,6 +184,9 @@
 
   "node.node_spell.block_from_item": "Item -> Block",
   "node.node_spell.block_in_tag": "Block in Tag",
+  "node.node_spell.is_air": "Is Air",
+  "node.node_spell.block_id": "Block Id",
+  "node.node_spell.block_replaceable": "Replaceable",
 
   "node.node_spell.item_count": "Item Count",
   "node.node_spell.item_has_nbt": "Item has NBT",
@@ -263,12 +267,8 @@
   "socket.node_spell.low_out": "Out Low",
   "socket.node_spell.high_out": "Out High",
   "socket.node_spell.select_a": "Select A",
-  "socket.node_spell.has_nbt": "Has NBT",
   "socket.node_spell.id": "Id",
   "socket.node_spell.ticks": "Ticks",
-  "socket.node_spell.in_tag": "In Tag",
-  "socket.node_spell.stackable": "Stackable",
-  "socket.node_spell.damaged": "Damaged",
   "socket.node_spell.tag": "Tag",
   "socket.node_spell.ent": "Ent.",
   "socket.node_spell.power": "Power",

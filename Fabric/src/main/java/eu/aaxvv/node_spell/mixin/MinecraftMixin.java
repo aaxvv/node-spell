@@ -18,6 +18,7 @@ public class MinecraftMixin {
     @Shadow
     public LocalPlayer player;
 
+    // trigger spell selection overlay when left-clicking wand
     @Inject(method = "startAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/HitResult;getType()Lnet/minecraft/world/phys/HitResult$Type;", shift = At.Shift.BEFORE), cancellable = true)
     private void afterAttack(CallbackInfoReturnable<Boolean> cir) {
         ItemStack itemstack = this.player.getItemInHand(InteractionHand.MAIN_HAND);
@@ -25,7 +26,6 @@ public class MinecraftMixin {
             return;
         }
 
-        //TODO: still need a way to detect left release. maybe just check in the gui overlay if left no longer held?
         NodeSpellClient.getSpellSelectionOverlay().activate();
         cir.cancel();
     }

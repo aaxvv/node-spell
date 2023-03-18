@@ -2,7 +2,6 @@ package eu.aaxvv.node_spell.spell.graph.nodes.generic;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
-import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
@@ -23,7 +22,7 @@ public class GenericIsInTagNode<T> extends Node {
         super(category, ModConstants.resLoc(resLoc));
         this.sObjIn = addInputSocket(inType, "socket.node_spell." + inputName);
         this.sTagIn = addInputSocket(Datatype.STRING, "socket.node_spell.tag");
-        this.sOut = addOutputSocket(Datatype.BOOL, "socket.node_spell.in_tag");
+        this.sOut = addOutputSocket(Datatype.BOOL, "socket.node_spell.bool");
         this.checkFunction = checkFunction;
     }
 

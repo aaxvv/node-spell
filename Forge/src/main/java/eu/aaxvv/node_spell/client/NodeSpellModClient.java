@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.item.ModItems;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
@@ -18,6 +19,7 @@ public class NodeSpellModClient {
     public static void clientInit(FMLClientSetupEvent event) {
         NodeSpellClient.init();
 
+        // trigger spell selection overlay when left-clicking wand
         MinecraftForge.EVENT_BUS.addListener((PlayerInteractEvent.LeftClickEmpty clickEvent) -> {
             if (clickEvent.getItemStack().is(ModItems.WAND)) {
                 NodeSpellClient.getSpellSelectionOverlay().activate();
@@ -28,6 +30,16 @@ public class NodeSpellModClient {
             if (clickEvent.getItemStack().is(ModItems.WAND)) {
                 NodeSpellClient.getSpellSelectionOverlay().activate();
                 clickEvent.setCanceled(true);
+            }
+        });
+
+        // prevent wand from right-click interaction with entities
+        MinecraftForge.EVENT_BUS.addListener((PlayerInteractEvent.EntityInteract interactEvent) -> {
+            if (interactEvent.getItemStack().is(ModItems.WAND)) {
+                interactEvent.setCanceled(true);
+                if (Minecraft.getInstance().gameMode != null) {
+                    Minecraft.getInstance().gameMode.useItem(interactEvent.getEntity(), interactEvent.getHand());
+                }
             }
         });
     }

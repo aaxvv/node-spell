@@ -6,12 +6,14 @@ import eu.aaxvv.node_spell.platform.registry.PlatformRegistryWrapper;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.DebugPrintNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.action.PlaceBlockNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.block.BlockFromItemNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.block.GenericBlockPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.BasicNumberCompNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.EqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.NotEqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.entity.GenericEntityPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.entity.ItemInHandNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.entity.NextItemInHotbarNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.FlowRepeaterNode;
@@ -37,6 +39,7 @@ import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 import eu.aaxvv.node_spell.util.VectorUtil;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -47,6 +50,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -221,6 +225,12 @@ public class Nodes {
         TagKey<EntityType<?>> tag =  TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(tagName));
         return entity.getType().is(tag);
     });
+    public static final Node ENTITY_ID = new GenericEntityPropertyNode<>(
+            "entity_id",
+            Datatype.STRING,
+            "id",
+            entity -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())
+    );
 
     // target entity / position,
 
@@ -233,7 +243,9 @@ public class Nodes {
         TagKey<Block> tag =  TagKey.create(Registries.BLOCK, new ResourceLocation(tagName));
         return block.is(tag);
     });
-    // break, get at position, get id, is liquid, is solid, is flammable
+    public static final Node IS_AIR = new GenericBlockPropertyNode<>("is_air", Datatype.BOOL, "bool", BlockBehaviour.BlockStateBase::isAir);
+    public static final Node BLOCK_ID = new GenericBlockPropertyNode<>("block_id", Datatype.STRING, "id", state -> BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString());
+    public static final Node BLOCK_REPLACEABLE = new GenericBlockPropertyNode<>("block_replaceable", Datatype.BOOL, "bool", BlockBehaviour.BlockStateBase::canBeReplaced);
 
     // ===== ITEM =====
     public static final Node ITEM_COUNT = new GenericItemPropertyNode<>("item_count", Datatype.NUMBER, "count", item -> ((double) item.getCount()));
@@ -374,6 +386,7 @@ public class Nodes {
 
         register(ENTITY_POSITION);
         register(ITEM_IN_HAND);
+        register(NEXT_ITEM_IN_HOTBAR);
         register(ENTITY_HEALTH);
         register(ENTITY_MAX_HEALTH);
         register(ENTITY_VELOCITY);
@@ -381,9 +394,13 @@ public class Nodes {
         register(ENTITY_IS_SNEAKING);
         register(ENTITY_EYE_POSITION);
         register(ENTITY_IN_TAG);
+        register(ENTITY_ID);
 
         register(BLOCK_FROM_ITEM);
         register(BLOCK_IN_TAG);
+        register(IS_AIR);
+        register(BLOCK_ID);
+        register(BLOCK_REPLACEABLE);
 
         register(ITEM_COUNT);
         register(ITEM_HAS_NBT);
