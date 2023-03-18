@@ -54,6 +54,7 @@
   "gui.node_spell.spell_verification.cycle_found": "Graph contains a cycle.",
   "gui.node_spell.spell_verification.no_entrypoint": "No Flow Source found.",
   "gui.node_spell.spell_verification.multiple_entrypoints": "Multiple Flow Sources found.",
+  "gui.node_spell.spell_verification.incorrect_flow_order": "Output of flow node is used before node is run.",
 
   "node.category.node_spell.input": "INPUT",
   "node.category.node_spell.spell_flow": "SPELL FLOW",
