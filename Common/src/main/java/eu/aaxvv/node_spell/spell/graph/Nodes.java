@@ -9,11 +9,10 @@ import eu.aaxvv.node_spell.spell.graph.nodes.block.BlockFromItemNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.block.GenericBlockPropertyNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.BasicNumberCompNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.EqualsNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.comparison.InRangeNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.NotEqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.*;
-import eu.aaxvv.node_spell.spell.graph.nodes.entity.GenericEntityPropertyNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.entity.ItemInHandNode;
-import eu.aaxvv.node_spell.spell.graph.nodes.entity.NextItemInHotbarNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.entity.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.FlowRepeaterNode;
@@ -46,6 +45,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -53,6 +53,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class Nodes {
     public static PlatformRegistryWrapper<Node> REGISTRY;
@@ -95,6 +97,8 @@ public class Nodes {
     public static final Node ATAN = new BasicNumberUnaryOpNode(ModConstants.resLoc("atan"), Math::atan);
     public static final Node MAP_RANGE = new MapRangeNode();
 
+
+
     // ===== VECTOR =====
     public static final Node VEC_CONSTRUCT = new VectorConstructNode();
     public static final Node VEC_DESTRUCT = new VectorDestructNode();
@@ -122,7 +126,6 @@ public class Nodes {
             .build();
     public static final Node VEC_SCALE = new VectorScaleNode();
 
-    // scale, project, rotate around
 
     // ===== LOGIC =====
     public static final Node AND = new BasicBoolOpNode(ModConstants.resLoc("and"), (a, b) -> a && b);
@@ -134,6 +137,7 @@ public class Nodes {
             .function(b -> !b)
             .build();
 
+
     // ===== COMPARE =====
     public static final Node EQUALS = new EqualsNode();
     public static final Node NOT_EQUAL = new NotEqualsNode();
@@ -141,12 +145,15 @@ public class Nodes {
     public static final Node GREATER_THAN = new BasicNumberCompNode(ModConstants.resLoc("greater_than"), (a, b) -> a > b);
     public static final Node LESS_THAN_OR_EQUALS = new BasicNumberCompNode(ModConstants.resLoc("less_than_or_eq"), (a, b) -> a <= b);
     public static final Node GREATER_THAN_OR_EQUALS = new BasicNumberCompNode(ModConstants.resLoc("greater_than_or_eq"), (a, b) -> a >= b);
+    public static final Node IN_RANGE = new InRangeNode();
+
 
     // ===== FLOW =====
     public static final Node ENTRY_POINT = new EntryPointNode();
     public static final Node BRANCH = new BranchNode();
     public static final Node FOR_RANGE = new ForLoopNode();
     public static final Node REPEAT_FLOW = new FlowRepeaterNode();
+
 
     // ===== DATA FLOW =====
     public static final Node REPEAT_BOOL = new GenericRepeatNode(NodeCategories.DATA_FLOW, ModConstants.resLoc("repeat_bool"), Datatype.BOOL);
@@ -175,7 +182,6 @@ public class Nodes {
     public static final Node CAST_TO_BLOCK = new GenericCastNode(Datatype.BLOCK, ModConstants.resLoc("cast_to_block"));
     public static final Node CAST_TO_ITEM = new GenericCastNode(Datatype.ITEM, ModConstants.resLoc("cast_to_item"));
     public static final Node CAST_TO_LIST = new GenericCastNode(Datatype.LIST, ModConstants.resLoc("cast_to_list"));
-
 
 
     // ===== ENTITY =====
@@ -229,15 +235,15 @@ public class Nodes {
             "entity_id",
             Datatype.STRING,
             "id",
-            entity -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())
+            entity -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString()
     );
-
-    // target entity / position,
-
     public static final Node ITEM_IN_HAND = new ItemInHandNode();
+    public static final Node NEXT_ITEM_IN_HOTBAR = new NextItemInHotbarNode();
+    public static final Node ENTITY_TARGET_ENTITY = new TargetEntityNode();
+    public static final Node ENTITY_TARGET_POS = new TargetPosNode();
+
 
     // ===== BLOCK =====
-    // block: at position, from item, is in tag, redstone activated, name, waterlogged / flammable?
     public static final Node BLOCK_FROM_ITEM = new BlockFromItemNode();
     public static final Node BLOCK_IN_TAG = new GenericIsInTagNode<BlockState>(NodeCategories.BLOCK, "block_in_tag", Datatype.BLOCK, "block", (block, tagName) -> {
         TagKey<Block> tag =  TagKey.create(Registries.BLOCK, new ResourceLocation(tagName));
@@ -247,15 +253,25 @@ public class Nodes {
     public static final Node BLOCK_ID = new GenericBlockPropertyNode<>("block_id", Datatype.STRING, "id", state -> BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString());
     public static final Node BLOCK_REPLACEABLE = new GenericBlockPropertyNode<>("block_replaceable", Datatype.BOOL, "bool", BlockBehaviour.BlockStateBase::canBeReplaced);
 
+
     // ===== ITEM =====
     public static final Node ITEM_COUNT = new GenericItemPropertyNode<>("item_count", Datatype.NUMBER, "count", item -> ((double) item.getCount()));
-    public static final Node ITEM_HAS_NBT = new GenericItemPropertyNode<>("item_has_nbt", Datatype.BOOL, "has_nbt", ItemStack::hasTag);
-    public static final Node ITEM_IS_DAMAGED = new GenericItemPropertyNode<>("item_is_damaged", Datatype.BOOL, "damaged", ItemStack::isDamaged);
-    public static final Node ITEM_IS_STACKABLE = new GenericItemPropertyNode<>("item_is_stackable", Datatype.BOOL, "stackable", ItemStack::isStackable);
+    public static final Node ITEM_HAS_NBT = new GenericItemPropertyNode<>("item_has_nbt", Datatype.BOOL, "bool", ItemStack::hasTag);
+    public static final Node ITEM_IS_DAMAGED = new GenericItemPropertyNode<>("item_is_damaged", Datatype.BOOL, "bool", ItemStack::isDamaged);
+    public static final Node ITEM_IS_STACKABLE = new GenericItemPropertyNode<>("item_is_stackable", Datatype.BOOL, "bool", ItemStack::isStackable);
     public static final Node ITEM_IN_TAG = new GenericIsInTagNode<ItemStack>(NodeCategories.ITEM, "item_in_tag", Datatype.ITEM, "item", (item, tagName) -> {
         TagKey<Item> tag =  TagKey.create(Registries.ITEM, new ResourceLocation(tagName));
         return item.is(tag);
     });
+    public static final Node ITEM_IS_EMPTY = new GenericItemPropertyNode<>("item_is_empty", Datatype.BOOL, "bool", ItemStack::isEmpty);
+    public static final Node ITEM_FROM_ENTITY = new GenericEntityPropertyNode<>("item_from_entity", Datatype.ITEM, "item", entity -> {
+        if (entity instanceof ItemEntity itemEntity) {
+            return itemEntity.getItem();
+        } else {
+            return ItemStack.EMPTY;
+        }
+    });
+    public static final Node ITEM_FROM_BLOCK = new GenericBlockPropertyNode<>("item_from_block", Datatype.ITEM, "item", blockState -> blockState.getBlock().asItem().getDefaultInstance());
 
 
     // ===== WORLD =====
@@ -266,6 +282,7 @@ public class Nodes {
     public static final Node REDSTONE_POWER = new GenericBlockPosQueryNode<>("redstone_power", Datatype.NUMBER, "power", (level, pos) -> (double)level.getDirectSignalTo(pos));
     public static final Node BLOCK_AT_POS = new GenericBlockPosQueryNode<>("block_at_pos", Datatype.BLOCK, "block", Level::getBlockState);
 
+
     // ===== STRING =====
     public static final Node STRING_APPEND = new BasicStringOpNode<>(ModConstants.resLoc("string_append"), Datatype.STRING, Value::createString, (a, b) -> a + b);
     public static final Node STRING_CONTAINS = new BasicStringOpNode<>(ModConstants.resLoc("string_contains"), Datatype.BOOL, Value::createBool, String::contains);
@@ -273,12 +290,31 @@ public class Nodes {
     public static final Node STRING_ENDS_WITH = new BasicStringOpNode<>(ModConstants.resLoc("string_ends_with"), Datatype.BOOL, Value::createBool, String::endsWith);
     public static final Node STRING_INDEX_OF = new BasicStringOpNode<>(ModConstants.resLoc("string_index_of"), Datatype.NUMBER, Value::createNumber, (a, b) -> (double)a.indexOf(b));
     public static final Node TO_STRING = new ToStringNode();
-    // substring, char at,
+    public static final Node TO_LOWER_CASE = new GenericConversionNode
+            .Builder<String, String>(NodeCategories.STRING, "to_lower_case")
+            .types(Datatype.STRING, Datatype.STRING)
+            .socketNames("string", "string")
+            .function(String::toLowerCase)
+            .build();
+    public static final Node TO_UPPER_CASE = new GenericConversionNode
+            .Builder<String, String>(NodeCategories.STRING, "to_upper_case")
+            .types(Datatype.STRING, Datatype.STRING)
+            .socketNames("string", "string")
+            .function(String::toUpperCase)
+            .build();
+    public static final Node TO_CHAR_LIST = new GenericConversionNode
+            .Builder<String, List<Value>>(NodeCategories.STRING, "to_char_list")
+            .types(Datatype.STRING, Datatype.LIST)
+            .socketNames("string", "chars")
+            .function(str -> str.chars().mapToObj(c -> Value.createString(Character.toString(c))).toList())
+            .build();
+    // substring, char at
+
 
     // ===== ACTION =====
     public static final Node PRINT = new DebugPrintNode();
     public static final Node PLACE_BLOCK = new PlaceBlockNode();
-    // place block, break block, apply impulse,
+
 
     // ===== MEMORY =====
     public static final Node GET_VARIABLE = new GetVariableNode();
@@ -288,6 +324,7 @@ public class Nodes {
     public static final Node WRITE_PAPER = new WritePaperNode();
     public static final Node READ_PAPER = new ReadPaperNode();
     public static final Node IS_WRITTEN_PAPER = new IsWrittenPaperNode();
+
 
     // ===== LIST =====
 
@@ -353,6 +390,7 @@ public class Nodes {
         register(LESS_THAN);
         register(GREATER_THAN_OR_EQUALS);
         register(LESS_THAN_OR_EQUALS);
+        register(IN_RANGE);
 
         register(ENTRY_POINT);
         register(BRANCH);
@@ -395,6 +433,8 @@ public class Nodes {
         register(ENTITY_EYE_POSITION);
         register(ENTITY_IN_TAG);
         register(ENTITY_ID);
+        register(ENTITY_TARGET_ENTITY);
+        register(ENTITY_TARGET_POS);
 
         register(BLOCK_FROM_ITEM);
         register(BLOCK_IN_TAG);
@@ -407,6 +447,9 @@ public class Nodes {
         register(ITEM_IS_DAMAGED);
         register(ITEM_IS_STACKABLE);
         register(ITEM_IN_TAG);
+        register(ITEM_IS_EMPTY);
+        register(ITEM_FROM_ENTITY);
+        register(ITEM_FROM_BLOCK);
 
         register(RAY_CAST_BLOCK);
         register(RAY_CAST_ENTITY);
@@ -421,6 +464,9 @@ public class Nodes {
         register(STRING_ENDS_WITH);
         register(STRING_INDEX_OF);
         register(TO_STRING);
+        register(TO_LOWER_CASE);
+        register(TO_UPPER_CASE);
+        register(TO_CHAR_LIST);
 
         register(PRINT);
         register(PLACE_BLOCK);

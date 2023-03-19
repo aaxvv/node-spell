@@ -22,7 +22,7 @@ public class BasicNumberCompNode extends Node {
         super(NodeCategories.COMPARISON, resLoc);
         this.sA = addInputSocket(Datatype.NUMBER, "socket.node_spell.a");
         this.sB = addInputSocket(Datatype.NUMBER, "socket.node_spell.b");
-        this.sResult = addOutputSocket(Datatype.BOOL, "socket.node_spell.result");
+        this.sResult = addOutputSocket(Datatype.BOOL, "socket.node_spell.bool");
         this.operation = operation;
     }
 

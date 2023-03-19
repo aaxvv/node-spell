@@ -140,6 +140,7 @@
   "node.node_spell.greater_than": ">",
   "node.node_spell.less_than_or_eq": "<=",
   "node.node_spell.greater_than_or_eq": ">=",
+  "node.node_spell.in_range": "In Range",
 
   "node.node_spell.entrypoint": "Flow Source",
   "node.node_spell.branch": "Branch",
@@ -173,7 +174,7 @@
 
   "node.node_spell.entity_pos": "Entity Pos.",
   "node.node_spell.item_in_hand": "Item in hand",
-  "node.node_spell.next_item_in_hotbar": "Next Item in Hotbar",
+  "node.node_spell.next_item_in_hotbar": "Next Hotbar Item",
   "node.node_spell.entity_health": "Entity HP",
   "node.node_spell.entity_max_health": "Entity Max HP",
   "node.node_spell.entity_look_direction": "Look Dir.",
@@ -181,6 +182,9 @@
   "node.node_spell.entity_is_sneaking": "Is Sneaking",
   "node.node_spell.entity_eye_pos": "Eye Pos.",
   "node.node_spell.entity_in_tag": "Ent. in Tag",
+  "node.node_spell.entity_target_entity": "Target Ent.",
+  "node.node_spell.entity_target_pos": "Target Pos.",
+  "node.node_spell.entity_id": "Entity Id",
 
   "node.node_spell.block_from_item": "Item -> Block",
   "node.node_spell.block_in_tag": "Block in Tag",
@@ -193,6 +197,9 @@
   "node.node_spell.item_is_damaged": "Item Damaged",
   "node.node_spell.item_is_stackable": "Item Stackable",
   "node.node_spell.item_in_tag": "Item in Tag",
+  "node.node_spell.item_from_entity": "Item Ent. -> Item",
+  "node.node_spell.item_from_block": "Block -> Item",
+  "node.node_spell.item_is_empty": "Item Empty",
 
   "node.node_spell.ray_cast_block": "Raycast Block",
   "node.node_spell.raycast_entity": "Raycast Entity",
@@ -207,6 +214,9 @@
   "node.node_spell.string_ends_with": "Ends with",
   "node.node_spell.string_index_of": "Index of",
   "node.node_spell.to_string": "To String",
+  "node.node_spell.to_lower_case": "Lower Case",
+  "node.node_spell.to_upper_case": "Upper Case",
+  "node.node_spell.to_char_list": "To Char List",
 
   "node.node_spell.print": "Print",
   "node.node_spell.place_block": "Place Block",
@@ -275,5 +285,6 @@
   "socket.node_spell.holder": "Holder",
   "socket.node_spell.paper": "Paper",
   "socket.node_spell.success": "Success",
-  "socket.node_spell.failure": "Failure"
+  "socket.node_spell.failure": "Failure",
+  "socket.node_spell.chars": "Chars"
 }

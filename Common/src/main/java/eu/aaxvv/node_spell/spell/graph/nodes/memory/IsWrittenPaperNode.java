@@ -38,4 +38,9 @@ public class IsWrittenPaperNode extends Node {
 
         instance.setSocketValue(this.sResult, Value.createBool(true));
     }
+
+    @Override
+    public int getWidth() {
+        return (int) (super.getWidth() * 1.2);
+    }
 }
