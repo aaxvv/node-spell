@@ -128,6 +128,8 @@
   "node.node_spell.vec_nearest_axis": "Nearest Axis",
   "node.node_spell.vec_normalize": "Normalize",
   "node.node_spell.vec_scale": "Vec. Scale",
+  "node.node_spell.vector_rotate": "Vec. Rotate",
+  "node.node_spell.vector_project": "Vec. Project",
 
   "node.node_spell.and": "And",
   "node.node_spell.or": "Or",
@@ -286,5 +288,7 @@
   "socket.node_spell.paper": "Paper",
   "socket.node_spell.success": "Success",
   "socket.node_spell.failure": "Failure",
-  "socket.node_spell.chars": "Chars"
+  "socket.node_spell.chars": "Chars",
+  "socket.node_spell.angle": "Angle",
+  "socket.node_spell.onto": "Onto"
 }

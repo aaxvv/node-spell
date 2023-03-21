@@ -125,6 +125,8 @@ public class Nodes {
             .function(Vec3::normalize)
             .build();
     public static final Node VEC_SCALE = new VectorScaleNode();
+    public static final Node VEC_ROTATE = new VectorRotateNode();
+    public static final Node VEC_PROJECT = new VectorProjectNode();
 
 
     // ===== LOGIC =====
@@ -378,6 +380,8 @@ public class Nodes {
         register(VEC_NEAREST_AXIS);
         register(VEC_NORMALIZE);
         register(VEC_SCALE);
+        register(VEC_ROTATE);
+        register(VEC_PROJECT);
 
         register(AND);
         register(OR);
