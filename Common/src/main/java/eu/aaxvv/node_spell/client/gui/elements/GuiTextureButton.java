@@ -7,6 +7,7 @@ import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class GuiTextureButton extends GuiElement {
 
     @Override
     public boolean onMouseDown(double screenX, double screenY, int button) {
-        if (this.clickCallback != null) {
+        if (this.clickCallback != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             this.clickCallback.run();
             return true;
         }

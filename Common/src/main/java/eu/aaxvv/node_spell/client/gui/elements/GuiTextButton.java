@@ -5,6 +5,7 @@ import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
 
 public class GuiTextButton extends GuiElement {
     private Component text;
@@ -44,7 +45,7 @@ public class GuiTextButton extends GuiElement {
 
     @Override
     public boolean onMouseDown(double screenX, double screenY, int button) {
-        if (this.clickCallback != null) {
+        if (this.clickCallback != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             this.clickCallback.run();
             return true;
         }
