@@ -1,15 +1,13 @@
 package eu.aaxvv.node_spell.item;
 
 import eu.aaxvv.node_spell.NodeSpellCommon;
+import eu.aaxvv.node_spell.helper.NbtHelper;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -25,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class WandItem extends Item {
 
@@ -35,7 +34,7 @@ public class WandItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lines, TooltipFlag flag) {
         super.appendHoverText(stack, level, lines, flag);
-        String spellName = stack.getOrCreateTag().getString("Spell");
+        String spellName = stack.getOrCreateTag().getString("SpellName");
         if (spellName.isEmpty()) {
             spellName = "-";
         }
@@ -44,10 +43,12 @@ public class WandItem extends Item {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
+        player.getCooldowns().addCooldown(this.asItem(), 20);
         ItemStack stack = player.getItemInHand(hand);
         CompoundTag tag = stack.getOrCreateTag();
+        Tag idTag = tag.get("SpellId");
 
-        if (!tag.contains("Spell")) {
+        if (idTag == null) {
             player.displayClientMessage(Component.translatable("gui.node_spell.no_spell_selected").withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);
         }
@@ -69,9 +70,9 @@ public class WandItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
-        String spellName = tag.getString("Spell");
-        CompoundTag spellNbt = this.getSpellFromBook(spellBook.bookStack, spellName);
-        Optional<Spell> cachedSpell = NodeSpellCommon.playerSpellCache.getOrCreate(player.getUUID(), spellName, spellNbt, new SpellDeserializationContext.ServerSide(player, spellBook.bookStack));
+        UUID spellId = NbtUtils.loadUUID(idTag);
+        CompoundTag spellNbt = this.getSpellFromBook(spellBook.bookStack, spellId);
+        Optional<Spell> cachedSpell = NodeSpellCommon.playerSpellCache.getOrCreate(player.getUUID(), spellId, spellNbt, new SpellDeserializationContext.ServerSide(player, spellBook.bookStack));
 
         if (cachedSpell.isEmpty()) {
             player.displayClientMessage(Component.translatable("gui.node_spell.spell_not_active").withStyle(ChatFormatting.RED), true);
@@ -79,8 +80,6 @@ public class WandItem extends Item {
         }
 
         boolean success = NodeSpellCommon.spellTaskRunner.startSpell(player.getUUID(), cachedSpell.get(), new SpellContext((ServerPlayer) player, level, cachedSpell.get().getName()));
-
-        player.getCooldowns().addCooldown(this.asItem(), 20);
 
         return success ? InteractionResultHolder.consume(stack) : InteractionResultHolder.fail(stack);
     }
@@ -102,18 +101,13 @@ public class WandItem extends Item {
         return new SpellBookResult(found, false);
     }
 
-    private CompoundTag getSpellFromBook(ItemStack spellBook, String spellName) {
-        ListTag bookActiveSpellsTag = spellBook.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
-        if (!bookActiveSpellsTag.contains(StringTag.valueOf(spellName))) {
+    private CompoundTag getSpellFromBook(ItemStack spellBook, UUID spellId) {
+        ListTag bookActiveSpellsTag = spellBook.getOrCreateTag().getList("ActiveSpells", Tag.TAG_INT_ARRAY);
+        if (!bookActiveSpellsTag.contains(NbtUtils.createUUID(spellId))) {
             return null;
         }
 
-        CompoundTag bookSpellListTag = spellBook.getOrCreateTagElement("Spells");
-        if (bookSpellListTag.contains(spellName)) {
-            return bookSpellListTag.getCompound(spellName);
-        } else {
-            return null;
-        }
+        return NbtHelper.findSpellInBookTag(spellBook, spellId);
     }
 
     private record SpellBookResult(ItemStack bookStack, boolean duplicate){}

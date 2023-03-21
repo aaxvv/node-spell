@@ -5,9 +5,11 @@ import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class SubSpellInstanceData {
     private Map<NodeInstance, SocketInstance> sockets;
+    private UUID spellId;
     private String spellName;
     private final Spell referencedSpell;
     private final NodeInstance parentInstance;
@@ -17,6 +19,7 @@ public class SubSpellInstanceData {
         this.parentInstance = parentInstance;
         this.referencedSpell = spell;
         this.spellName = spell.getName();
+        this.spellId = spell.getId();
 
         for (var externalSocket : this.referencedSpell.getGraph().getExternalSockets().entrySet()) {
             SocketInstance instance = new SocketInstance(externalSocket.getValue(), this.parentInstance);

@@ -3,6 +3,8 @@ package eu.aaxvv.node_spell.item;
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,11 +24,14 @@ public class WrittenPaperItem extends Item {
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> components, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, components, flag);
 
-        CompoundTag spellTag = stack.getOrCreateTagElement("Spells");
+        ListTag spellTag = stack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND);
         if (!spellTag.isEmpty()) {
             components.add(Component.translatable("node_spell.written_paper.spell_header").withStyle(ChatFormatting.GRAY));
-            for (String key : spellTag.getAllKeys()) {
-                components.add(Component.literal(" - " + key).withStyle(ChatFormatting.GRAY));
+            for (Tag tag : spellTag) {
+                if (tag instanceof CompoundTag compound) {
+                    String name = compound.getString("Name");
+                    components.add(Component.literal(" - " + name).withStyle(ChatFormatting.GRAY));
+                }
             }
         }
 

@@ -4,6 +4,8 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
+import eu.aaxvv.node_spell.helper.InventoryHelper;
+import eu.aaxvv.node_spell.helper.NbtHelper;
 import eu.aaxvv.node_spell.item.ModItems;
 import eu.aaxvv.node_spell.network.packet.UpdateWandActiveSpellC2SPacket;
 import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
@@ -13,7 +15,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +26,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class SpellSelectionOverlay extends GuiComponent {
     private static final int SLICE_COUNT = 8;
@@ -37,12 +43,12 @@ public class SpellSelectionOverlay extends GuiComponent {
     private int activeSlice;
     private int wandSlot;
 
-    private final String[] activeSpellNames;
+    private final SelectableSpell[] activeSpellNames;
 
     public SpellSelectionOverlay() {
         this.active = false;
         this.activeSlice = -1;
-        this.activeSpellNames = new String[SLICE_COUNT];
+        this.activeSpellNames = new SelectableSpell[SLICE_COUNT];
     }
 
     public void activate() {
@@ -67,12 +73,12 @@ public class SpellSelectionOverlay extends GuiComponent {
         Minecraft.getInstance().mouseHandler.grabMouse();
 
         if (this.activeSlice != -1 && this.wandSlot != -1) {
-            String spellName = this.activeSpellNames[this.activeSlice];
-            if (spellName == null) {
-                spellName = "";
+            SelectableSpell spell = this.activeSpellNames[this.activeSlice];
+            if (spell == null) {
+                ClientPlatformHelper.INSTANCE.sendToServer(new UpdateWandActiveSpellC2SPacket(this.wandSlot, null));
+            } else {
+                ClientPlatformHelper.INSTANCE.sendToServer(new UpdateWandActiveSpellC2SPacket(this.wandSlot, spell.id));
             }
-
-            ClientPlatformHelper.INSTANCE.sendToServer(new UpdateWandActiveSpellC2SPacket(this.wandSlot, spellName));
         }
     }
 
@@ -157,10 +163,12 @@ public class SpellSelectionOverlay extends GuiComponent {
         for (int i = 0; i < SLICE_COUNT; i++) {
             double startAngle = SLICE_ANGLE * i + (SLICE_ANGLE * 0.5);
 
-            String text = this.activeSpellNames[i];
-            if (text == null) {
+            SelectableSpell spell = this.activeSpellNames[i];
+            if (spell == null) {
                 continue;
             }
+
+            String text = spell.name;
 
             pose.setIdentity();
             // translate to middle of wheel
@@ -198,31 +206,29 @@ public class SpellSelectionOverlay extends GuiComponent {
             return false;
         }
 
-        ItemStack found = null;
+        List<ItemStack> bookStacks = InventoryHelper.findAllStacksInInventory(player, stack -> stack.is(ModItems.SPELL_BOOK));
 
-        for(int i = 0; i < player.getInventory().getContainerSize(); ++i) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if (stack.is(ModItems.SPELL_BOOK)) {
-                if (found != null) {
-                    player.displayClientMessage(Component.translatable("gui.node_spell.multiple_spell_books_found").withStyle(ChatFormatting.RED), true);
-                    return false;
-                }
-
-                found = stack;
-            }
-        }
-
-        if (found == null) {
+        if (bookStacks.isEmpty()) {
             player.displayClientMessage(Component.translatable("gui.node_spell.spell_book_not_found").withStyle(ChatFormatting.RED), true);
+            return false;
 
+        } else if (bookStacks.size() > 1) {
+            player.displayClientMessage(Component.translatable("gui.node_spell.multiple_spell_books_found").withStyle(ChatFormatting.RED), true);
             return false;
         }
 
-        ListTag activeSpellsList = found.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
+        ItemStack found = bookStacks.get(0);
+
+        ListTag activeSpellsList = found.getOrCreateTag().getList("ActiveSpells", Tag.TAG_INT_ARRAY);
+
         Arrays.fill(this.activeSpellNames, null);
         for (int i = 0; i < activeSpellsList.size(); i++) {
-            this.activeSpellNames[i] = activeSpellsList.get(i).getAsString();
+            UUID spellId = NbtUtils.loadUUID(activeSpellsList.get(i));
+            CompoundTag spellTag = NbtHelper.findSpellInBookTag(found, spellId);
+            this.activeSpellNames[i] = new SelectableSpell(spellId, spellTag.getString("Name"));
         }
         return true;
     }
+
+    private record SelectableSpell(UUID id, String name){}
 }

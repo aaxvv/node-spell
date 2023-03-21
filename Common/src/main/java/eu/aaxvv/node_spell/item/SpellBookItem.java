@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.item;
 import eu.aaxvv.node_spell.client.screen.SpellBookScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -36,7 +37,7 @@ public class SpellBookItem extends Item {
     public void appendHoverText(@NotNull ItemStack itemStack, @Nullable Level level, @NotNull List<Component> components, @NotNull TooltipFlag flag) {
         super.appendHoverText(itemStack, level, components, flag);
 
-        int spellCount = itemStack.getOrCreateTagElement("Spells").size();
+        int spellCount = itemStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND).size();
         components.add(Component.translatable("gui.node_spell.book_spell_tooltip", spellCount).withStyle(ChatFormatting.GRAY));
     }
 }

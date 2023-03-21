@@ -7,24 +7,24 @@ import net.minecraft.nbt.CompoundTag;
 import java.util.*;
 
 public class PlayerSpellCache {
-    private final Map<UUID, Map<String, Spell>> cache;
+    private final Map<UUID, Map<UUID, Spell>> cache;
 
     public PlayerSpellCache() {
         this.cache = new HashMap<>();
     }
 
-    public Optional<Spell> get(UUID playerUuid, String spellName) {
-        Map<String, Spell> map = cache.get(playerUuid);
+    public Optional<Spell> get(UUID playerUuid, UUID spellId) {
+        Map<UUID, Spell> map = cache.get(playerUuid);
         if (map == null) {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(map.get(spellName));
+        return Optional.ofNullable(map.get(spellId));
     }
 
-    public Optional<Spell> getOrCreate(UUID playerUuid, String spellName, CompoundTag spellNbt, SpellDeserializationContext context) {
-        Map<String, Spell> map = cache.computeIfAbsent(playerUuid, key -> new HashMap<>());
-        Spell spell = map.get(spellName);
+    public Optional<Spell> getOrCreate(UUID playerUuid, UUID spellId, CompoundTag spellNbt, SpellDeserializationContext context) {
+        Map<UUID, Spell> map = cache.computeIfAbsent(playerUuid, key -> new HashMap<>());
+        Spell spell = map.get(spellId);
 
         if (spell == null) {
             if (spellNbt == null) {
@@ -34,20 +34,20 @@ public class PlayerSpellCache {
             spell = Spell.fromNbt(spellNbt, context);
             GraphVerifier verifier = new GraphVerifier(spell.getGraph());
             spell.setHasErrors(!verifier.check());
-            map.put(spellName, spell);
+            map.put(spellId, spell);
         }
 
         return Optional.of(spell);
     }
 
-    public void put(UUID playerUuid, String spellName, Spell spell) {
-        Map<String, Spell> map = cache.computeIfAbsent(playerUuid, k -> new HashMap<>());
+    public void put(UUID playerUuid, UUID spellId, Spell spell) {
+        Map<UUID, Spell> map = cache.computeIfAbsent(playerUuid, k -> new HashMap<>());
 
-        map.put(spellName, spell);
+        map.put(spellId, spell);
     }
 
     public void invalidate(UUID playerUuid) {
-        Map<String, Spell> map = cache.get(playerUuid);
+        Map<UUID, Spell> map = cache.get(playerUuid);
         if (map == null) {
             return;
         }

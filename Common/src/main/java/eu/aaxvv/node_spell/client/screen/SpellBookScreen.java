@@ -9,6 +9,7 @@ import eu.aaxvv.node_spell.client.gui.helper.TextEditController;
 import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
 import eu.aaxvv.node_spell.client.gui.spell_list.GuiSpellListItem;
 import eu.aaxvv.node_spell.helper.InventoryHelper;
+import eu.aaxvv.node_spell.helper.NbtHelper;
 import eu.aaxvv.node_spell.item.ModItems;
 import eu.aaxvv.node_spell.network.packet.ExportSpellsC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
@@ -17,10 +18,7 @@ import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -110,7 +108,7 @@ public class SpellBookScreen extends BaseScreen {
                 return false;
             }
 
-            return stack.getOrCreateTag().contains("Spells", Tag.TAG_COMPOUND);
+            return stack.getOrCreateTag().contains("Spells", Tag.TAG_LIST);
         });
     }
 
@@ -125,7 +123,7 @@ public class SpellBookScreen extends BaseScreen {
         if (selected.getCachedSpell() != null) {
             spell = selected.getCachedSpell();
         } else {
-            CompoundTag spellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(selected.getSpellName());
+            CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.bookStack, selected.getSpellId());
             spell = Spell.fromNbt(spellTag, new SpellDeserializationContext.ClientSide(this));
             selected.setCachedSpell(spell);
         }
@@ -136,11 +134,13 @@ public class SpellBookScreen extends BaseScreen {
     private void onRemoveSpell() {
         this.selectionModel.getSelectedItems().forEach(item -> {
             if (item instanceof GuiSpellListItem listItem) {
-                this.bookStack.getOrCreateTagElement("Spells").remove(listItem.getSpellName());
+                Tag idTag = NbtUtils.createUUID(listItem.getSpellId());
+                this.bookStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND).removeIf(tag -> tag instanceof CompoundTag compound && idTag.equals(compound.get("Id")));
                 this.spellList.removeChild(listItem);
 
-                ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
-                activeSpellsList.removeIf(tag -> tag.getAsString().equals(listItem.getSpellName()));
+                ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_LIST);
+
+                activeSpellsList.removeIf(tag -> tag.equals(idTag));
             }
         });
         this.selectionModel.deselectAll();
@@ -148,8 +148,9 @@ public class SpellBookScreen extends BaseScreen {
 
     private void onAddSpell() {
         String name = getNewSpellName("New Spell");
-        addSpellItem(name);
-        this.bookStack.getOrCreateTagElement("Spells").put(name, Spell.createEmptyNbt(name));
+        UUID spellId = UUID.randomUUID();
+        addSpellItem(name, spellId);
+        this.bookStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND).add(Spell.createEmptyNbt(name, spellId));
     }
 
     private void onRenameSpell() {
@@ -180,17 +181,10 @@ public class SpellBookScreen extends BaseScreen {
                 return false;
             }
 
-            CompoundTag oldSpellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(selected.getSpellName());
-            this.bookStack.getOrCreateTagElement("Spells").remove(selected.getSpellName());
-
-            ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
-            if (activeSpellsList.removeIf(tag -> tag.getAsString().equals(selected.getSpellName()))) {
-                activeSpellsList.add(StringTag.valueOf(newName));
-            }
+            CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.bookStack, selected.getSpellId());
 
             selected.setSpellName(newName);
-            this.bookStack.getOrCreateTagElement("Spells").put(newName, oldSpellTag);
-            oldSpellTag.putString("Name", newName);
+            spellTag.putString("Name", newName);
             this.renaming = null;
             this.spellList.getChildren().sort(Comparator.comparing(child -> ((GuiSpellListItem)child).getSpellName()));
             return true;
@@ -227,19 +221,23 @@ public class SpellBookScreen extends BaseScreen {
             newSpellTag = new CompoundTag();
             selected.getCachedSpell().serialize(newSpellTag);
         } else {
-            newSpellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(selected.getSpellName()).copy();
+            newSpellTag = NbtHelper.findSpellInBookTag(this.bookStack, selected.getSpellId()).copy();
         }
 
+        newSpellTag.put("Id", NbtUtils.createUUID(UUID.randomUUID()));
         String name = getNewSpellName(selected.getSpellName());
-        addSpellItem(name);
-        this.bookStack.getOrCreateTagElement("Spells").put(name, newSpellTag);
+        newSpellTag.putString("Name", name);
+
+        addSpellItem(name, UUID.randomUUID());
+        this.bookStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND).add(newSpellTag);
     }
 
     private void onFavoriteSpell(GuiSpellListItem item) {
-        ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING);
+        ListTag activeSpellsList = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_LIST);
         if (item.isFavorite()) {
             item.setFavorite(false);
-            activeSpellsList.removeIf(tag -> tag.getAsString().equals(item.getSpellName()));
+            Tag idTag = NbtUtils.createUUID(item.getSpellId());
+            activeSpellsList.removeIf(tag -> tag.equals(idTag));
         } else {
             if (activeSpellsList.size() >= MAX_FAVORITE_SPELLS) {
                 this.errorText.show(Component.translatable("gui.node_spell.spell_list.favorite_limit_error", 8).withStyle(ChatFormatting.RED), 60);
@@ -247,7 +245,7 @@ public class SpellBookScreen extends BaseScreen {
             }
 
             item.setFavorite(true);
-            activeSpellsList.add(StringTag.valueOf(item.getSpellName()));
+            activeSpellsList.add(NbtUtils.createUUID(item.getSpellId()));
         }
 
         this.bookStack.getOrCreateTag().put("ActiveSpells", activeSpellsList);
@@ -258,12 +256,10 @@ public class SpellBookScreen extends BaseScreen {
         // save all cached spells to nbt
         for (GuiElement child : this.spellList.getChildren()) {
             if (child instanceof GuiSpellListItem item && item.getCachedSpell() != null) {
-                String spellName = item.getSpellName();
                 Spell spell = item.getCachedSpell();
 
-                CompoundTag spellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(spellName);
+                CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.bookStack, item.getSpellId());
                 spell.serialize(spellTag);
-                this.bookStack.getOrCreateTagElement("Spells").put(spellName, spellTag);
             }
         }
 
@@ -279,7 +275,7 @@ public class SpellBookScreen extends BaseScreen {
             return;
         }
 
-        CompoundTag spellsToExport = new CompoundTag();
+        ListTag spellsToExport = new ListTag();
 
         this.selectionModel.getSelectedItems().forEach(item -> {
             if (item instanceof GuiSpellListItem listItem) {
@@ -288,10 +284,13 @@ public class SpellBookScreen extends BaseScreen {
                     spellTag = new CompoundTag();
                     listItem.getCachedSpell().serialize(spellTag);
                 } else {
-                    spellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(listItem.getSpellName());
+                    spellTag = NbtHelper.findSpellInBookTag(this.bookStack, listItem.getSpellId());
                 }
 
-                spellsToExport.put(listItem.getSpellName(), spellTag);
+                if (spellTag == null) {
+                    return;
+                }
+                spellsToExport.add(spellTag);
             }
         });
 
@@ -306,17 +305,32 @@ public class SpellBookScreen extends BaseScreen {
         }
 
         ItemStack stackToLoad = this.writtenSpellPaperItems.get(this.selectedImportItemIdx);
-        CompoundTag spellsTag = stackToLoad.getOrCreateTagElement("Spells");
+        ListTag spellsTag = stackToLoad.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND);
 
         List<String> duplicateSpells = new ArrayList<>();
-        for (String spellName : spellsTag.getAllKeys()) {
-            if (this.spellList.getChildren().stream().map(elem -> ((GuiSpellListItem) elem)).anyMatch(item -> item.getSpellName().equals(spellName))) {
-                // already exists
-                duplicateSpells.add(spellName);
+        for (Tag spellTag : spellsTag) {
+            if (!(spellTag instanceof CompoundTag compound)) {
                 continue;
             }
-            addSpellItem(spellName);
-            this.bookStack.getOrCreateTagElement("Spells").put(spellName, spellsTag.getCompound(spellName));
+
+            Tag idTag = compound.get("Id");
+            UUID id = idTag != null ? NbtUtils.loadUUID(idTag) : null;
+            String name = compound.getString("Name");
+
+            if (this.spellList.getChildren().stream().map(elem -> ((GuiSpellListItem) elem)).anyMatch(item -> item.getSpellId().equals(id))) {
+                // already exists
+                duplicateSpells.add(name);
+                continue;
+            }
+
+            if (this.spellList.getChildren().stream().map(elem -> ((GuiSpellListItem) elem)).anyMatch(item -> item.getSpellName().equals(name))) {
+                // already exists
+                duplicateSpells.add(name);
+                continue;
+            }
+
+            addSpellItem(name, id);
+            this.bookStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND).add(compound);
         }
 
         if (!duplicateSpells.isEmpty()) {
@@ -345,8 +359,11 @@ public class SpellBookScreen extends BaseScreen {
             tooltip.add(Component.translatable("gui.node_spell.spell_list.import.scroll_hint").withStyle(ChatFormatting.GRAY));
             ItemStack current = this.writtenSpellPaperItems.get(this.selectedImportItemIdx);
             tooltip.add(Component.translatable("gui.node_spell.spell_list.import.spell_header"));
-            for (String spellName : current.getOrCreateTagElement("Spells").getAllKeys()) {
-                tooltip.add(Component.literal(" - " + spellName).withStyle(ChatFormatting.GRAY));
+            for (Tag spell : current.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND)) {
+                if (!(spell instanceof CompoundTag compound)) {
+                    continue;
+                }
+                tooltip.add(Component.literal(" - " + compound.getString("Name")).withStyle(ChatFormatting.GRAY));
             }
         }
 
@@ -372,19 +389,27 @@ public class SpellBookScreen extends BaseScreen {
     }
 
     private void addSpellsFromBook() {
-        CompoundTag spellsTag = this.bookStack.getOrCreateTagElement("Spells");
-        Set<String> activeSpells = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_STRING).stream().map(Tag::getAsString).collect(Collectors.toSet());
+        ListTag spellsTag = this.bookStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND);
+        this.bookStack.addTagElement("Spells", spellsTag); // re-add it in case the book didn't actually have one yet
+        Set<UUID> activeSpells = this.bookStack.getOrCreateTag().getList("ActiveSpells", Tag.TAG_INT_ARRAY).stream().map(NbtUtils::loadUUID).collect(Collectors.toSet());
 
-        for (String spellName : spellsTag.getAllKeys().stream().sorted().toList()) {
-            GuiSpellListItem item = addSpellItem(spellName);
-            if (activeSpells.contains(item.getSpellName())) {
+        spellsTag.sort(Comparator.comparing(tag -> tag instanceof CompoundTag compound ? compound.getString("Name") : null));
+        for (Tag tag : spellsTag) {
+            CompoundTag spellTag = ((CompoundTag) tag);
+            Tag idTag = spellTag.get("Id");
+            if (idTag == null) {
+                ModConstants.LOG.error("Failed to load spell with name '{}' because Id tag does not exist.", spellTag.getString("Name"));
+                continue;
+            }
+            GuiSpellListItem item = addSpellItem(spellTag.getString("Name"), NbtUtils.loadUUID(idTag));
+            if (activeSpells.contains(item.getSpellId())) {
                 item.setFavorite(true);
             }
         }
     }
 
-    private GuiSpellListItem addSpellItem(String spellName) {
-        GuiSpellListItem spellItem = new GuiSpellListItem(spellName);
+    private GuiSpellListItem addSpellItem(String spellName, UUID spellId) {
+        GuiSpellListItem spellItem = new GuiSpellListItem(spellName, spellId);
         this.spellList.addChild(spellItem);
         this.spellList.getChildren().sort(Comparator.comparing(child -> ((GuiSpellListItem)child).getSpellName()));
         this.spellList.invalidateLayout();

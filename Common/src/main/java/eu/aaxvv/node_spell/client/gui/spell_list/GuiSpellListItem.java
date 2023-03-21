@@ -9,6 +9,7 @@ import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.client.Minecraft;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class GuiSpellListItem extends GuiElement {
@@ -18,15 +19,17 @@ public class GuiSpellListItem extends GuiElement {
 
     private Runnable clickCallback;
     private String spellName;
+    private UUID spellId;
     private Spell cachedSpell;
     private final GuiTextureButton favoriteButton;
     private boolean selected;
     private boolean isFavorite;
     private Supplier<String> displayNameOverrideSupplier;
 
-    public GuiSpellListItem(String spellName) {
+    public GuiSpellListItem(String spellName, UUID spellId) {
         super(0, ITEM_HEIGHT);
         this.spellName = spellName;
+        this.spellId = spellId;
         this.favoriteButton = new GuiTextureButton(FAVORITE_SIZE, FAVORITE_SIZE);
         this.favoriteButton.setTexture(FAVORITE_BUTTON_TEXTURE);
         this.favoriteButton.setDrawHoverOverlay(false);
@@ -35,6 +38,10 @@ public class GuiSpellListItem extends GuiElement {
 
     public String getSpellName() {
         return this.spellName;
+    }
+
+    public UUID getSpellId() {
+        return spellId;
     }
 
     public void setSpellName(String spellName) {
