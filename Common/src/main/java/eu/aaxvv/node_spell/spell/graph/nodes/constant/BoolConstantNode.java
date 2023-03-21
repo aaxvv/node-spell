@@ -2,6 +2,7 @@ package eu.aaxvv.node_spell.spell.graph.nodes.constant;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.gui.node_widget.BoolFieldWidget;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
@@ -25,7 +26,7 @@ public class BoolConstantNode extends BaseConstantNode<Boolean> {
     }
 
     @Override
-    public Object deserializeInstanceData(CompoundTag dataTag) {
+    public Object deserializeInstanceData(CompoundTag dataTag, SpellDeserializationContext context) {
         return dataTag.getBoolean("Val");
     }
 }

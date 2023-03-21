@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.spell;
 
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -36,14 +37,14 @@ public class Spell {
         this.graph.serialize(nbt);
     }
 
-    public void deserialize(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt, SpellDeserializationContext context) {
         this.name = nbt.getString("Name");
-        this.graph.deserialize(nbt);
+        this.graph.deserialize(nbt, context);
     }
 
-    public static Spell fromNbt(CompoundTag nbt) {
+    public static Spell fromNbt(CompoundTag nbt, SpellDeserializationContext context) {
         Spell spell = new Spell(null);
-        spell.deserialize(nbt);
+        spell.deserialize(nbt, context);
         return spell;
     }
 

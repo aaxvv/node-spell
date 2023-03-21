@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.spell.graph;
 
 import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
@@ -101,11 +102,11 @@ public class SpellGraph {
         }
     }
 
-    public void deserialize(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt, SpellDeserializationContext context) {
         ListTag instanceList = nbt.getList("Nodes", Tag.TAG_COMPOUND);
         for (int i = 0; i < instanceList.size(); i++) {
             CompoundTag instanceNbt = instanceList.getCompound(i);
-            NodeInstance instance = NodeInstance.fromNbt(instanceNbt);
+            NodeInstance instance = NodeInstance.fromNbt(instanceNbt, context);
             if (instance != null) {
                 this.nodeInstances.add(instance);
             }

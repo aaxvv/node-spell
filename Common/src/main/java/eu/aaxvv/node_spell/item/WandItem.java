@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.item;
 import eu.aaxvv.node_spell.NodeSpellCommon;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -70,7 +71,7 @@ public class WandItem extends Item {
 
         String spellName = tag.getString("Spell");
         CompoundTag spellNbt = this.getSpellFromBook(spellBook.bookStack, spellName);
-        Optional<Spell> cachedSpell = NodeSpellCommon.playerSpellCache.getOrCreate(player.getUUID(), spellName, spellNbt);
+        Optional<Spell> cachedSpell = NodeSpellCommon.playerSpellCache.getOrCreate(player.getUUID(), spellName, spellNbt, new SpellDeserializationContext.ServerSide(player, spellBook.bookStack));
 
         if (cachedSpell.isEmpty()) {
             player.displayClientMessage(Component.translatable("gui.node_spell.spell_not_active").withStyle(ChatFormatting.RED), true);

@@ -22,7 +22,7 @@ public class PlayerSpellCache {
         return Optional.ofNullable(map.get(spellName));
     }
 
-    public Optional<Spell> getOrCreate(UUID playerUuid, String spellName, CompoundTag spellNbt) {
+    public Optional<Spell> getOrCreate(UUID playerUuid, String spellName, CompoundTag spellNbt, SpellDeserializationContext context) {
         Map<String, Spell> map = cache.computeIfAbsent(playerUuid, key -> new HashMap<>());
         Spell spell = map.get(spellName);
 
@@ -31,7 +31,7 @@ public class PlayerSpellCache {
                 return Optional.empty();
             }
 
-            spell = Spell.fromNbt(spellNbt);
+            spell = Spell.fromNbt(spellNbt, context);
             GraphVerifier verifier = new GraphVerifier(spell.getGraph());
             spell.setHasErrors(!verifier.check());
             map.put(spellName, spell);

@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.spell.graph.runtime;
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.gui.node_widget.Widget;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
@@ -38,7 +39,7 @@ public class NodeInstance implements InstanceDataContainer {
         base.getSockets().forEach(s -> this.socketInstances.put(s, s.createInstance(this)));
     }
 
-    public static NodeInstance fromNbt(CompoundTag instanceNbt) {
+    public static NodeInstance fromNbt(CompoundTag instanceNbt, SpellDeserializationContext context) {
         ResourceLocation baseNodeResLoc = ResourceLocation.tryParse(instanceNbt.getString("Base"));
         Node baseNode = Nodes.REGISTRY.get(baseNodeResLoc);
         if (baseNode == null) {
@@ -46,7 +47,7 @@ public class NodeInstance implements InstanceDataContainer {
         }
 
         NodeInstance instance = baseNode.createInstance();
-        instance.deserialize(instanceNbt);
+        instance.deserialize(instanceNbt, context);
         return instance;
     }
 
@@ -206,11 +207,11 @@ public class NodeInstance implements InstanceDataContainer {
         }
     }
 
-    public void deserialize(CompoundTag nodeTag) {
+    public void deserialize(CompoundTag nodeTag, SpellDeserializationContext context) {
         this.x = nodeTag.getInt("X");
         this.y = nodeTag.getInt("Y");
         if (nodeTag.contains("Data", Tag.TAG_COMPOUND)) {
-            this.instanceData = this.base.deserializeInstanceData(nodeTag.getCompound("Data"));
+            this.instanceData = this.base.deserializeInstanceData(nodeTag.getCompound("Data"), context);
         }
     }
 

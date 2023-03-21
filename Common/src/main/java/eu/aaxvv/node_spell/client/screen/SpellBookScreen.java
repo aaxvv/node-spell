@@ -14,6 +14,7 @@ import eu.aaxvv.node_spell.network.packet.ExportSpellsC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
 import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
 import eu.aaxvv.node_spell.spell.Spell;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
@@ -125,7 +126,7 @@ public class SpellBookScreen extends BaseScreen {
             spell = selected.getCachedSpell();
         } else {
             CompoundTag spellTag = this.bookStack.getOrCreateTagElement("Spells").getCompound(selected.getSpellName());
-            spell = Spell.fromNbt(spellTag);
+            spell = Spell.fromNbt(spellTag, new SpellDeserializationContext.ClientSide(this));
             selected.setCachedSpell(spell);
         }
 
@@ -432,5 +433,15 @@ public class SpellBookScreen extends BaseScreen {
         return true;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
 
+    public ItemStack getBookStack() {
+        return bookStack;
+    }
+
+    public GuiScrollContainer getSpellList() {
+        return spellList;
+    }
 }

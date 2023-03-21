@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.spell.graph.structure;
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.client.gui.node_widget.Widget;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.nbt.CompoundTag;
@@ -128,7 +129,7 @@ public abstract class Node {
     public void serializeInstanceData(Object instanceData, CompoundTag dataTag) {
     }
 
-    public Object deserializeInstanceData(CompoundTag dataTag) {
+    public Object deserializeInstanceData(CompoundTag dataTag, SpellDeserializationContext context) {
         return null;
     }
 }

@@ -8,14 +8,15 @@ import java.util.Map;
 
 public class SubSpellInstanceData {
     private Map<NodeInstance, SocketInstance> sockets;
+    private String spellName;
     private final Spell referencedSpell;
-
     private final NodeInstance parentInstance;
     private final boolean hasSideEffects;   // check if external flow input pin exists
 
     public SubSpellInstanceData(NodeInstance parentInstance, Spell spell) {
         this.parentInstance = parentInstance;
         this.referencedSpell = spell;
+        this.spellName = spell.getName();
 
         for (var externalSocket : this.referencedSpell.getGraph().getExternalSockets().entrySet()) {
             SocketInstance instance = new SocketInstance(externalSocket.getValue(), this.parentInstance);

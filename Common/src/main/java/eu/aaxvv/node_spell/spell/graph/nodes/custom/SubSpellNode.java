@@ -3,6 +3,7 @@ package eu.aaxvv.node_spell.spell.graph.nodes.custom;
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.execution.SpellRunner;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
@@ -10,7 +11,6 @@ import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.sub_spell.SubSpellInstanceData;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 
 public class SubSpellNode extends FlowNode {
     public SubSpellNode() {
@@ -63,7 +63,9 @@ public class SubSpellNode extends FlowNode {
     }
 
     @Override
-    public Object deserializeInstanceData(CompoundTag dataTag) {
-        return super.deserializeInstanceData(dataTag);
+    public Object deserializeInstanceData(CompoundTag dataTag, SpellDeserializationContext context) {
+        return super.deserializeInstanceData(dataTag, context);
     }
+
+
 }
