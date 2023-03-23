@@ -24,10 +24,11 @@ import java.util.List;
  */
 public abstract class Node {
     private final String translationKey;
+    private final Component displayName;
     private final NodeCategory category;
     private final List<Socket> sockets;
-    private int inSocketCount;
-    private int outSocketCount;
+    protected int inSocketCount;
+    protected int outSocketCount;
     private final ResourceLocation resourceLocation;
     private NodeStyle style;
 
@@ -37,6 +38,7 @@ public abstract class Node {
 
     public Node(String translationKey, NodeCategory category, ResourceLocation resourceLocation) {
         this.translationKey = translationKey;
+        this.displayName = Component.translatable(translationKey);
         this.category = category;
         this.sockets = new ArrayList<>();
         this.inSocketCount = 0;
@@ -45,7 +47,7 @@ public abstract class Node {
         this.style = NodeStyle.getDefault();
     }
 
-    private void addSocket(Socket socket) {
+    protected void addSocket(Socket socket) {
         for (Socket existingSocket : this.sockets) {
             if (existingSocket.getSerializationHash() == socket.getSerializationHash()) {
                 throw new RuntimeException(String.format("All node sockets must be differentiable by hash. (Conflict: %s / %s)", socket, existingSocket));
@@ -58,22 +60,27 @@ public abstract class Node {
         return Collections.unmodifiableList(this.sockets);
     }
 
+    protected void clearSockets() {
+        this.sockets.clear();
+        this.inSocketCount = 0;
+        this.outSocketCount = 0;
+    }
     protected final Socket addInputSocket(Datatype datatype, String translationKey) {
-        Socket socket = new Socket(datatype, translationKey, this, Socket.Direction.IN, this.inSocketCount);
+        Socket socket = new Socket(datatype, translationKey, Socket.Direction.IN, this.inSocketCount);
         addSocket(socket);
         this.inSocketCount++;
         return socket;
     }
 
     protected final Socket addOutputSocket(Datatype datatype, String translationKey) {
-        Socket socket = new Socket(datatype, translationKey, this, Socket.Direction.OUT, this.outSocketCount);
+        Socket socket = new Socket(datatype, translationKey, Socket.Direction.OUT, this.outSocketCount);
         addSocket(socket);
         this.outSocketCount++;
         return socket;
     }
 
     public Component getDisplayName() {
-        return Component.translatable(this.translationKey);
+        return this.displayName;
     }
 
     public NodeInstance createInstance() {

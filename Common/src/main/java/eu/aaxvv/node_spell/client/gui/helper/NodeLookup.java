@@ -1,7 +1,10 @@
-package eu.aaxvv.node_spell.client.gui.graph_editor;
+package eu.aaxvv.node_spell.client.gui.helper;
 
+import eu.aaxvv.node_spell.spell.Spell;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.Nodes;
+import eu.aaxvv.node_spell.spell.graph.nodes.custom.SubSpellNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.client.Minecraft;
@@ -9,14 +12,19 @@ import net.minecraft.network.chat.Component;
 
 import java.util.*;
 
-public class NodeCategoryLookup {
+public class NodeLookup {
     private final Map<NodeCategory, List<Node>> nodesByCategory;
     private final List<NodeCategory> categoriesOrdered;
+    private List<Node> subSpellNodes;
     private final int maxCategoryNameWidth;
 
-    public NodeCategoryLookup() {
-        nodesByCategory = new HashMap<>();
-        categoriesOrdered = new ArrayList<>();
+    private final SpellDeserializationContext spellContext;
+
+    public NodeLookup(SpellDeserializationContext spellContext) {
+        this.nodesByCategory = new HashMap<>();
+        this.categoriesOrdered = new ArrayList<>();
+        this.subSpellNodes = null;
+        this.spellContext = spellContext;
         setup();
         this.maxCategoryNameWidth = this.categoriesOrdered.stream().mapToInt(cat -> Minecraft.getInstance().font.width(Component.translatable(cat.translationKey))).max().orElse(0);
     }
@@ -44,7 +52,7 @@ public class NodeCategoryLookup {
         }
 
         for (List<Node> list : nodesByCategory.values()) {
-            list.sort(Comparator.comparing(n -> (Component.translatable(n.getTranslationKey()).getString().toLowerCase())));
+            list.sort(Comparator.comparing(n -> (n.getDisplayName().getString().toLowerCase())));
         }
 
 
@@ -54,4 +62,20 @@ public class NodeCategoryLookup {
                 .toList();
         this.categoriesOrdered.addAll(categoriesOrdered);
     }
+
+    private void setupSubSpells() {
+        this.subSpellNodes = this.spellContext
+                .getAllSpells()
+                .stream()
+                .map(SubSpellNode::create)
+                .toList();
+    }
+
+    public List<Node> getSubSpellNodes() {
+        if (this.subSpellNodes == null) {
+            setupSubSpells();
+        }
+        return this.subSpellNodes;
+    }
+
 }

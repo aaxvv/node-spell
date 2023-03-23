@@ -25,7 +25,7 @@ public class SpellTaskRunner {
                  player.displayClientMessage(Component.translatable("error.node_spell.spell_has_errors").withStyle(ChatFormatting.RED), true);
              });
             return false;
-        }
+         }
 
         SpellRunner newRunner = new SpellRunner(spell.getGraph(), context);
         newRunner.start();
@@ -62,7 +62,9 @@ public class SpellTaskRunner {
                     }
                 });
                 ModConstants.LOG.error("Failed to execute spell.", ex);
-                runner.stop();
+                if (runner.running) {
+                    runner.stop();
+                }
             }
         }
     }

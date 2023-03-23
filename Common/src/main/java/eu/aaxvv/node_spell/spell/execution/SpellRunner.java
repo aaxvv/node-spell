@@ -5,7 +5,6 @@ import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
-import eu.aaxvv.node_spell.spell.sub_spell.SubSpellInstanceData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -17,8 +16,6 @@ public class SpellRunner {
     protected SpellRunner activeSubRunner;
     protected boolean running;
 
-    protected SubSpellInstanceData subSpellData;
-
     public SpellRunner(SpellGraph graph, SpellContext ctx) {
         this(ctx);
         this.graph = graph;
@@ -27,6 +24,7 @@ public class SpellRunner {
 
     public SpellRunner(SpellContext ctx) {
         this.ctx = ctx;
+        this.ctx.pushRunner(this);
     }
 
     public void start() {
@@ -44,6 +42,11 @@ public class SpellRunner {
     public void stop() {
         this.currentNode = null;
         this.running = false;
+        if (this.ctx.getCurrentRunner() == null) {
+            ModConstants.LOG.error("Tried to pop spell-runner from stack, but it was already empty.");
+        } else {
+            this.ctx.popRunner();
+        }
     }
     public void tick() {
         if (!this.running) {
@@ -57,8 +60,10 @@ public class SpellRunner {
             try {
                 tickInner();
             } catch (SpellExecutionException ex) {
+                stop();
                 throw ex;
             } catch (Exception ex) {
+                stop();
                 throw new SpellExecutionException(ex);
             }
         }
@@ -76,7 +81,7 @@ public class SpellRunner {
         }
 
         if (this.currentNode == null) {
-            this.running = false;
+            this.stop();
             return;
         }
 
@@ -114,7 +119,7 @@ public class SpellRunner {
         }
     }
 
-    public SubSpellInstanceData getSubSpellData() {
-        return this.subSpellData;
+    public SubSpellRunner getAsSubSpell() {
+        return null;
     }
 }

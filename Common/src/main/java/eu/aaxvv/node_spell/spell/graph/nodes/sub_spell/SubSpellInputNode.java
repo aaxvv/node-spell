@@ -1,29 +1,45 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.sub_spell;
 
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
+import eu.aaxvv.node_spell.spell.execution.SpellExecutionException;
+import eu.aaxvv.node_spell.spell.execution.SubSpellRunner;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
-import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
-import eu.aaxvv.node_spell.spell.sub_spell.SubSpellInstanceData;
 import eu.aaxvv.node_spell.spell.value.Datatype;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
-public class SubSpellInputNode extends Node {
+public class SubSpellInputNode extends SubSpellSocketNode {
     public final Socket sOut;
+    private final Datatype datatype;
 
-    public SubSpellInputNode(ResourceLocation resourceLocation, Datatype datatype) {
-        super(NodeCategories.SUB_SPELL, resourceLocation);
+    public SubSpellInputNode(Datatype datatype) {
+        super(NodeCategories.SUB_SPELL, ModConstants.resLoc("sub_input_" + datatype.shortName));
+        this.datatype = datatype;
         this.sOut = addOutputSocket(datatype, "socket.node_spell.empty");
     }
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
-        SubSpellInstanceData subSpellData = ctx.getCurrentRunner().getSubSpellData();
-        SocketInstance socket = subSpellData.getSocketInstance(instance);
+        SubSpellRunner subRunner = ctx.getCurrentRunner().getAsSubSpell();
+        if (subRunner == null) {
+            instance.setSocketInvalid(this.sOut);
+            return;
+        }
+
+        SocketInstance socket = subRunner.getSocketInstance(instance);
         instance.setSocketValue(this.sOut, socket.getComputedValue(ctx));
     }
 
-    //TODO: use instance data to store name?
+    @Override
+    public Socket.Direction getDirection() {
+        return Socket.Direction.IN;
+    }
+
+    @Override
+    public Datatype getDatatype() {
+        return this.datatype;
+    }
 }

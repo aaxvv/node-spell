@@ -2,10 +2,7 @@ package eu.aaxvv.node_spell.spell.graph.verification;
 
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
-import eu.aaxvv.node_spell.spell.graph.verification.rule.DataUsedBeforeFlowReachedRule;
-import eu.aaxvv.node_spell.spell.graph.verification.rule.NoCyclesRule;
-import eu.aaxvv.node_spell.spell.graph.verification.rule.SingleEntrypointRule;
-import eu.aaxvv.node_spell.spell.graph.verification.rule.VerificationRule;
+import eu.aaxvv.node_spell.spell.graph.verification.rule.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +13,8 @@ public class GraphVerifier {
     private final List<VerificationRule> rules = List.of(
             new SingleEntrypointRule(),
             new NoCyclesRule(),
-            new DataUsedBeforeFlowReachedRule()
+            new DataUsedBeforeFlowReachedRule(),
+            new SubSpellSocketRule()
     );
     private final SpellGraph graph;
     private final List<VerificationResult> problems;

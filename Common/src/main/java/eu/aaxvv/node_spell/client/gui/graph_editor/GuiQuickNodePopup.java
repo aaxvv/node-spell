@@ -75,7 +75,7 @@ public class GuiQuickNodePopup extends GuiElement {
                 continue;
             }
 
-            String displayName = Component.translatable(node.getTranslationKey()).getString();
+            String displayName = node.getDisplayName().getString();
             float matchScore = matchScore(displayName, searchText);
             if (matchScore != 0) {
                 toDisplay.add(new SearchResult(node, displayName, matchScore));
@@ -87,7 +87,7 @@ public class GuiQuickNodePopup extends GuiElement {
         toDisplay.sort(comp);
 
         for (SearchResult result : toDisplay) {
-            GuiTextButton button = new GuiTextButton(0, 11, Component.translatable(result.node.getTranslationKey()));
+            GuiTextButton button = new GuiTextButton(0, 11, result.node.getDisplayName());
             button.setClickCallback(() -> this.nodeClicked(result.node));
             this.nodeList.addChild(button);
         }

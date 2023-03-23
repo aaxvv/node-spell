@@ -14,15 +14,25 @@ import java.util.Objects;
  */
 public class Socket {
     private final Datatype dataType;
-    private final String translationKey;
+    private String translationKey;
+    private Component displayName;
     private final Direction direction;
-    private final int positionOnNode;
+    private int positionOnNode;
 
-    public Socket(Datatype dataType, String translationKey, Node parentNode, Direction direction, int positionOnNode) {
+    public Socket(Datatype dataType, String translationKey, Direction direction, int positionOnNode) {
         this.dataType = dataType;
         this.translationKey = translationKey;
         this.direction = direction;
         this.positionOnNode = positionOnNode;
+        this.displayName = Component.translatable(this.translationKey);
+    }
+
+    public Socket(Datatype dataType, String translationKey, Direction direction, int positionOnNode, boolean isLiteralName) {
+        this.dataType = dataType;
+        this.translationKey = translationKey;
+        this.direction = direction;
+        this.positionOnNode = positionOnNode;
+        this.displayName = isLiteralName ? Component.literal(translationKey) : Component.translatable(this.translationKey);
     }
 
     public SocketInstance createInstance(NodeInstance parentInstance) {
@@ -33,8 +43,16 @@ public class Socket {
         return this.direction;
     }
 
+    public void setTranslationKey(String translationKey, boolean isLiteralName) {
+        this.translationKey = translationKey;
+        this.displayName = isLiteralName ? Component.literal(translationKey) : Component.translatable(this.translationKey);
+    }
+
     public String getTranslationKey() {
         return translationKey;
+    }
+    public Component getDisplayName() {
+        return this.displayName;
     }
 
     public Datatype getDataType() {
@@ -43,6 +61,10 @@ public class Socket {
 
     public int getPositionOnNode() {
         return positionOnNode;
+    }
+
+    public void setPositionOnNode(int positionOnNode) {
+        this.positionOnNode = positionOnNode;
     }
 
     public enum Direction {
@@ -67,10 +89,14 @@ public class Socket {
     }
 
     public int getSerializationHash() {
-        int typeIdx = this.getDataType().ordinal();
-        int direction = this.getDirection().ordinal();
-        int nameHash = this.getTranslationKey().hashCode();
-        return Objects.hash(nameHash, typeIdx, direction);
+        return Socket.calculateSerializationHash(this.getDataType(), this.getDirection(), this.getTranslationKey());
+    }
+
+    public static int calculateSerializationHash(Datatype type, Direction direction, String translationKey) {
+        int typeIdx = type.ordinal();
+        int directionIdx = direction.ordinal();
+        int nameHash = translationKey.hashCode();
+        return Objects.hash(nameHash, typeIdx, directionIdx);
     }
 
     @Override

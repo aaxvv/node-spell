@@ -7,6 +7,7 @@ import eu.aaxvv.node_spell.client.gui.elements.GuiPanContainer;
 import eu.aaxvv.node_spell.client.gui.graph_editor.GuiGraphEditor;
 import eu.aaxvv.node_spell.client.gui.graph_editor.GuiNodePicker;
 import eu.aaxvv.node_spell.spell.Spell;
+import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.verification.GraphVerifier;
 import eu.aaxvv.node_spell.spell.graph.verification.VerificationResult;
 import net.minecraft.client.Minecraft;
@@ -28,7 +29,9 @@ public class NewSpellEditScreen extends BaseScreen {
         this.spell = spell;
         this.verifier = new GraphVerifier(this.spell.getGraph());
 
-        this.nodePicker = new GuiNodePicker(this.getRootWidth(), 0);
+        SpellDeserializationContext context = new SpellDeserializationContext.ClientSide(this.parentScreen);
+        context.pushCurrentSpell(spell);
+        this.nodePicker = new GuiNodePicker(this.getRootWidth(), 0, context);
         this.nodePicker.setLocalPosition(0, this.getRootHeight());
         this.getGuiRoot().addChild(this.nodePicker);
 
@@ -63,7 +66,7 @@ public class NewSpellEditScreen extends BaseScreen {
 
     @Override
     public void onClose() {
-        this.spell.getGraph().findEntrypoint();
+        this.spell.refreshDependents();
         Minecraft.getInstance().setScreen(this.parentScreen);
     }
 

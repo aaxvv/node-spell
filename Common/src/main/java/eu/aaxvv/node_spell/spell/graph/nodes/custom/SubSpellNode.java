@@ -4,68 +4,35 @@ import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
-import eu.aaxvv.node_spell.spell.execution.SpellRunner;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
-import eu.aaxvv.node_spell.spell.graph.structure.FlowNode;
-import eu.aaxvv.node_spell.spell.graph.structure.Socket;
-import eu.aaxvv.node_spell.spell.sub_spell.SubSpellInstanceData;
+import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import net.minecraft.nbt.CompoundTag;
 
-public class SubSpellNode extends FlowNode {
+import java.util.UUID;
+
+public class SubSpellNode extends Node {
     public SubSpellNode() {
         super(NodeCategories.CUSTOM, ModConstants.resLoc("sub_spell"));
     }
 
-    public NodeInstance create(Spell subSpell) {
-        NodeInstance instance = this.createInstance();
-        instance.setInstanceData(new SubSpellInstanceData(instance, subSpell));
-        return instance;
+    public static Node create(Spell subSpell) {
+        return new SubSpellPseudoNode(subSpell);
     }
 
-    @Override
-    public Socket getFlowContinueSocket(SpellContext ctx, NodeInstance instance) {
-        return null;
+    public NodeInstance fromNbt(CompoundTag nodeTag, SpellDeserializationContext context) {
+        UUID spellId = nodeTag.getCompound("Data").getUUID("SpellId");
+        Spell spell = context.findSpell(spellId);
+        if (spell != null) {
+            spell.addDependent(context.getCurrentSpell());
+        }
+        NodeInstance instance = new NodeInstance(SubSpellNode.create(spell));
+        instance.deserialize(nodeTag, context);
+        return instance;
     }
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {
 
     }
-
-//    @Override
-//    public Component getDisplayName(NodeInstance instance) {
-//        SubSpellInstanceData data = ((SubSpellInstanceData) instance.getInstanceData());
-//        String spellName = data.getReferencedSpell().getName();
-//        return Component.literal(spellName);
-//    }
-
-    @Override
-    public SpellRunner getSubRunner(SpellContext ctx, NodeInstance instance) {
-        // TODO: spell runner
-        return super.getSubRunner(ctx, instance);
-    }
-
-    @Override
-    public boolean hasSideEffects() {
-        //TODO: depends on if spell has flow input
-        return super.hasSideEffects();
-    }
-
-    @Override
-    public Object createInstanceData() {
-        return super.createInstanceData();
-    }
-
-    @Override
-    public void serializeInstanceData(Object instanceData, CompoundTag dataTag) {
-        super.serializeInstanceData(instanceData, dataTag);
-    }
-
-    @Override
-    public Object deserializeInstanceData(CompoundTag dataTag, SpellDeserializationContext context) {
-        return super.deserializeInstanceData(dataTag, context);
-    }
-
-
 }

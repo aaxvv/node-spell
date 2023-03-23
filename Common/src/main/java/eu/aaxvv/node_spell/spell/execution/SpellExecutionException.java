@@ -21,7 +21,7 @@ public class SpellExecutionException extends RuntimeException {
             return Component.translatable("error.node_spell.unhandled_exception", this.getCause().getClass().getName());
         } else {
             if (this.nodeContext != null) {
-                return this.message.append(Component.literal(" [" + Component.translatable(this.nodeContext.getBaseNode().getTranslationKey()).getString() + "]"));
+                return this.message.append(Component.literal(" [" + this.nodeContext.getBaseNode().getDisplayName().getString() + "]"));
             } else {
                 return this.message;
             }

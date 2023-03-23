@@ -5,6 +5,7 @@ import eu.aaxvv.node_spell.client.gui.node_widget.Widget;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.Nodes;
+import eu.aaxvv.node_spell.spell.graph.nodes.custom.SubSpellNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Value;
@@ -27,7 +28,7 @@ public class NodeInstance implements InstanceDataContainer {
     private Object instanceData;
 
     /** The socket instances of this node */
-    private final Map<Socket, SocketInstance> socketInstances;
+    private Map<Socket, SocketInstance> socketInstances;
 
     private int x;
     private int y;
@@ -46,8 +47,15 @@ public class NodeInstance implements InstanceDataContainer {
             return null;
         }
 
-        NodeInstance instance = baseNode.createInstance();
-        instance.deserialize(instanceNbt, context);
+        NodeInstance instance;
+        if (baseNode instanceof SubSpellNode subSpellNode) {
+            // special case for sub-spell nodes
+            instance = subSpellNode.fromNbt(instanceNbt, context);
+        } else {
+            instance = baseNode.createInstance();
+            instance.deserialize(instanceNbt, context);
+        }
+
         return instance;
     }
 
@@ -232,6 +240,23 @@ public class NodeInstance implements InstanceDataContainer {
         }
         copy.setPosition(this.getX(), this.getY());
         return copy;
+    }
+
+    public void refreshSocketInstances() {
+        Map<Socket, SocketInstance> prevInstances = this.socketInstances;
+        this.socketInstances = new HashMap<>();
+
+        for (Socket socket : this.base.getSockets()) {
+            SocketInstance instance = prevInstances.remove(socket);
+
+            if (instance == null) {
+                this.socketInstances.put(socket, socket.createInstance(this));
+            }
+        }
+
+        for (SocketInstance remaining : prevInstances.values()) {
+            remaining.disconnectAll();
+        }
     }
 
     @Override

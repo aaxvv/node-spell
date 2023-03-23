@@ -7,16 +7,34 @@ import eu.aaxvv.node_spell.client.screen.SpellBookScreen;
 import eu.aaxvv.node_spell.helper.NbtHelper;
 import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-public interface SpellDeserializationContext {
-    Spell findSpell(UUID spellId);
+public abstract class SpellDeserializationContext {
+    private final Deque<Spell> currentSpellStack = new ArrayDeque<>();
 
-    class ClientSide implements SpellDeserializationContext {
+    public abstract Spell findSpell(UUID spellId);
+
+    public abstract List<Spell> getAllSpells();
+
+    public Spell getCurrentSpell() {
+        if (this.currentSpellStack.isEmpty()) {
+            throw new IllegalStateException("Tried to access current spell while none was set.");
+        }
+
+        return this.currentSpellStack.peekLast();
+    }
+    public void pushCurrentSpell(Spell spell) {
+        this.currentSpellStack.push(spell);
+    }
+    public void popCurrentSpell() {
+        this.currentSpellStack.removeLast();
+    }
+
+    public static class ClientSide extends SpellDeserializationContext {
         private final SpellBookScreen screen;
 
         public ClientSide(SpellBookScreen screen) {
@@ -28,18 +46,28 @@ public interface SpellDeserializationContext {
             for (GuiElement listItem : this.screen.getSpellList().getChildren()) {
                 GuiSpellListItem item = ((GuiSpellListItem) listItem);
                 if (item.getSpellId().equals(spellId)) {
-                    return getFromListItem(item, spellId);
+                    return getFromListItem(item);
                 }
             }
 
             return null;
         }
 
-        private Spell getFromListItem(GuiSpellListItem item, UUID spellId) {
+        @Override
+        public List<Spell> getAllSpells() {
+            return this.screen
+                    .getSpellList()
+                    .getChildren()
+                    .stream()
+                    .map(item -> getFromListItem(((GuiSpellListItem) item)))
+                    .toList();
+        }
+
+        private Spell getFromListItem(GuiSpellListItem item) {
             if (item.getCachedSpell() != null) {
                 return item.getCachedSpell();
             } else {
-                CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.screen.getBookStack(), spellId);
+                CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.screen.getBookStack(), item.getSpellId());
                 if (spellTag == null) {
                     return null;
                 }
@@ -51,7 +79,7 @@ public interface SpellDeserializationContext {
         }
     }
 
-    class ServerSide implements SpellDeserializationContext {
+    public static class ServerSide extends SpellDeserializationContext {
         private final Player player;
         private final ItemStack spellBookStack;
 
@@ -69,6 +97,21 @@ public interface SpellDeserializationContext {
 
             Optional<Spell> spell = NodeSpellCommon.playerSpellCache.getOrCreate(this.player.getUUID(), spellId, spellTag, this);
             return spell.orElse(null);
+        }
+
+        @Override
+        public List<Spell> getAllSpells() {
+            List<Spell> spells = new ArrayList<>();
+
+            for (Tag spellTag : this.spellBookStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND)) {
+                if (spellTag instanceof CompoundTag compound) {
+                    UUID id = compound.getUUID("Id");
+                    Optional<Spell> spell = NodeSpellCommon.playerSpellCache.getOrCreate(this.player.getUUID(), id, compound, this);
+                    spell.ifPresent(spells::add);
+                }
+            }
+
+            return spells;
         }
     }
 }

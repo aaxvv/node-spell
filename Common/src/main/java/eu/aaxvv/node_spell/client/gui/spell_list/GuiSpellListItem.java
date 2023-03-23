@@ -46,6 +46,9 @@ public class GuiSpellListItem extends GuiElement {
 
     public void setSpellName(String spellName) {
         this.spellName = spellName;
+        if (this.cachedSpell != null && !this.cachedSpell.getName().equals(spellName)) {
+            this.cachedSpell.setName(spellName);
+        }
     }
 
     public void setCachedSpell(Spell cachedSpell) {

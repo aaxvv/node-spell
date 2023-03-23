@@ -39,7 +39,7 @@ public class DataUsedBeforeFlowReachedRule implements VerificationRule {
     }
 
     private void recursiveDfs(NodeInstance nextInstance, Deque<NodeInstance> dfsStack, boolean traversingFlow, Set<NodeInstance> incorrectFlowNodes) {
-        if (!traversingFlow && (nextInstance.getBaseNode() instanceof FlowNode) && !dfsStack.contains(nextInstance)) {
+        if (!traversingFlow && (nextInstance.getBaseNode() instanceof FlowNode flow && flow.hasSideEffects()) && !dfsStack.contains(nextInstance)) {
             incorrectFlowNodes.add(nextInstance);
             return;
         }

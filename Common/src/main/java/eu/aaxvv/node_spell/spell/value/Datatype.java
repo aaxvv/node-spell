@@ -31,6 +31,7 @@ public enum Datatype {
         this.g = components[2];
         this.b = components[3];
         this.translationKey = "datatype.node_spell." + translation;
+        this.shortName = translation;
     }
 
     public final float r;
@@ -39,6 +40,7 @@ public enum Datatype {
     public final int packedColor;
     public final Supplier<Value> defaultValue;
     public final String translationKey;
+    public final String shortName;
 
     public boolean isAssignableFrom(Datatype other) {
         if ((this == Datatype.FLOW || other == Datatype.FLOW) && this != other) {

@@ -2,6 +2,9 @@ package eu.aaxvv.node_spell.spell.graph;
 
 import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
+import eu.aaxvv.node_spell.spell.graph.nodes.custom.SubSpellPseudoNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.sub_spell.SubSpellInputNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.sub_spell.SubSpellOutputNode;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
@@ -20,21 +23,36 @@ import java.util.*;
  */
 public class SpellGraph {
     private NodeInstance entrypoint;
+    private boolean isSubSpell;
 
     private final List<NodeInstance> nodeInstances;
     private final List<Edge> edges;
 
-    private Map<NodeInstance, Socket> externalSockets;
+    private final Map<NodeInstance, Socket> externalSockets;
 
     public SpellGraph() {
         this.edges = new ArrayList<>();
         this.nodeInstances = new ArrayList<>();
         this.externalSockets = new HashMap<>();
+        this.isSubSpell = false;
+        this.entrypoint = null;
     }
 
     public NodeInstance getEntrypoint() {
         return entrypoint;
     }
+
+    public void setEntrypoint(NodeInstance entrypoint) {
+        this.entrypoint = entrypoint;
+    }
+    public void setIsSubSpell(boolean subSpell) {
+        this.isSubSpell = subSpell;
+    }
+
+    public boolean isSubSpell() {
+        return this.isSubSpell;
+    }
+
 
     public List<NodeInstance> getNodeInstances() {
         return Collections.unmodifiableList(this.nodeInstances);
@@ -46,6 +64,7 @@ public class SpellGraph {
 
     public NodeInstance addInstance(NodeInstance instance) {
         this.nodeInstances.add(instance);
+        recomputeExternalSockets();
         return instance;
     }
 
@@ -61,6 +80,7 @@ public class SpellGraph {
             socket.disconnectAll();
         }
         recomputeEdges();
+        recomputeExternalSockets();
     }
 
     public Edge addEdge(Edge edge) {
@@ -71,10 +91,6 @@ public class SpellGraph {
         this.edges.add(edge);
         recomputeEdges();
         return edge;
-    }
-
-    public void setEntrypoint(NodeInstance entrypoint) {
-        this.entrypoint = entrypoint;
     }
 
     public void serialize(CompoundTag nbt) {
@@ -131,6 +147,8 @@ public class SpellGraph {
                 this.entrypoint = this.nodeInstances.get(nbt.getInt("Entrypoint"));
             }
         }
+
+        recomputeExternalSockets();
     }
 
     private Edge buildEdge(int[] nbtData) {
@@ -181,20 +199,20 @@ public class SpellGraph {
         this.edges.addAll(allEdges);
     }
 
-    public void findEntrypoint() {
-        boolean found = false;
-        for (NodeInstance instance : this.nodeInstances) {
-            if (instance.getBaseNode() == Nodes.ENTRY_POINT) {
-                if (found) {
-                    ModConstants.LOG.error("Spell graph had multiple entry points.");
-                    break;
-                }
-
-                this.entrypoint = instance;
-                found = true;
-            }
-        }
-    }
+//    public void findEntrypoint() {
+//        boolean found = false;
+//        for (NodeInstance instance : this.nodeInstances) {
+//            if (instance.getBaseNode() == Nodes.ENTRY_POINT) {
+//                if (found) {
+//                    ModConstants.LOG.error("Spell graph had multiple entry points.");
+//                    break;
+//                }
+//
+//                this.entrypoint = instance;
+//                found = true;
+//            }
+//        }
+//    }
 
     public void clear() {
         this.nodeInstances.clear();
@@ -204,5 +222,28 @@ public class SpellGraph {
 
     public Map<NodeInstance, Socket> getExternalSockets() {
         return externalSockets;
+    }
+
+    public void recomputeExternalSockets() {
+        this.externalSockets.clear();
+
+        for (NodeInstance instance : this.nodeInstances) {
+            if (instance.getBaseNode() instanceof SubSpellInputNode input) {
+                Socket socket = input.createSocket(instance);
+                this.externalSockets.put(instance, socket);
+            } else if (instance.getBaseNode() instanceof SubSpellOutputNode output) {
+                Socket socket = output.createSocket(instance);
+                this.externalSockets.put(instance, socket);
+            }
+        }
+    }
+
+    public void refreshSubSpellNodes() {
+        for (NodeInstance instance : this.nodeInstances) {
+            if (instance.getBaseNode() instanceof SubSpellPseudoNode node) {
+                node.refresh();
+                instance.refreshSocketInstances();
+            }
+        }
     }
 }

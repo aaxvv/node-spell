@@ -28,6 +28,8 @@
   "error.node_spell.local_access_before_set": "Tried to access value of variable '%s' before it was set",
   "error.node_spell.invalid_holder": "Invalid holder",
   "error.node_spell.paper_no_value": "Written paper does not contain a value",
+  "error.node_spell.not_sub_spell": "Spell expected to be run as a sub-spell, but wasn't",
+  "error.node_spell.sub_spell_gone": "Spell referenced by this sub-spell node no longer exists",
 
   "gui.node_spell.wand_spell_tooltip": "Current Spell: %s",
   "gui.node_spell.book_spell_tooltip": "Contains %d spells",
@@ -55,6 +57,7 @@
   "gui.node_spell.spell_verification.no_entrypoint": "No Flow Source found.",
   "gui.node_spell.spell_verification.multiple_entrypoints": "Multiple Flow Sources found.",
   "gui.node_spell.spell_verification.incorrect_flow_order": "Output of flow node is used before node is run.",
+  "gui.node_spell.spell_verification.conflicting_sub_spell_sockets": "Sub-Spell sockets of same type must have different names.",
 
   "node.category.node_spell.input": "INPUT",
   "node.category.node_spell.spell_flow": "SPELL FLOW",
@@ -231,6 +234,24 @@
   "node.node_spell.is_written_paper": "Is written Paper",
   "node.node_spell.write_paper": "Write Paper",
   "node.node_spell.read_paper": "Read Paper",
+
+  "node.node_spell.sub_input_bool": "Bool Input",
+  "node.node_spell.sub_input_number": "Num. Input",
+  "node.node_spell.sub_input_vector": "Vec. Input",
+  "node.node_spell.sub_input_string": "Str. Input",
+  "node.node_spell.sub_input_entity": "Ent. Input",
+  "node.node_spell.sub_input_item": "Item Input",
+  "node.node_spell.sub_input_block": "Block Input",
+  "node.node_spell.sub_input_list": "List Input",
+  "node.node_spell.sub_output_bool": "Bool Output",
+  "node.node_spell.sub_output_number": "Num. Output",
+  "node.node_spell.sub_output_vector": "Vec. Output",
+  "node.node_spell.sub_output_string": "Str. Output",
+  "node.node_spell.sub_output_entity": "Ent. Output",
+  "node.node_spell.sub_output_item": "Item Output",
+  "node.node_spell.sub_output_block": "Block Output",
+  "node.node_spell.sub_output_list": "List Output",
+  "node.node_spell.is_sub_spell": "Is Sub Spell",
 
 
   "socket.node_spell.empty": "",

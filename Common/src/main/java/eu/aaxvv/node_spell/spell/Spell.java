@@ -7,6 +7,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Spell {
@@ -15,6 +18,9 @@ public class Spell {
 
     private final SpellGraph graph;
     private boolean hasErrors;
+
+    private final List<WeakReference<Spell>> dependentSpells;
+    private boolean refreshing;
 
     private Spell() {
         this(null, new SpellGraph(), null);
@@ -29,6 +35,8 @@ public class Spell {
         this.name = name;
         this.graph = graph;
         this.hasErrors = false;
+        this.dependentSpells = new ArrayList<>();
+        this.refreshing = false;
     }
 
     public static Tag createEmptyNbt(String name, UUID spellId) {
@@ -61,7 +69,9 @@ public class Spell {
 
     public static Spell fromNbt(CompoundTag nbt, SpellDeserializationContext context) {
         Spell spell = new Spell();
+        context.pushCurrentSpell(spell);
         spell.deserialize(nbt, context);
+        context.popCurrentSpell();
         return spell;
     }
 
@@ -87,5 +97,35 @@ public class Spell {
 
     public boolean hasErrors() {
         return hasErrors;
+    }
+
+    public void addDependent(Spell dependentSpell) {
+        this.dependentSpells.add(new WeakReference<>(dependentSpell));
+    }
+
+    public void refreshDependents() {
+        this.refreshing = true;
+        var iterator = this.dependentSpells.iterator();
+
+        while (iterator.hasNext()) {
+            var dependent = iterator.next().get();
+            if (dependent == null) {
+                iterator.remove();
+            } else {
+                dependent.refreshOnDependencyChange();
+            }
+        }
+
+        this.refreshing = false;
+    }
+
+    public void refreshOnDependencyChange() {
+        if (this.refreshing) {
+            // actually cant have a dependency loop right now because we don't update our dependents on this. should we be doing that?
+
+            return;
+        }
+
+        this.graph.refreshSubSpellNodes();
     }
 }

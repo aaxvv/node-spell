@@ -12,6 +12,7 @@ import eu.aaxvv.node_spell.spell.graph.nodes.comparison.EqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.InRangeNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.comparison.NotEqualsNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.constant.*;
+import eu.aaxvv.node_spell.spell.graph.nodes.custom.SubSpellNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.entity.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.BranchNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.EntryPointNode;
@@ -29,6 +30,9 @@ import eu.aaxvv.node_spell.spell.graph.nodes.math.MapRangeNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.memory.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.BasicStringOpNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.string.ToStringNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.sub_spell.IsSubSpellNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.sub_spell.SubSpellInputNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.sub_spell.SubSpellOutputNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.vector.*;
 import eu.aaxvv.node_spell.spell.graph.nodes.world.GenericBlockPosQueryNode;
 import eu.aaxvv.node_spell.spell.graph.nodes.world.GenericWorldPropertyNode;
@@ -330,6 +334,31 @@ public class Nodes {
 
     // ===== LIST =====
 
+
+    // ===== SUB SPELL =====
+    public static final Node SUB_INPUT_BOOL = new SubSpellInputNode(Datatype.BOOL);
+    public static final Node SUB_INPUT_NUMBER = new SubSpellInputNode(Datatype.NUMBER);
+    public static final Node SUB_INPUT_VECTOR = new SubSpellInputNode(Datatype.VECTOR);
+    public static final Node SUB_INPUT_STRING = new SubSpellInputNode(Datatype.STRING);
+    public static final Node SUB_INPUT_ENTITY = new SubSpellInputNode(Datatype.ENTITY);
+    public static final Node SUB_INPUT_ITEM = new SubSpellInputNode(Datatype.ITEM);
+    public static final Node SUB_INPUT_BLOCK = new SubSpellInputNode(Datatype.BLOCK);
+    public static final Node SUB_INPUT_LIST = new SubSpellInputNode(Datatype.LIST);
+
+    public static final Node SUB_OUTPUT_BOOL = new SubSpellOutputNode(Datatype.BOOL);
+    public static final Node SUB_OUTPUT_NUMBER = new SubSpellOutputNode(Datatype.NUMBER);
+    public static final Node SUB_OUTPUT_VECTOR = new SubSpellOutputNode(Datatype.VECTOR);
+    public static final Node SUB_OUTPUT_STRING = new SubSpellOutputNode(Datatype.STRING);
+    public static final Node SUB_OUTPUT_ENTITY = new SubSpellOutputNode(Datatype.ENTITY);
+    public static final Node SUB_OUTPUT_ITEM = new SubSpellOutputNode(Datatype.ITEM);
+    public static final Node SUB_OUTPUT_BLOCK = new SubSpellOutputNode(Datatype.BLOCK);
+    public static final Node SUB_OUTPUT_LIST = new SubSpellOutputNode(Datatype.LIST);
+
+    public static final Node IS_SUB_SPELL = new IsSubSpellNode();
+
+    // ===== CUSTOM =====
+    public static final Node SUB_SPELL = new SubSpellNode();
+
     public static void initRegistry(PlatformRegistryWrapper<Node> nodeRegistry) {
         REGISTRY = nodeRegistry;
     }
@@ -482,6 +511,28 @@ public class Nodes {
         register(WRITE_PAPER);
         register(READ_PAPER);
         register(IS_WRITTEN_PAPER);
+
+        register(SUB_INPUT_BOOL);
+        register(SUB_INPUT_NUMBER);
+        register(SUB_INPUT_VECTOR);
+        register(SUB_INPUT_STRING);
+        register(SUB_INPUT_ENTITY);
+        register(SUB_INPUT_ITEM);
+        register(SUB_INPUT_BLOCK);
+        register(SUB_INPUT_LIST);
+
+        register(SUB_OUTPUT_BOOL);
+        register(SUB_OUTPUT_NUMBER);
+        register(SUB_OUTPUT_VECTOR);
+        register(SUB_OUTPUT_STRING);
+        register(SUB_OUTPUT_ENTITY);
+        register(SUB_OUTPUT_ITEM);
+        register(SUB_OUTPUT_BLOCK);
+        register(SUB_OUTPUT_LIST);
+
+        register(IS_SUB_SPELL);
+
+        register(SUB_SPELL);
     }
 
     private static void register(Node node) {
