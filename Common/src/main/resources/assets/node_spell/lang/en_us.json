@@ -30,6 +30,7 @@
   "error.node_spell.paper_no_value": "Written paper does not contain a value",
   "error.node_spell.not_sub_spell": "Spell expected to be run as a sub-spell, but wasn't",
   "error.node_spell.sub_spell_gone": "Spell referenced by this sub-spell node no longer exists",
+  "error.node_spell.recursion_limit": "Spell hit recursion limit (%d)",
 
   "gui.node_spell.wand_spell_tooltip": "Current Spell: %s",
   "gui.node_spell.book_spell_tooltip": "Contains %d spells",

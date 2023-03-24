@@ -8,6 +8,7 @@ import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.nodes.custom.SubSpellNode;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
+import eu.aaxvv.node_spell.spell.value.Datatype;
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -255,6 +256,16 @@ public class NodeInstance implements InstanceDataContainer {
         }
 
         for (SocketInstance remaining : prevInstances.values()) {
+            if (remaining.getBase().getDataType() == Datatype.FLOW) {
+                // flow sockets are not represented on the actual spell object, but added afterwards by the pseudo node
+                for (Socket baseSocket : this.base.getSockets()) {
+                    if (baseSocket.getSerializationHash() == remaining.getSerializationHash()) {
+                        remaining.setBase(baseSocket);
+                        this.socketInstances.put(baseSocket, remaining);
+                    }
+                }
+            }
+
             remaining.disconnectAll();
         }
     }

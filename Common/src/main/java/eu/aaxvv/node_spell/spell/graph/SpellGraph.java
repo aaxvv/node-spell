@@ -24,6 +24,7 @@ import java.util.*;
 public class SpellGraph {
     private NodeInstance entrypoint;
     private boolean isSubSpell;
+    private boolean hasSideEffects;
 
     private final List<NodeInstance> nodeInstances;
     private final List<Edge> edges;
@@ -36,6 +37,7 @@ public class SpellGraph {
         this.externalSockets = new HashMap<>();
         this.isSubSpell = false;
         this.entrypoint = null;
+        this.hasSideEffects = false;
     }
 
     public NodeInstance getEntrypoint() {
@@ -44,6 +46,7 @@ public class SpellGraph {
 
     public void setEntrypoint(NodeInstance entrypoint) {
         this.entrypoint = entrypoint;
+        this.hasSideEffects = entrypoint != null;
     }
     public void setIsSubSpell(boolean subSpell) {
         this.isSubSpell = subSpell;
@@ -119,6 +122,7 @@ public class SpellGraph {
     }
 
     public void deserialize(CompoundTag nbt, SpellDeserializationContext context) {
+        this.hasSideEffects = nbt.contains("Entrypoint");
         ListTag instanceList = nbt.getList("Nodes", Tag.TAG_COMPOUND);
         for (int i = 0; i < instanceList.size(); i++) {
             CompoundTag instanceNbt = instanceList.getCompound(i);
@@ -214,10 +218,15 @@ public class SpellGraph {
 //        }
 //    }
 
+
+    public boolean hasSideEffects() {
+        return hasSideEffects;
+    }
+
     public void clear() {
         this.nodeInstances.clear();
         this.edges.clear();
-        this.entrypoint = null;
+        this.setEntrypoint(null);
     }
 
     public Map<NodeInstance, Socket> getExternalSockets() {

@@ -43,7 +43,7 @@ public class SubSpellPseudoNode extends FlowNode {
             return;
         }
 
-        this.hasSideEffects = spell.getGraph().getEntrypoint() != null;
+        this.hasSideEffects = spell.getGraph().hasSideEffects();
 
         if (this.hasSideEffects) {
             this.addInputSocket(Datatype.FLOW, "socket.node_spell.empty");

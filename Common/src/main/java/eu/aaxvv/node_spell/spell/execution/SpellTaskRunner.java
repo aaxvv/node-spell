@@ -4,7 +4,6 @@ import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.spell.Spell;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
@@ -42,13 +41,15 @@ public class SpellTaskRunner {
         Iterator<Map.Entry<UUID, SpellRunner>> iterator = this.runningSpells.entrySet().iterator();
         while (iterator.hasNext()) {
             var entry = iterator.next();
-            SpellRunner runner = entry.getValue();
-            if (runner.ctx.getLevel() != level) {
+            SpellRunner runner = entry.getValue().ctx.getCurrentRunner();
+            if (runner == null || !runner.running) {
+                iterator.remove();
                 continue;
             }
 
-            if (!runner.running) {
-                iterator.remove();
+
+            if (runner.ctx.getLevel() != level) {
+                continue;
             }
 
             try {

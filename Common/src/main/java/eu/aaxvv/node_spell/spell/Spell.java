@@ -100,7 +100,9 @@ public class Spell {
     }
 
     public void addDependent(Spell dependentSpell) {
-        this.dependentSpells.add(new WeakReference<>(dependentSpell));
+        if (dependentSpell != this) {
+            this.dependentSpells.add(new WeakReference<>(dependentSpell));
+        }
     }
 
     public void refreshDependents() {

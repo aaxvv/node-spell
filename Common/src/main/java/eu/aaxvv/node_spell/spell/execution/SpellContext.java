@@ -1,5 +1,6 @@
 package eu.aaxvv.node_spell.spell.execution;
 
+import eu.aaxvv.node_spell.ModConstants;
 import eu.aaxvv.node_spell.helper.EntityHelper;
 import eu.aaxvv.node_spell.spell.value.Value;
 import net.minecraft.core.BlockPos;
@@ -62,6 +63,9 @@ public class SpellContext {
 
     public void pushRunner(SpellRunner runner) {
         this.runnerStack.addLast(runner);
+        if (this.runnerStack.size() > ModConstants.SPELL_RECURSION_LIMIT) {
+            throw new SpellExecutionException(Component.translatable("error.node_spell.recursion_limit", ModConstants.SPELL_RECURSION_LIMIT));
+        }
     }
 
     public SpellRunner popRunner() {

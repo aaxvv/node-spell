@@ -43,6 +43,11 @@ public abstract class SpellDeserializationContext {
 
         @Override
         public Spell findSpell(UUID spellId) {
+            // prevent infinite recursion if a spell contains itself
+            if (this.getCurrentSpell().getId().equals(spellId)) {
+                return this.getCurrentSpell();
+            }
+
             for (GuiElement listItem : this.screen.getSpellList().getChildren()) {
                 GuiSpellListItem item = ((GuiSpellListItem) listItem);
                 if (item.getSpellId().equals(spellId)) {
@@ -90,6 +95,11 @@ public abstract class SpellDeserializationContext {
 
         @Override
         public Spell findSpell(UUID spellId) {
+            // prevent infinite recursion if a spell contains itself
+            if (this.getCurrentSpell().getId().equals(spellId)) {
+                return this.getCurrentSpell();
+            }
+
             CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.spellBookStack, spellId);
             if (spellTag == null) {
                 return null;

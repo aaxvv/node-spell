@@ -147,10 +147,11 @@ public class SpellBookScreen extends BaseScreen {
     }
 
     private void onAddSpell() {
-        String name = getNewSpellName("New Spell");
+        String fallbackName = getNewSpellName("New Spell");
         UUID spellId = UUID.randomUUID();
-        addSpellItem(name, spellId);
-        this.bookStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND).add(Spell.createEmptyNbt(name, spellId));
+        GuiSpellListItem item = addSpellItem("", spellId);
+        this.bookStack.getOrCreateTag().getList("Spells", Tag.TAG_COMPOUND).add(Spell.createEmptyNbt(fallbackName, spellId));
+        startRenaming(item, fallbackName);
     }
 
     private void onRenameSpell() {
@@ -164,15 +165,20 @@ public class SpellBookScreen extends BaseScreen {
 
         GuiSpellListItem selected = (GuiSpellListItem) this.selectionModel.getSelectedItems().iterator().next();
 
-        this.renaming = selected;
-        selected.setDisplayNameOverrideSupplier(this.textEditController::getDisplayString);
-        textEditController.setDisplayWidth(selected.getWidth() - 6 - GuiSpellListItem.FAVORITE_SIZE);
-        textEditController.setRollbackValueProvider(selected::getSpellName);
-        textEditController.startEditing(selected.getSpellName());
+        startRenaming(selected, selected.getSpellName());
+    }
+
+    private void startRenaming(GuiSpellListItem item, String fallbackName) {
+        this.renaming = item;
+        item.setDisplayNameOverrideSupplier(this.textEditController::getDisplayString);
+        textEditController.setDisplayWidth(item.getWidth() - 6 - GuiSpellListItem.FAVORITE_SIZE);
+        textEditController.setRollbackValueProvider(() -> fallbackName);
+        textEditController.startEditing(item.getSpellName());
         textEditController.setDoneCallback(newName -> {
-            selected.setDisplayNameOverrideSupplier(null);
+            item.setDisplayNameOverrideSupplier(null);
             if (newName == null || newName.isEmpty()) {
                 this.renaming = null;
+                item.setSpellName(fallbackName);
                 return false;
             }
 
@@ -181,9 +187,9 @@ public class SpellBookScreen extends BaseScreen {
                 return false;
             }
 
-            CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.bookStack, selected.getSpellId());
+            CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.bookStack, item.getSpellId());
 
-            selected.setSpellName(newName);
+            item.setSpellName(newName);
             spellTag.putString("Name", newName);
             this.renaming = null;
             this.spellList.getChildren().sort(Comparator.comparing(child -> ((GuiSpellListItem)child).getSpellName()));

@@ -10,8 +10,9 @@ public class ModConstants {
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
 	public static final int SPELL_INTERACTION_RANGE = 20;
+	public static final int SPELL_RECURSION_LIMIT = 128;
 
-	public static ResourceLocation resLoc(String name) {
+    public static ResourceLocation resLoc(String name) {
 		return new ResourceLocation(MOD_ID, name);
 	}
 

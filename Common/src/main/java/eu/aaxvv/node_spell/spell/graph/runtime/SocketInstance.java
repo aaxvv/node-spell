@@ -17,7 +17,7 @@ import java.util.List;
  * This is used to store connections between node instances, as well as values of nodes during execution.
  */
 public class SocketInstance {
-    private final Socket base;
+    private Socket base;
     private final List<Edge> connections;
     private final NodeInstance parentInstance;
     private Value currentValue;
@@ -34,6 +34,10 @@ public class SocketInstance {
 
     public Socket getBase() {
         return this.base;
+    }
+
+    public void setBase(Socket base) {
+        this.base = base;
     }
 
     public void addConnection(Edge edge) {
