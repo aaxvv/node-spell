@@ -1,13 +1,18 @@
 package eu.aaxvv.node_spell.client.gui.graph_editor;
 
 import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
+import eu.aaxvv.node_spell.spell.graph.nodes.flow.FlowRepeaterNode;
+import eu.aaxvv.node_spell.spell.graph.nodes.generic.GenericRepeatNode;
 import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
+import eu.aaxvv.node_spell.spell.value.Datatype;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.joml.Vector2i;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -23,9 +28,10 @@ public class NodeGraphView {
     private Consumer<SocketInstance> socketReleasedCallback;
 
 
-    private Map<NodeInstance, GuiNodeView> instances;
-    private Map<Edge, GuiEdgeView> edges;
+    private final Map<NodeInstance, GuiNodeView> instances;
+    private final Map<Edge, GuiEdgeView> edges;
     private GuiDraggingEdgeView draggingEdge;
+    private float splitEdgeCoolDown;
 
     // store dragging edge here?
 
@@ -37,6 +43,7 @@ public class NodeGraphView {
         this.instances = new HashMap<>();
         this.edges = new HashMap<>();
         this.draggingEdge = null;
+        this.splitEdgeCoolDown = 0;
 
         createInitialElements();
     }
@@ -103,9 +110,9 @@ public class NodeGraphView {
         this.edgeParent.removeChild(edge);
     }
 
-    public GuiNodeView getNodeFor(NodeInstance parentInstance) {
-        return this.instances.get(parentInstance);
-    }
+//    public GuiNodeView getNodeFor(NodeInstance parentInstance) {
+//        return this.instances.get(parentInstance);
+//    }
 
     public void invalidateConnected(GuiNodeView node) {
         for (SocketInstance socket : node.getInstance().getSocketInstances()) {
@@ -154,21 +161,21 @@ public class NodeGraphView {
         this.nodeClickedCallback = nodeClickedCallback;
     }
 
-    private void nodeClicked(GuiNodeView node, double screenX, double screenY) {
-        if (this.nodeClickedCallback != null)  {
-            this.nodeClickedCallback.accept(node, screenX, screenY);
-        }
-    }
+//    private void nodeClicked(GuiNodeView node, double screenX, double screenY) {
+//        if (this.nodeClickedCallback != null)  {
+//            this.nodeClickedCallback.accept(node, screenX, screenY);
+//        }
+//    }
 
     public void setNodeReleasedCallback(TriConsumer<GuiNodeView, Double, Double> nodeReleasedCallback) {
         this.nodeReleasedCallback = nodeReleasedCallback;
     }
 
-    private void nodeReleased(GuiNodeView node, double screenX, double screenY) {
-        if (this.nodeReleasedCallback != null)  {
-            this.nodeReleasedCallback.accept(node, screenX, screenY);
-        }
-    }
+//    private void nodeReleased(GuiNodeView node, double screenX, double screenY) {
+//        if (this.nodeReleasedCallback != null)  {
+//            this.nodeReleasedCallback.accept(node, screenX, screenY);
+//        }
+//    }
 
     private void nodeInteract(GuiNodeView node, double screenX, double screenY, boolean mouseDown) {
         if (mouseDown) {
@@ -244,9 +251,7 @@ public class NodeGraphView {
                 }
             }
 
-        } else {
-            // TODO: maybe create matching node?
-       }
+        }
 
         this.edgeParent.removeChild(this.draggingEdge);
         this.draggingEdge = null;
@@ -278,5 +283,78 @@ public class NodeGraphView {
 
     public boolean isDraggingNewEdge() {
         return this.draggingEdge != null && this.draggingEdge.isNew();
+    }
+
+    public void drawOverEdge(Vector2i prevPos, Vector2i curPos, boolean split) {
+        if (prevPos == null || curPos == null) {
+            return;
+        }
+
+        Map<GuiEdgeView, Vector2i> toEdit = new HashMap<>();
+
+        for (GuiEdgeView edge : this.getEdges()) {
+            // check intersect
+            Vector2i intersectionPoint = edge.intersectLine(prevPos, curPos);
+            if (intersectionPoint != null) {
+                toEdit.put(edge, intersectionPoint);
+            }
+        }
+
+        for (var entry : toEdit.entrySet()) {
+            if (split) {
+                splitEdge(entry.getKey(), entry.getValue());
+            } else {
+                removeEdge(entry.getKey());
+            }
+        }
+    }
+
+    private void splitEdge(GuiEdgeView edge, Vector2i pos) {
+        if (this.splitEdgeCoolDown > 0) {
+            return;
+        }
+
+        Datatype datatype = edge.getDatatype();
+        SocketInstance out = edge.getInstance().getOutSocket();
+        SocketInstance in = edge.getInstance().getInSocket();
+
+        removeEdge(edge);
+
+        NodeInstance repNode = (switch (datatype) {
+            case BOOL -> Nodes.REPEAT_BOOL;
+            case NUMBER -> Nodes.REPEAT_NUM;
+            case STRING -> Nodes.REPEAT_STRING;
+            case VECTOR -> Nodes.REPEAT_VEC;
+            case ENTITY -> Nodes.REPEAT_ENTITY;
+            case BLOCK -> Nodes.REPEAT_BLOCK;
+            case ITEM -> Nodes.REPEAT_ITEM;
+            case LIST -> Nodes.REPEAT_LIST;
+            case FLOW -> Nodes.REPEAT_FLOW;
+            case ANY -> Nodes.REPEAT_ANY;
+        }).createInstance();
+        repNode.setPosition(pos.x - repNode.getBaseNode().getWidth(), pos.y - repNode.getBaseNode().getExpectedHeight() / 2);
+
+        SocketInstance repStart, repEnd;
+        if (repNode.getBaseNode() instanceof GenericRepeatNode rep) {
+            repStart = repNode.getSocketInstance(rep.sIn);
+            repEnd = repNode.getSocketInstance(rep.sOut);
+        } else if (repNode.getBaseNode() instanceof FlowRepeaterNode flow) {
+            repStart = repNode.getSocketInstance(flow.sIn);
+            repEnd = repNode.getSocketInstance(flow.sOut);
+        } else {
+            throw new IllegalStateException(repNode.getBaseNode().getResourceLocation().toString());
+        }
+
+        addNewNode(repNode);
+        addNewEdge(Edge.create(out, repStart));
+        addNewEdge(Edge.create(repEnd, in));
+
+        this.splitEdgeCoolDown = 10;
+    }
+
+    public void tickCoolDown(float tickDelta) {
+        if (this.splitEdgeCoolDown > 0) {
+            this.splitEdgeCoolDown -= tickDelta;
+        }
     }
 }

@@ -31,6 +31,22 @@ public class Edge {
         return endSocket;
     }
 
+    public SocketInstance getInSocket() {
+        if (this.startSocket.getBase().getDirection().isIn()) {
+            return this.startSocket;
+        } else {
+            return this.endSocket;
+        }
+    }
+
+    public SocketInstance getOutSocket() {
+        if (this.startSocket.getBase().getDirection().isIn()) {
+            return this.endSocket;
+        } else {
+            return this.startSocket;
+        }
+    }
+
     public Datatype getDatatype() {
         if (this.endSocket == null) {
             return this.startSocket.getBase().getDataType();
@@ -44,13 +60,13 @@ public class Edge {
         }
     }
 
-    public boolean isIncomplete() {
-        return startSocket == null || endSocket == null;
-    }
-
-    public Edge complete(SocketInstance end) {
-        return new Edge(this.startSocket, end);
-    }
+//    public boolean isIncomplete() {
+//        return startSocket == null || endSocket == null;
+//    }
+//
+//    public Edge complete(SocketInstance end) {
+//        return new Edge(this.startSocket, end);
+//    }
 
     public SocketInstance getOpposite(SocketInstance of) {
         if (of == this.startSocket) {
@@ -66,9 +82,9 @@ public class Edge {
         return new Edge(start, end);
     }
 
-    public static Edge createIncomplete(SocketInstance start) {
-        return new Edge(start, null);
-    }
+//    public static Edge createIncomplete(SocketInstance start) {
+//        return new Edge(start, null);
+//    }
 
     public void remove() {
         this.startSocket.removeConnection(this);

@@ -7,6 +7,7 @@ import eu.aaxvv.node_spell.spell.graph.runtime.Edge;
 import eu.aaxvv.node_spell.spell.value.Datatype;
 import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 
 public class GuiEdgeView extends GuiElement {
     private static final int STRAIGHT_EDGE_LENGTH = 8;
@@ -192,5 +193,46 @@ public class GuiEdgeView extends GuiElement {
     @Override
     public void setSize(int width, int height) {
         throw new UnsupportedOperationException();
+    }
+
+    public Vector2i intersectLine(Vector2i start, Vector2i end) {
+        // check bounding box for early exit
+        int bbXLow = getLocalX() - STRAIGHT_EDGE_LENGTH;
+        int bbXHigh = getLocalX() + getWidth() + STRAIGHT_EDGE_LENGTH;
+        int bbYLow = getLocalY();
+        int bbYHigh = getLocalY() + getHeight();
+
+        if (Math.max(start.x, end.x) < bbXLow || Math.min(start.x, end.x) > bbXHigh ||
+            Math.max(start.y, end.y) < bbYLow || Math.min(start.y, end.y) > bbYHigh) {
+            return null;
+        }
+
+        int endX = this.cachedInX - this.getParent().getGlobalX();
+        int endY = this.cachedInY - this.getParent().getGlobalY();
+        int startX = this.cachedOutX - this.getParent().getGlobalX();
+        int startY = this.cachedOutY - this.getParent().getGlobalY();
+
+        Vector2i intersectMid = linesIntersect(startX + STRAIGHT_EDGE_LENGTH, startY, endX - STRAIGHT_EDGE_LENGTH, endY, start.x, start.y, end.x, end.y);
+        if (intersectMid != null) {
+            return intersectMid;
+        }
+        Vector2i intersectStart = linesIntersect(startX, startY, startX + STRAIGHT_EDGE_LENGTH, startY, start.x, start.y, end.x, end.y);
+        if (intersectStart != null) {
+            return intersectStart;
+        }
+        Vector2i intersectEnd = linesIntersect(endX, endY, endX - STRAIGHT_EDGE_LENGTH, endY, start.x, start.y, end.x, end.y);
+        return intersectEnd;
+    }
+
+    private Vector2i linesIntersect(int pX1, int pY1, int pX2, int pY2, int qX1, int qY1, int qX2, int qY2) {
+        float denom = (float) ((pX1 - pX2)*(qY1 - qY2) - (pY1 - pY2)*(qX1 - qX2));
+        float t = ((pX1 - qX1)*(qY1 - qY2) - (pY1 - qY1)*(qX1 - qX2)) / denom;
+        float u = ((pX1 - qX1)*(pY1 - pY2) - (pY1 - qY1)*(pX1 - pX2)) / denom;
+
+       if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+           return new Vector2i((int)(pX1 + t*(pX2 - pX1)), (int)(pY1 + t*(pY2 - pY1)));
+       } else {
+           return null;
+       }
     }
 }

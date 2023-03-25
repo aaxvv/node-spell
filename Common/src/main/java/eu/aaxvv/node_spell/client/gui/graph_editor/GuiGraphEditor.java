@@ -25,6 +25,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
     private final Set<GuiNodeView> selectedNodes;
     private Vector2i selectionStart;
     private Vector2i selectionEnd;
+    private Vector2i prevMousePos;
     private CurrentAction currentAction;
 
     private Runnable graphChangedCallback;
@@ -46,6 +47,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.currentAction = CurrentAction.NONE;
 
         this.graphChangedCallback = null;
+        this.prevMousePos = null;
     }
 
     public GuiNodeView addNode(NodeInstance nodeInstance, double screenX, double screenY) {
@@ -121,6 +123,10 @@ public class GuiGraphEditor extends UnboundedGuiElement {
     private void socketReleased(SocketInstance socket) {
         if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
             this.currentAction = CurrentAction.NONE;
+        } else if (this.currentAction == CurrentAction.DRAGGING_SELECTION) {
+            this.selectionStart = null;
+            this.selectionEnd = null;
+            this.currentAction = CurrentAction.NONE;
         }
 
         this.graphView.stopDragEdge(socket.getParentInstance(), socket);
@@ -137,9 +143,16 @@ public class GuiGraphEditor extends UnboundedGuiElement {
 
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             // left click on empty space
-            this.selectedNodes.clear();
-            this.currentAction = CurrentAction.DRAGGING_SELECTION;
-            updateSelectionState();
+            this.prevMousePos = this.toLocal((int) screenX, (int) screenY);
+            if (GuiHelper.isControlDown()) {
+                this.currentAction = CurrentAction.DRAW_DELETING_EDGE;
+            } else if (GuiHelper.isShiftDown()) {
+                this.currentAction = CurrentAction.DRAW_SPLITTING_EDGE;
+            } else {
+                this.selectedNodes.clear();
+                this.currentAction = CurrentAction.DRAGGING_SELECTION;
+                updateSelectionState();
+            }
             requestFocus();
             return true;
         }
@@ -154,14 +167,21 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         }
 
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            Vector2i dragPos = this.toLocal((int) screenX, (int) screenY);
+
             if (this.currentAction == CurrentAction.DRAGGING_NODES) {
                 dragSelectedNodes(screenX, screenY);
             } else if (this.currentAction == CurrentAction.DRAGGING_SELECTION) {
                 boxSelect(screenX, screenY);
             } else if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
-                Vector2i dragPos = this.toLocal((int) screenX, (int) screenY);
                 this.graphView.updateDragPos(dragPos.x, dragPos.y);
+            } else if (this.currentAction == CurrentAction.DRAW_DELETING_EDGE) {
+                this.graphView.drawOverEdge(this.prevMousePos, dragPos, false);
+            } else if (this.currentAction == CurrentAction.DRAW_SPLITTING_EDGE) {
+                this.graphView.drawOverEdge(this.prevMousePos, dragPos, true);
             }
+
+            this.prevMousePos = dragPos;
             return false;
         }
 
@@ -288,6 +308,8 @@ public class GuiGraphEditor extends UnboundedGuiElement {
 
             RenderUtil.drawRect(pose, x, y, Math.abs(this.selectionStart.x - this.selectionEnd.x), Math.abs(this.selectionStart.y - this.selectionEnd.y), SELECTION_RECT_COLOR);
         }
+
+        this.graphView.tickCoolDown(tickDelta);
     }
 
     private void updateSelectionState() {
@@ -314,6 +336,8 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         NONE,
         DRAGGING_NODES,
         DRAGGING_SELECTION,
-        DRAGGING_EDGE
+        DRAGGING_EDGE,
+        DRAW_DELETING_EDGE,
+        DRAW_SPLITTING_EDGE
     }
 }
