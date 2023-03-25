@@ -1,9 +1,11 @@
 package eu.aaxvv.node_spell.platform.services;
 
+import eu.aaxvv.node_spell.network.packet.CustomPacket;
 import eu.aaxvv.node_spell.platform.Services;
 import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
 import net.minecraft.core.Registry;
+import net.minecraft.server.level.ServerPlayer;
 
 public interface PlatformHelper {
     PlatformHelper INSTANCE = Services.load(PlatformHelper.class);
@@ -38,4 +40,6 @@ public interface PlatformHelper {
     default String getEnvironmentName() {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    void sendToPlayer(ServerPlayer player, CustomPacket packet);
 }

@@ -3,10 +3,10 @@
     "id": "node_spell",
     "version": "${version}",
   
-    "name": "Example Mod",
+    "name": "Node Spell",
     "description": "This is an example description! Tell everyone what your mod is about!",
     "authors": [
-      "Me!"
+      "aaxvv"
     ],
     "contact": {
       "homepage": "https://fabricmc.net/",
@@ -14,7 +14,7 @@
     },
   
     "license": "CC0-1.0",
-    "icon": "assets/modid/icon.png",
+    "icon": "assets/node_spell/icon.png",
   
     "environment": "*",
     "entrypoints": {
@@ -34,9 +34,6 @@
       "fabric": "*",
       "minecraft": "1.19.3",
       "java": ">=17"
-    },
-    "suggests": {
-      "another-mod": "*"
     }
   }
   

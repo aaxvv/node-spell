@@ -1,12 +1,10 @@
 package eu.aaxvv.node_spell.platform;
 
-import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.network.packet.CustomPacket;
 import eu.aaxvv.node_spell.platform.services.PlatformHelper;
-import eu.aaxvv.node_spell.spell.graph.structure.Node;
-import eu.aaxvv.node_spell.spell.graph.structure.NodeCategory;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.Registry;
+import net.minecraft.server.level.ServerPlayer;
 
 public class FabricPlatformHelper implements PlatformHelper {
 
@@ -25,5 +23,10 @@ public class FabricPlatformHelper implements PlatformHelper {
     public boolean isDevelopmentEnvironment() {
 
         return FabricLoader.getInstance().isDevelopmentEnvironment();
+    }
+
+    @Override
+    public void sendToPlayer(ServerPlayer player, CustomPacket packet) {
+        ServerPlayNetworking.send(player, packet.getFabricId(), packet.toBuf());
     }
 }

@@ -46,13 +46,13 @@ public class NodeSpellMod {
 
     @SubscribeEvent
     public static void createRegistries(NewRegistryEvent event) {
-        RegistryBuilder<Node> nodeRegistryBuilder = new RegistryBuilder<Node>().setName(ModConstants.resLoc("nodes"));//.disableSaving().disableSync();
+        RegistryBuilder<Node> nodeRegistryBuilder = new RegistryBuilder<Node>().setName(ModConstants.resLoc("nodes"));
 
         Supplier<IForgeRegistry<Node>> nodeRegistry = event.create(nodeRegistryBuilder);
         Nodes.initRegistry(new ForgeRegistryWrapper<>(nodeRegistry));
 
 
-        RegistryBuilder<NodeCategory> nodeCategoryRegistryBuilder =  new RegistryBuilder<NodeCategory>().setName(ModConstants.resLoc("node_categories"));//.disableSaving().disableSync();
+        RegistryBuilder<NodeCategory> nodeCategoryRegistryBuilder =  new RegistryBuilder<NodeCategory>().setName(ModConstants.resLoc("node_categories"));
 
         Supplier<IForgeRegistry<NodeCategory>> nodeCategoryRegistry = event.create(nodeCategoryRegistryBuilder);
         NodeCategories.initRegistry(new ForgeRegistryWrapper<>(nodeCategoryRegistry));

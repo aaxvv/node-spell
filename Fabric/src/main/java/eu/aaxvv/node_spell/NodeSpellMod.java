@@ -11,6 +11,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 
@@ -29,10 +30,10 @@ public class NodeSpellMod implements ModInitializer {
     }
 
     private void createRegistries() {
-        Registry<Node> nodeRegistry = FabricRegistryBuilder.createSimple(Node.class, ModConstants.resLoc("nodes")).buildAndRegister();
+        Registry<Node> nodeRegistry = FabricRegistryBuilder.createSimple(Node.class, ModConstants.resLoc("nodes")).attribute(RegistryAttribute.SYNCED).buildAndRegister();
         Nodes.initRegistry(new VanillaRegistryWrapper<>(nodeRegistry));
 
-        Registry<NodeCategory> nodeCategoryRegistry = FabricRegistryBuilder.createSimple(NodeCategory.class, ModConstants.resLoc("node_categories")).buildAndRegister();;
+        Registry<NodeCategory> nodeCategoryRegistry = FabricRegistryBuilder.createSimple(NodeCategory.class, ModConstants.resLoc("node_categories")).attribute(RegistryAttribute.SYNCED).buildAndRegister();;
         NodeCategories.initRegistry(new VanillaRegistryWrapper<>(nodeCategoryRegistry));
     }
 }

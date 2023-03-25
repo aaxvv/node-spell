@@ -43,7 +43,7 @@ public class SpellBookScreen extends BaseScreen {
 
     private final ItemStack bookStack;
     private final Player player;
-    private final InteractionHand hand;
+    private final int slot;
     private final List<ItemStack> writtenSpellPaperItems;
     private int selectedImportItemIdx;
 
@@ -55,11 +55,11 @@ public class SpellBookScreen extends BaseScreen {
     private GuiSpellListItem renaming;
     private final TextEditController textEditController;
 
-    public SpellBookScreen(Player player, ItemStack bookStack, InteractionHand hand) {
+    public SpellBookScreen(Player player, ItemStack bookStack, int slot) {
         super(Component.literal("Spell Book"));
         this.player = player;
         this.bookStack = bookStack;
-        this.hand = hand;
+        this.slot = slot;
         this.selectionModel = new MultiSelectionModel();
         this.textEditController = new TextEditController();
         this.writtenSpellPaperItems = this.findSpellPaperItems(this.player);
@@ -269,8 +269,7 @@ public class SpellBookScreen extends BaseScreen {
             }
         }
 
-        int slot = this.hand == InteractionHand.MAIN_HAND ? this.player.getInventory().selected : Inventory.SLOT_OFFHAND;
-        ClientPlatformHelper.INSTANCE.sendToServer(new UpdateSpellBookC2SPacket(slot, this.bookStack.getTag()));
+        ClientPlatformHelper.INSTANCE.sendToServer(new UpdateSpellBookC2SPacket(this.slot, this.bookStack.getTag()));
 
         super.onClose();
     }

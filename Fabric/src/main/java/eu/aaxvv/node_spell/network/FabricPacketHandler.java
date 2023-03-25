@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.network;
 
 import eu.aaxvv.node_spell.network.packet.ExportSpellsC2SPacket;
+import eu.aaxvv.node_spell.network.packet.OpenSpellBookGuiS2CPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateSpellBookC2SPacket;
 import eu.aaxvv.node_spell.network.packet.UpdateWandActiveSpellC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -26,7 +27,7 @@ public class FabricPacketHandler {
     }
 
     public static void initClient() {
-
+        ClientPlayNetworking.registerGlobalReceiver(OpenSpellBookGuiS2CPacket.ID, makeClientBoundHandler(OpenSpellBookGuiS2CPacket::decode, OpenSpellBookGuiS2CPacket::handle));
     }
 
     private static <T> ServerPlayNetworking.PlayChannelHandler makeServerBoundHandler(

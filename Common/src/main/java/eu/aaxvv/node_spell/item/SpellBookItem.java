@@ -1,12 +1,14 @@
 package eu.aaxvv.node_spell.item;
 
-import eu.aaxvv.node_spell.client.screen.SpellBookScreen;
+import eu.aaxvv.node_spell.network.packet.OpenSpellBookGuiS2CPacket;
+import eu.aaxvv.node_spell.platform.services.PlatformHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,12 +27,14 @@ public class SpellBookItem extends Item {
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack bookStack = player.getItemInHand(hand);
-        if (!level.isClientSide) {
-            return InteractionResultHolder.consume(bookStack);
+        if (level.isClientSide) {
+            return InteractionResultHolder.success(bookStack);
         }
 
-        Minecraft.getInstance().setScreen(new SpellBookScreen(player, bookStack, hand));
-        return InteractionResultHolder.success(player.getItemInHand(hand));
+        int slot = hand == InteractionHand.MAIN_HAND ? player.getInventory().selected : Inventory.SLOT_OFFHAND;
+        PlatformHelper.INSTANCE.sendToPlayer((ServerPlayer) player, new OpenSpellBookGuiS2CPacket(slot));
+
+        return InteractionResultHolder.consume(player.getItemInHand(hand));
     }
 
     @Override
