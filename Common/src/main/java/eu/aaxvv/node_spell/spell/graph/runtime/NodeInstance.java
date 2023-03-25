@@ -202,7 +202,7 @@ public class NodeInstance implements InstanceDataContainer {
     }
 
     public boolean containsPoint(int x, int y) {
-        return x >= this.x && x < this.x + this.base.getWidth() && y >= this.y && y < this.y + this.base.getExpectedHeight();
+        return x >= this.x && x < this.x + this.base.getMinWidth() && y >= this.y && y < this.y + this.base.getExpectedHeight();
     }
 
     public void serialize(CompoundTag nodeTag) {

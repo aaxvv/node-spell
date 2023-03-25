@@ -63,8 +63,8 @@ public class RaycastBlockNode extends Node {
         }
     }
 
-    @Override
-    public int getWidth() {
-        return super.getWidth() + 4;
-    }
+//    @Override
+//    public int getMinWidth() {
+//        return super.getMinWidth() + 4;
+//    }
 }

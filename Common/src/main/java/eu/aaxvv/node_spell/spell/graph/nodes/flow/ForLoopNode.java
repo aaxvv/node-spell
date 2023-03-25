@@ -42,10 +42,10 @@ public class ForLoopNode extends FlowNode {
         return new InstanceData();
     }
 
-    @Override
-    public int getWidth() {
-        return (int)(super.getWidth() * 1.5);
-    }
+//    @Override
+//    public int getMinWidth() {
+//        return (int)(super.getMinWidth() * 1.5);
+//    }
 
     @Override
     public void run(SpellContext ctx, NodeInstance instance) {

@@ -6,6 +6,8 @@ import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.value.Datatype;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +34,8 @@ public abstract class Node {
     private final ResourceLocation resourceLocation;
     private NodeStyle style;
 
+    private int width;
+
     public Node(NodeCategory category, ResourceLocation resourceLocation) {
         this(resourceLocation.toLanguageKey("node"), category, resourceLocation);
     }
@@ -45,6 +49,7 @@ public abstract class Node {
         this.outSocketCount = 0;
         this.resourceLocation = resourceLocation;
         this.style = NodeStyle.getDefault();
+        this.width = -1;
     }
 
     protected void addSocket(Socket socket) {
@@ -119,7 +124,7 @@ public abstract class Node {
         return this.style.getSocketYOffset() + Math.max(this.inSocketCount, this.outSocketCount) * ModConstants.Sizing.SOCKET_STEP_Y - 3;
     }
 
-    public int getWidth() {
+    public int getMinWidth() {
         return ModConstants.Sizing.DEFAULT_NODE_WIDTH;
     }
 
@@ -138,5 +143,33 @@ public abstract class Node {
 
     public Object deserializeInstanceData(CompoundTag dataTag, SpellDeserializationContext context) {
         return null;
+    }
+
+    public int getWidth() {
+        if (this.width >= 0) {
+            return this.width;
+        }
+
+        // recalculate
+        final int socketNameSeparation = 4;
+        final int socketNameEdgeOffset = 5;
+
+        Font font = Minecraft.getInstance().font;
+
+        int maxSocketLeft = 0;
+        int maxSocketRight = 0;
+
+        for (Socket socket : this.getSockets()) {
+            if (socket.getDirection().isIn()) {
+                maxSocketLeft = Math.max(maxSocketLeft, font.width(socket.getDisplayName()) + socketNameEdgeOffset);
+            } else {
+                maxSocketRight = Math.max(maxSocketRight, font.width(socket.getDisplayName()) + socketNameEdgeOffset);
+            }
+        }
+        int fromSockets = maxSocketLeft + maxSocketRight + socketNameSeparation;
+        int fromTitle = this.style.drawHeader() ? font.width(this.getDisplayName()) + 4 : 0;
+        this.width = Math.max(Math.max(fromSockets, fromTitle), this.getMinWidth());
+
+        return this.width;
     }
 }

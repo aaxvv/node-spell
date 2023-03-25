@@ -44,8 +44,8 @@ public class MapRangeNode extends Node {
         instance.setSocketValue(this.sOut, Value.createNumber(result));
     }
 
-    @Override
-    public int getWidth() {
-        return (int) (super.getWidth() * 1.25f);
-    }
+//    @Override
+//    public int getMinWidth() {
+//        return (int) (super.getMinWidth() * 1.25f);
+//    }
 }

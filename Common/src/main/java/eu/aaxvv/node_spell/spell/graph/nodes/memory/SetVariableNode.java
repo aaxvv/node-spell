@@ -30,7 +30,7 @@ public class SetVariableNode extends SimpleFlowNode {
 
     @Override
     public Widget<?> createWidget(NodeInstance instance) {
-        TextFieldWidget field = new TextFieldWidget(instance, this.getWidth() - 8);
+        TextFieldWidget field = new TextFieldWidget(instance, this.getMinWidth() - 8);
         field.setLocalPosition(4, ModConstants.Sizing.HEADER_HEIGHT + 2);
         return field;
     }

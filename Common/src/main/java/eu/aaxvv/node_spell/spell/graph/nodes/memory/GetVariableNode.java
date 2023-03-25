@@ -30,7 +30,7 @@ public class GetVariableNode extends Node {
 
     @Override
     public Widget<?> createWidget(NodeInstance instance) {
-        TextFieldWidget field = new TextFieldWidget(instance, this.getWidth() - 6);
+        TextFieldWidget field = new TextFieldWidget(instance, this.getMinWidth() - 6);
         field.setLocalPosition(2, ModConstants.Sizing.HEADER_HEIGHT + 2);
         return field;
     }

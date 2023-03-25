@@ -33,8 +33,8 @@ public class GenericItemPropertyNode<T> extends Node {
         instance.setSocketValue(sOut, Value.create(outputType, outputValue));
     }
 
-    @Override
-    public int getWidth() {
-        return (int) (super.getWidth() * 1.2f);
-    }
+//    @Override
+//    public int getMinWidth() {
+//        return (int) (super.getMinWidth() * 1.2f);
+//    }
 }

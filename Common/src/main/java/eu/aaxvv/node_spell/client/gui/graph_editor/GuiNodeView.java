@@ -38,7 +38,7 @@ public class GuiNodeView extends GuiElement {
     private int highlightColor;
 
     public GuiNodeView(NodeInstance instance) {
-        super(instance.getBaseNode().getWidth(), instance.getBaseNode().getExpectedHeight());
+        super(instance.getBaseNode().getMinWidth(), instance.getBaseNode().getExpectedHeight());
         this.instance = instance;
         this.selected = false;
         this.highlightColor = 0;

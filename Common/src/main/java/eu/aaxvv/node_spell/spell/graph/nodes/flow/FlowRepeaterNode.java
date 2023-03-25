@@ -31,7 +31,7 @@ public class FlowRepeaterNode extends FlowNode {
     }
 
     @Override
-    public int getWidth() {
+    public int getMinWidth() {
         return 12;
     }
 

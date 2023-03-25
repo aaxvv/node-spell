@@ -45,8 +45,8 @@ public class NextItemInHotbarNode extends Node {
         instance.setSocketValue(sItem, Value.createItem(foundStack));
     }
 
-    @Override
-    public int getWidth() {
-        return (int) (super.getWidth() * 1.3);
-    }
+//    @Override
+//    public int getMinWidth() {
+//        return (int) (super.getMinWidth() * 1.3);
+//    }
 }

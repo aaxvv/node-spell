@@ -27,7 +27,7 @@ public class GenericRepeatNode extends Node {
     }
 
     @Override
-    public int getWidth() {
+    public int getMinWidth() {
         return 12;
     }
 

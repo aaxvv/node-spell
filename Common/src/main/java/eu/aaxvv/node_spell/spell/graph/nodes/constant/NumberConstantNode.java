@@ -15,7 +15,7 @@ public class NumberConstantNode extends BaseConstantNode<Double> {
 
     @Override
     public NumberFieldWidget createWidget(NodeInstance instance) {
-        NumberFieldWidget field = new NumberFieldWidget(instance, this.getWidth() - 6);
+        NumberFieldWidget field = new NumberFieldWidget(instance, this.getMinWidth() - 6);
         field.setLocalPosition(2, ModConstants.Sizing.HEADER_HEIGHT + 2);
         return field;
     }
