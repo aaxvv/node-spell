@@ -19,7 +19,7 @@ public class VectorConstantNode extends BaseConstantNode<Vec3> {
 
     @Override
     public VectorNodeWidget createWidget(NodeInstance instance) {
-        VectorNodeWidget field = new VectorNodeWidget(instance, this.getMinWidth() - 6);
+        VectorNodeWidget field = new VectorNodeWidget(instance, this.getWidth() - 6);
         field.setLocalPosition(2, ModConstants.Sizing.HEADER_HEIGHT + 2);
         return field;
     }

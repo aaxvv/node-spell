@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.client.gui.node_widget;
 
 import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.screen.SpellEditContext;
 import eu.aaxvv.node_spell.spell.graph.runtime.InstanceDataContainer;
 
 public abstract class Widget<T> extends GuiElement {
@@ -20,6 +21,7 @@ public abstract class Widget<T> extends GuiElement {
     public void commitValue() {
         this.instance.setInstanceData(this.currentValue);
         this.releaseFocus();
+        SpellEditContext.reVerifyGraph();
     }
 
     @SuppressWarnings("unchecked")

@@ -6,6 +6,7 @@ import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.gui.elements.GuiFlowContainer;
 import eu.aaxvv.node_spell.client.gui.elements.GuiTextButton;
 import eu.aaxvv.node_spell.client.gui.helper.NodeLookup;
+import eu.aaxvv.node_spell.client.screen.SpellEditContext;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
@@ -25,7 +26,6 @@ public class GuiNodePicker extends GuiElement {
 
     private final GuiFlowContainer flowContainer;
     private final NodeLookup nodeLookup;
-    private Consumer<Node> nodeCreatedCallback;
 
     public GuiNodePicker(int width, int height, SpellDeserializationContext spellContext) {
         super(width, height);
@@ -70,9 +70,7 @@ public class GuiNodePicker extends GuiElement {
     }
 
     private void createNode(Node node) {
-        if (this.nodeCreatedCallback != null) {
-            this.nodeCreatedCallback.accept(node);
-        }
+        SpellEditContext.addNodeAtCursor(node);
     }
 
     @Override
@@ -81,9 +79,5 @@ public class GuiNodePicker extends GuiElement {
         this.flowContainer.setWidth(this.getWidth());
         this.setHeight(this.flowContainer.getHeight() + 1);
         super.invalidate();
-    }
-
-    public void setNodeCreatedCallback(Consumer<Node> nodeCreatedCallback) {
-        this.nodeCreatedCallback = nodeCreatedCallback;
     }
 }

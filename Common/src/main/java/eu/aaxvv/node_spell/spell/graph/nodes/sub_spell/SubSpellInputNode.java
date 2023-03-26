@@ -1,15 +1,15 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.sub_spell;
 
 import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.client.gui.node_widget.TextFieldWidget;
+import eu.aaxvv.node_spell.client.gui.node_widget.Widget;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
-import eu.aaxvv.node_spell.spell.execution.SpellExecutionException;
 import eu.aaxvv.node_spell.spell.execution.SubSpellRunner;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
 import eu.aaxvv.node_spell.spell.graph.runtime.SocketInstance;
 import eu.aaxvv.node_spell.spell.graph.structure.Socket;
 import eu.aaxvv.node_spell.spell.value.Datatype;
-import net.minecraft.network.chat.Component;
 
 public class SubSpellInputNode extends SubSpellSocketNode {
     public final Socket sOut;
@@ -19,6 +19,13 @@ public class SubSpellInputNode extends SubSpellSocketNode {
         super(NodeCategories.SUB_SPELL, ModConstants.resLoc("sub_input_" + datatype.shortName));
         this.datatype = datatype;
         this.sOut = addOutputSocket(datatype, "socket.node_spell.empty");
+    }
+
+    @Override
+    public Widget<?> createWidget(NodeInstance instance) {
+        TextFieldWidget field = new TextFieldWidget(instance, this.getWidth() - 6);
+        field.setLocalPosition(2, ModConstants.Sizing.HEADER_HEIGHT + 2);
+        return field;
     }
 
     @Override

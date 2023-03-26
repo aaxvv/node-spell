@@ -12,6 +12,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SubSpellPseudoNode extends FlowNode {
     // As long as a player has not deleted the spell on purpose,
@@ -50,8 +52,15 @@ public class SubSpellPseudoNode extends FlowNode {
             this.fOut = this.addOutputSocket(Datatype.FLOW, "socket.node_spell.empty");
         }
 
+        Set<Integer> seenHashes = new HashSet<>();
+
         for (Socket socket : spell.getGraph().getExternalSockets().values()) {
+            if (seenHashes.contains(socket.getSerializationHash())) {
+                continue;
+            }
+
             this.addSocket(socket);
+            seenHashes.add(socket.getSerializationHash());
             if (socket.getDirection().isIn()) {
                 socket.setPositionOnNode(this.inSocketCount);
                 this.inSocketCount++;
@@ -114,5 +123,14 @@ public class SubSpellPseudoNode extends FlowNode {
     @Override
     public Object deserializeInstanceData(CompoundTag dataTag, SpellDeserializationContext context) {
         return new Object();
+    }
+
+    public boolean hasErrors() {
+        Spell spell = this.spell.get();
+        return spell != null && spell.hasErrors();
+    }
+
+    public Spell getSpell() {
+        return this.spell.get();
     }
 }

@@ -1,6 +1,7 @@
 package eu.aaxvv.node_spell.client.gui.graph_editor;
 
 import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.screen.SpellEditContext;
 import eu.aaxvv.node_spell.spell.graph.Nodes;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.nodes.flow.FlowRepeaterNode;
@@ -220,6 +221,7 @@ public class NodeGraphView {
             Edge prevEdge = socket.getSingleConnection();
             this.removeEdge(this.edges.get(prevEdge));
             this.draggingEdge = new GuiDraggingEdgeView(prevEdge.getOpposite(socket), prevEdge);
+            SpellEditContext.reVerifyGraph();
         }
 
         this.edgeParent.addChild(this.draggingEdge);
@@ -255,6 +257,7 @@ public class NodeGraphView {
 
         this.edgeParent.removeChild(this.draggingEdge);
         this.draggingEdge = null;
+        SpellEditContext.reVerifyGraph();
     }
 
     public void updateDragPos(int localX, int localY) {

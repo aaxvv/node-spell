@@ -28,10 +28,20 @@ public abstract class SpellDeserializationContext {
         return this.currentSpellStack.peekLast();
     }
     public void pushCurrentSpell(Spell spell) {
-        this.currentSpellStack.push(spell);
+        this.currentSpellStack.addLast(spell);
     }
     public void popCurrentSpell() {
         this.currentSpellStack.removeLast();
+    }
+
+    public Spell findInStack(UUID spellId) {
+        for (Spell spell : this.currentSpellStack) {
+            if (spell.getId().equals(spellId)) {
+                return spell;
+            }
+        }
+
+        return null;
     }
 
     public static class ClientSide extends SpellDeserializationContext {
@@ -44,8 +54,9 @@ public abstract class SpellDeserializationContext {
         @Override
         public Spell findSpell(UUID spellId) {
             // prevent infinite recursion if a spell contains itself
-            if (this.getCurrentSpell().getId().equals(spellId)) {
-                return this.getCurrentSpell();
+            Spell existing = findInStack(spellId);
+            if (existing != null) {
+                return existing;
             }
 
             for (GuiElement listItem : this.screen.getSpellList().getChildren()) {
@@ -96,8 +107,9 @@ public abstract class SpellDeserializationContext {
         @Override
         public Spell findSpell(UUID spellId) {
             // prevent infinite recursion if a spell contains itself
-            if (this.getCurrentSpell().getId().equals(spellId)) {
-                return this.getCurrentSpell();
+            Spell existing = findInStack(spellId);
+            if (existing != null) {
+                return existing;
             }
 
             CompoundTag spellTag = NbtHelper.findSpellInBookTag(this.spellBookStack, spellId);

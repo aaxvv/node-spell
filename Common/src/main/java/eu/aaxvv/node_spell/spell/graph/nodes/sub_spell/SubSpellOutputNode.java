@@ -1,6 +1,8 @@
 package eu.aaxvv.node_spell.spell.graph.nodes.sub_spell;
 
 import eu.aaxvv.node_spell.ModConstants;
+import eu.aaxvv.node_spell.client.gui.node_widget.TextFieldWidget;
+import eu.aaxvv.node_spell.client.gui.node_widget.Widget;
 import eu.aaxvv.node_spell.spell.execution.SpellContext;
 import eu.aaxvv.node_spell.spell.execution.SubSpellRunner;
 import eu.aaxvv.node_spell.spell.graph.NodeCategories;
@@ -18,6 +20,13 @@ public class SubSpellOutputNode extends SubSpellSocketNode {
         super(NodeCategories.SUB_SPELL, ModConstants.resLoc("sub_output_" + datatype.shortName));
         this.datatype = datatype;
         this.sIn = addInputSocket(datatype, "socket.node_spell.empty");
+    }
+
+    @Override
+    public Widget<?> createWidget(NodeInstance instance) {
+        TextFieldWidget field = new TextFieldWidget(instance, this.getWidth() - 6);
+        field.setLocalPosition(4, ModConstants.Sizing.HEADER_HEIGHT + 2);
+        return field;
     }
 
     @Override

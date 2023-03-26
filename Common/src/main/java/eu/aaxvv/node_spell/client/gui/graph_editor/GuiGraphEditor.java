@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.client.gui.GuiElement;
 import eu.aaxvv.node_spell.client.gui.elements.UnboundedGuiElement;
 import eu.aaxvv.node_spell.client.gui.helper.GuiHelper;
+import eu.aaxvv.node_spell.client.screen.SpellEditContext;
 import eu.aaxvv.node_spell.client.util.RenderUtil;
 import eu.aaxvv.node_spell.spell.graph.SpellGraph;
 import eu.aaxvv.node_spell.spell.graph.runtime.NodeInstance;
@@ -60,7 +61,7 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         this.currentAction = CurrentAction.DRAGGING_NODES;
         updateSelectionState();
         requestFocus();
-        graphChanged();
+        SpellEditContext.reVerifyGraph();
         return newNode;
     }
 
@@ -83,13 +84,13 @@ public class GuiGraphEditor extends UnboundedGuiElement {
             this.currentAction = CurrentAction.DRAGGING_NODES;
             this.selectedNodes.clear();
             this.selectedNodes.addAll(newSelection);
-            graphChanged();
+            SpellEditContext.reVerifyGraph();
             requestFocus();
 
         } else if (GuiHelper.isControlDown()) {
             this.graphView.removeNode(node);
             this.selectedNodes.remove(node);
-            graphChanged();
+            SpellEditContext.reVerifyGraph();
 
         } else {
             this.currentAction = CurrentAction.DRAGGING_NODES;
@@ -107,7 +108,6 @@ public class GuiGraphEditor extends UnboundedGuiElement {
     private void nodeReleased(GuiNodeView node, double screenX, double screenY) {
         if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
             this.graphView.stopDragEdge(node.getInstance(), null);
-            graphChanged();
             this.currentAction = CurrentAction.NONE;
         }
 
@@ -117,7 +117,6 @@ public class GuiGraphEditor extends UnboundedGuiElement {
     private void socketClicked(SocketInstance socket) {
         this.currentAction = CurrentAction.DRAGGING_EDGE;
         this.graphView.startDragEdge(socket);
-        graphChanged();
         requestFocus();
     }
     private void socketReleased(SocketInstance socket) {
@@ -130,7 +129,6 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         }
 
         this.graphView.stopDragEdge(socket.getParentInstance(), socket);
-        graphChanged();
         releaseFocus();
     }
 
@@ -242,7 +240,6 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         if (this.currentAction == CurrentAction.DRAGGING_EDGE) {
             if (!this.graphView.isDraggingNewEdge()) {
                 this.graphView.stopDragEdge(null, null);
-                graphChanged();
                 return;
             }
 
@@ -258,7 +255,6 @@ public class GuiGraphEditor extends UnboundedGuiElement {
                 this.currentAction = CurrentAction.NONE;
                 GuiNodeView newNode = this.addNode(node.createInstance(), GuiHelper.getMouseScreenX(), GuiHelper.getMouseScreenY());
                 this.graphView.stopDragEdge(newNode.getInstance(), null);
-                graphChanged();
             });
             this.getContext().getPopupPane().openPopup(popup, x, y);
             // dumb hack to focus the search field immediately
@@ -316,10 +312,6 @@ public class GuiGraphEditor extends UnboundedGuiElement {
         for (GuiNodeView node : this.graphView.getNodes()) {
             node.setSelected(this.selectedNodes.contains(node));
         }
-    }
-
-    public void setGraphChangedCallback(Runnable graphChangedCallback) {
-        this.graphChangedCallback = graphChangedCallback;
     }
 
     private void graphChanged() {

@@ -14,7 +14,8 @@ public class GraphVerifier {
             new SingleEntrypointRule(),
             new NoCyclesRule(),
             new DataUsedBeforeFlowReachedRule(),
-            new SubSpellSocketRule()
+            new SubSpellSocketRule(),
+            new SubSpellErrorRule()
     );
     private final SpellGraph graph;
     private final List<VerificationResult> problems;

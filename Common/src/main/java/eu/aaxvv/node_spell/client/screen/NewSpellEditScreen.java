@@ -1,16 +1,17 @@
 package eu.aaxvv.node_spell.client.screen;
 
 import eu.aaxvv.node_spell.client.gui.elements.GuiMultilineText;
-import eu.aaxvv.node_spell.client.gui.graph_editor.GuiNodeView;
-import eu.aaxvv.node_spell.client.gui.helper.GuiHelper;
 import eu.aaxvv.node_spell.client.gui.elements.GuiPanContainer;
 import eu.aaxvv.node_spell.client.gui.graph_editor.GuiGraphEditor;
 import eu.aaxvv.node_spell.client.gui.graph_editor.GuiNodePicker;
+import eu.aaxvv.node_spell.client.gui.graph_editor.GuiNodeView;
+import eu.aaxvv.node_spell.client.gui.helper.GuiHelper;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
+import eu.aaxvv.node_spell.spell.graph.structure.Node;
 import eu.aaxvv.node_spell.spell.graph.verification.GraphVerifier;
 import eu.aaxvv.node_spell.spell.graph.verification.VerificationResult;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class NewSpellEditScreen extends BaseScreen {
@@ -36,16 +37,9 @@ public class NewSpellEditScreen extends BaseScreen {
         this.getGuiRoot().addChild(this.nodePicker);
 
         this.nodeGraph = new GuiGraphEditor(this.spell.getGraph());
-        this.nodeGraph.setGraphChangedCallback(this::verifyGraph);
         this.canvasContainer = new GuiPanContainer(this.getRootWidth(), this.getRootHeight(), this.nodeGraph);
         this.canvasContainer.setLocalPosition(0, 0);
         this.getGuiRoot().addChild(this.canvasContainer);
-
-        this.nodePicker.setNodeCreatedCallback(node -> {
-            double x = GuiHelper.getMouseScreenX();
-            double y = GuiHelper.getMouseScreenY();
-            this.nodeGraph.addNode(node.createInstance(), x, y);
-        });
 
         this.errorText = new GuiMultilineText();
         this.errorText.setLocalPosition(2, 2);
@@ -66,11 +60,18 @@ public class NewSpellEditScreen extends BaseScreen {
 
     @Override
     public void onClose() {
+        this.spell.setHasErrors(this.verifier.check());
         this.spell.refreshDependents();
-        Minecraft.getInstance().setScreen(this.parentScreen);
+        SpellEditContext.closeScreen();
     }
 
-    private void verifyGraph() {
+    public void addNodeAtCursor(Node node) {
+        double x = GuiHelper.getMouseScreenX();
+        double y = GuiHelper.getMouseScreenY();
+        this.nodeGraph.addNode(node.createInstance(), x, y);
+    }
+
+    public void verifyGraph() {
         boolean isOk = this.verifier.check();
         this.errorText.getLines().clear();
 
@@ -86,5 +87,9 @@ public class NewSpellEditScreen extends BaseScreen {
             nodeView.setHighlightColor(this.verifier.getNodeErrorLevel(nodeView.getInstance()).highlightColor);
         }
 
+    }
+
+    public Screen getParentScreen() {
+        return this.parentScreen;
     }
 }

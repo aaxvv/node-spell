@@ -59,6 +59,8 @@
   "gui.node_spell.spell_verification.multiple_entrypoints": "Multiple Flow Sources found.",
   "gui.node_spell.spell_verification.incorrect_flow_order": "Output of flow node is used before node is run.",
   "gui.node_spell.spell_verification.conflicting_sub_spell_sockets": "Sub-Spell sockets of same type must have different names.",
+  "gui.node_spell.spell_verification.sub_spell_missing": "Referenced Sub-Spell no longer exists.",
+  "gui.node_spell.spell_verification.sub_spell_errors": "Referenced Sub-Spell contains errors.",
 
   "node.category.node_spell.input": "INPUT",
   "node.category.node_spell.spell_flow": "SPELL FLOW",

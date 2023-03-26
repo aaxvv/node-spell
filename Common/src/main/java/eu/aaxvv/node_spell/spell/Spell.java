@@ -89,6 +89,7 @@ public class Spell {
 
     public void setName(String name) {
         this.name = name;
+        refreshDependents();
     }
 
     public void setHasErrors(boolean hasErrors) {

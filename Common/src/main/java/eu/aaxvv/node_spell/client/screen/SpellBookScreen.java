@@ -2,8 +2,10 @@ package eu.aaxvv.node_spell.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.aaxvv.node_spell.ModConstants;
-import eu.aaxvv.node_spell.client.gui.*;
-import eu.aaxvv.node_spell.client.gui.elements.*;
+import eu.aaxvv.node_spell.client.gui.GuiElement;
+import eu.aaxvv.node_spell.client.gui.elements.GuiScrollContainer;
+import eu.aaxvv.node_spell.client.gui.elements.GuiTextureButton;
+import eu.aaxvv.node_spell.client.gui.elements.GuiTransientText;
 import eu.aaxvv.node_spell.client.gui.helper.MultiSelectionModel;
 import eu.aaxvv.node_spell.client.gui.helper.TextEditController;
 import eu.aaxvv.node_spell.client.gui.helper.TextureRegion;
@@ -17,13 +19,13 @@ import eu.aaxvv.node_spell.platform.services.ClientPlatformHelper;
 import eu.aaxvv.node_spell.spell.Spell;
 import eu.aaxvv.node_spell.spell.execution.SpellDeserializationContext;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -128,7 +130,7 @@ public class SpellBookScreen extends BaseScreen {
             selected.setCachedSpell(spell);
         }
 
-        Minecraft.getInstance().setScreen(new NewSpellEditScreen(this, spell));
+        SpellEditContext.openScreen(new NewSpellEditScreen(this, spell));
     }
 
     private void onRemoveSpell() {
