@@ -2,9 +2,7 @@
 
 A Minecraft 1.19.3 mod adding a magic system that uses node based programming similar to unreal blueprints
 
-<p align="center">
-    <video src=".github/media/NodeSpellDemo.mp4" width="100%" controls></video>
-</p>
+https://github.com/user-attachments/assets/9fd2614c-7261-4524-906f-ff5b7215d038
 
 I finished the entire programming system and added most of the nodes I wanted.  
 But after finishing "the hard part", I lost interest in doing the actual game-design to integrate it into survival gameplay.  
